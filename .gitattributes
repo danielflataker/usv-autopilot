@@ -1,0 +1,28 @@
+# Default: treat files as text and normalize to LF in repo
+* text=auto eol=lf
+
+# Explicit text types (optional, but nice)
+*.c   text eol=lf
+*.h   text eol=lf
+*.cpp text eol=lf
+*.hpp text eol=lf
+*.md  text eol=lf
+*.txt text eol=lf
+*.py  text eol=lf
+*.js  text eol=lf
+*.ts  text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Scripts
+*.sh  text eol=lf
+*.bat text eol=crlf
+
+# Binary files (never touch line endings)
+*.png binary
+*.jpg binary
+*.pdf binary
+*.zip binary
+*.bin binary
+*.elf binary
