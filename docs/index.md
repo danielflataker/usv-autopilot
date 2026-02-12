@@ -37,13 +37,13 @@ This folder is the **source of truth** for project architecture, module contract
 - Record formats: [`logging/record_formats.md`](logging/record_formats.md)
 
 ### Comms
-- Overview: [comms/overview.md](comms/overview.md)
+- Overview: [`comms/overview.md`](comms/overview.md)
 - Telemetry: [`comms/telemetry.md`](comms/telemetry.md)
 - Parameters: [`comms/params.md`](comms/params.md)
 - Protocol: [`comms/protocol.md`](comms/protocol.md)
 
 ### Hardware notes
-- Overview: [hw/overview.md](hw/overview.md)
+- Overview: [`hw/overview.md`](hw/overview.md)
 - Wiring + power: [`hw/wiring_power.md`](hw/wiring_power.md)
 - Waterproofing: [`hw/waterproofing.md`](hw/waterproofing.md)
 - EMI notes: [`hw/emi_notes.md`](hw/emi_notes.md)
