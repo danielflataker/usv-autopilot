@@ -1,0 +1,115 @@
+# Contracts (interfaces)
+
+Purpose: define the internal software contracts inside the firmware (and any shared code).
+This is the canonical place for shared structs, enums, and module APIs.
+
+If a type crosses a module/task boundary, it should be defined here (or referenced from here).
+
+## Scope
+- Firmware-internal contracts (estimation, guidance, control, modes, logging, comms)
+- Shared types with the ground station *only if* they must match bit-for-bit
+
+Non-goals:
+- Full implementations
+- HAL/driver details
+
+## Pipeline contracts (topics → payload types)
+
+To make the dataflow explicit, we name the *thing being published* (topic) and the struct that carries it:
+
+- `NAV_SOLUTION` → `nav_solution_t`
+- `MISSION_STATE` → `mission_state_t`
+- `GUIDANCE_REF` → `guidance_ref_t`
+- `ACTUATOR_CMD` → `actuator_cmd_t`
+- `ESC_OUTPUT` → `esc_output_t`
+
+(Exact RTOS wiring is described in [rtos_tasks.md](rtos_tasks.md) and [dataflow.md](dataflow.md).)
+
+## Core data types (V1)
+
+### Navigation / estimation
+- `nav_solution_t` (published by estimator)
+  - pose: `x, y, psi`
+  - rates/speeds: `v, r`
+  - gyro bias: `b_g`
+  - health: `status flags` + optional covariance diag (TBD)
+  - timestamp: `t_us`
+
+### Mission management
+- `mission_state_t` (published by mission manager)
+  - `idx` (active segment: waypoint `idx` → `idx+1`)
+  - `active`, `done`
+  - segment endpoints: `x0,y0` and `x1,y1`
+  - segment target speed: `v_seg` (optional in V1)
+  - distance to next WP: `d_wp` (optional; can also be computed in guidance)
+  - timestamp: `t_us`
+
+### Guidance references
+- `guidance_ref_t` (published by guidance)
+  - desired heading: `psi_d`
+  - desired speed (post scheduler): `v_d`
+  - optional debug terms: `e_psi`, `e_y`, `v_cap` (keep optional to avoid bloat)
+  - timestamp: `t_us`
+
+### Control / actuation
+- `actuator_cmd_t` (published by controller, consumed by actuator shaping)
+  - canonical internal form: `u_s`, `u_d` (preferred, matches process input)
+    - `u_s` is average thrust command
+    - `u_d` is differential thrust command
+  - validity flags (armed / failsafe)
+  - timestamp: `t_us`
+
+- `esc_output_t` (final output to hardware)
+  - per-motor commands: `u_L`, `u_R` (normalized)
+  - arm/disarm + output validity
+  - timestamp: `t_us`
+
+## Modes / state machine
+- `mode_t`: enum of modes (manual, autopilot, tests, abort, idle, ...)
+- `mode_iface_t`: mode callbacks
+  - `enter(ctx)`
+  - `update(ctx, dt)` (produces either `guidance_ref_t` or `actuator_cmd_t`, depending on mode)
+  - `exit(ctx)`
+
+(Mode behavior is described in [modes.md](modes.md).)
+
+## Inter-task messaging (payloads)
+Typed payloads passed through queues/mailboxes:
+- `log_record_t` (see [logging/record_formats.md](../logging/record_formats.md))
+- `telemetry_snapshot_t`, `event_t` (see [comms/telemetry.md](../comms/telemetry.md))
+- `param_update_t`, `param_ack_t` (see [comms/params.md](../comms/params.md))
+- `mission_chunk_t` / `mission_cmd_t` (if mission upload handled on MCU)
+
+## Event bus (contract)
+Events are emitted at the source and may have multiple consumers (SD logging, live link, etc.).
+Producers must not care who consumes the event.
+
+- `event_t`: canonical event payload (see `logging/events.md` for semantics)
+- `event_emit(const event_t* e)`: non-blocking
+  - returns success/fail (or increments drop counters internally)
+  - must be safe to call from the control loop
+
+Implementation note (V1):
+- `event_emit()` fans out to two queues:
+  - `event_q_sd` (logging task)
+  - `event_q_tm` (telemetry task)
+
+Drop policy:
+- never block the control loop
+- drop on overflow and increment `event_drop_*` counters
+
+## API conventions
+- No dynamic allocation in control loop paths
+- Prefer pure functions where possible (easy to test)
+- If stateful, keep state in explicit `*_state_t` passed as pointer
+- Time uses monotonic microseconds: `t_us`
+
+Suggested function naming:
+- `*_init`, `*_reset`
+- `*_step` (stateful update each loop)
+- `*_compute` (pure function if possible)
+
+## TODO / Open questions
+- Which fields in `nav_solution_t` are required for V1 telemetry vs log-only
+- Do we keep `v_cap`/errors in `guidance_ref_t` or log them separately
+- Which structs must be shared with the ground station (and versioned)

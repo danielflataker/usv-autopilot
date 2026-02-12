@@ -1,0 +1,70 @@
+# Glossary
+
+Quick reference for shared vocabulary across the docs. Math uses $\,\cdot\,$, code/log field names use backticks.
+
+## Conventions
+- `t_us`: monotonic timestamp in microseconds (code/log field name).
+- Units: SI (m, rad, m/s, rad/s) unless explicitly stated.
+- $(x,y)$: local navigation position (frame defined in [architecture.md](architecture.md)).
+- $\psi$: heading/yaw angle.
+- $\mathrm{wrap}(\cdot)$: wrap angle differences (e.g. to $[-\pi,\pi)$).
+
+## Estimation symbols (EKF)
+State (V1): $\vec{x} = [x, y, \psi, v, r, b_g]^{\mathsf T}$
+- $v$: surge speed estimate [m/s]
+- $r$: yaw rate [rad/s]
+- $b_g$: gyro bias (slow drift; modeled as random walk) [rad/s]
+- $\mathbf{Q}$: process noise covariance
+- $\mathbf{R}$: measurement noise covariance
+
+| Math | Code name |
+|---|---|
+| $x,y,\psi,v,r,b_g$ | `x,y,psi,v,r,b_g` |
+| $\mathbf{Q}$ | `Q` |
+| $\mathbf{R}$ | `R` |
+
+## Guidance + control symbols (math ↔ code)
+Key relations:
+- $e_v = v_d - v$
+- $e_r = r_d - r$
+- $u_s = 0.5(u_L + u_R)$, $u_d = 0.5(u_R - u_L)$
+- $u_L = u_s - u_d$, $u_R = u_s + u_d$
+
+| Math | Code name | Meaning / unit |
+|---|---|---|
+| $v_{\mathrm{seg}}$ | `v_seg` | segment target speed [m/s] |
+| $v_d$ | `v_d` | desired speed setpoint after caps+ramp [m/s] |
+| $\psi_d$ | `psi_d` | desired heading from LOS [rad] |
+| $e_y$ | `e_y` | cross-track error [m] |
+| $e_\psi$ | `e_psi` | heading error (wrapped) [rad] |
+| $r_d$ | `r_d` | desired yaw rate [rad/s] |
+| $e_r$ | `e_r` | yaw-rate error [rad/s] |
+| $e_v$ | `e_v` | speed error [m/s] |
+| $u_L$ | `u_L` | left motor command (normalized) |
+| $u_R$ | `u_R` | right motor command (normalized) |
+| $u_s$ | `u_s` | average input (normalized) |
+| $u_d$ | `u_d` | differential input (normalized) |
+
+## Sensors and measurements
+- GNSS: Global Navigation Satellite System
+  - `z_gnss_xy`: GNSS position in local frame
+  - GS: ground speed (speed over ground)
+  - COG: course over ground (direction of motion over ground)
+- IMU: Inertial Measurement Unit
+  - gyro `z_gyro_r`: measured yaw rate
+  - accel `z_acc`: measured acceleration (logged in V1; not necessarily used in estimation yet)
+- Magnetometer (optional): heading measurement `z_mag_psi` (EMI dependent)
+
+## Logging terms
+- `timeseries.bin`: high-rate binary time series
+- `events.jsonl`: sparse event log
+- `meta.json`: session metadata (`git_sha`, `git_dirty`, params snapshot, …)
+
+## Abbreviations
+- EKF: Extended Kalman Filter
+- LOS: Line-Of-Sight guidance
+- PID: Proportional–Integral–Derivative controller
+- RTOS: Real-Time Operating System
+- ESC: Electronic Speed Controller
+- SD: Secure Digital (storage)
+- SiK: serial telemetry radio modules
