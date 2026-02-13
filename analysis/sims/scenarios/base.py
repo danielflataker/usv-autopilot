@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import numpy as np
 import numpy.typing as npt
 
-from tools.usv_sim.usv_sim.digital_twin.process_model import ProcessParams
+from usv_sim.digital_twin.process_model import ProcessParams
 
 Array = npt.NDArray[np.float64]
 

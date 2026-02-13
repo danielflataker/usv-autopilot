@@ -103,7 +103,7 @@ Some data contracts must match exactly between firmware, logs, and analysis tool
 
 Where it shows up:
 - Firmware: compiled constant (e.g. `#define FW_MODEL_SCHEMA 1`) and written into session `meta.json` / boot event
-- Tools: `usv_sim.digital_twin.current.MODEL_SCHEMA` (or similar) and checked when loading a dataset
+- Tools: `usv_sim.digital_twin.current.FW_MODEL_SCHEMA` and checked when loading a dataset
 
 Recommended dataset check:
 - analysis/parsers should fail fast if `dataset.schema != tool.schema`

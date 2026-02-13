@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from tools.usv_sim.usv_sim.digital_twin.process_model import ProcessParams
+from usv_sim.digital_twin.process_model import ProcessParams
 from .base import DEFAULT_PARAMS, Scenario
 
 

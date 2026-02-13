@@ -9,3 +9,4 @@ dependencies:
   - pandas
   - pip:
       - packaging
+      - -e ./tools/usv_sim
