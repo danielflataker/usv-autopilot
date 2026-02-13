@@ -11,13 +11,22 @@ Principles:
 ## Session layout (proposed)
 On boot or “start logging”, create a new session folder:
 - `logs/YYYYMMDD_HHMMSS/`
-  - `meta.json` (build id, params snapshot, hw info)
+  - `meta.json` (build id, `FW_MODEL_SCHEMA`, params snapshot, hw info)
   - `timeseries.bin` (high-rate binary records)
   - `events.jsonl` (or `events.bin` if we want strictly binary)
 
+## Schema / compatibility (must match firmware + tools)
+Some contracts must match exactly (state order/meaning, units, record layouts). We use a single schema ID:
+
+- Firmware defines `FW_MODEL_SCHEMA` and logs it in `meta.json`
+- `timeseries.bin` header stores the same `fw_model_schema`
+- tools should fail fast if dataset schema != tool schema
+
+See: [`record_formats.md`](record_formats.md) and [`interfaces/contracts.md`](../interfaces/contracts.md).
+
 ## High-rate time series (binary)
 - single append-only file: `timeseries.bin`
-- consists of fixed header + sequence of records (see `record_formats.md`)
+- fixed header + TLV record stream (see [`record_formats.md`](record_formats.md))
 - designed for fast writes and easy parsing in Python
 
 ### Why a single `timeseries.bin` is OK
@@ -38,11 +47,12 @@ that should not compete with core nav/control logs.
 ## Metadata (`meta.json`)
 Should include:
 - firmware build id: `git_sha` + `dirty` flag
+- `FW_MODEL_SCHEMA` (contract schema id)
 - session start wall time (if available) + monotonic `t_us` info
 - hardware identifiers (board, sensor models)
 - parameter snapshot (or a hash + separate params file)
 
 ## TODO / Open questions
-- One `timeseries.bin` vs multiple binary streams by category
-- How to handle versioning of record layouts (record schema version)
+- When to move from `events.jsonl` to `events.bin`
 - Buffer overflow strategy (drop policy + counters + event)
+- If/when to split `timeseries.bin` into multiple streams (only if needed)

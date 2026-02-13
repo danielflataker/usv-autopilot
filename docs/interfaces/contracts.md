@@ -93,6 +93,21 @@ Typed payloads passed through queues/mailboxes:
 - `param_update_t`, `param_ack_t` (see [comms/params.md](../comms/params.md))
 - `mission_chunk_t` / `mission_cmd_t` (if mission upload handled on MCU)
 
+## Compatibility / schema IDs (tiny but important)
+
+Some data contracts must match exactly between firmware, logs, and analysis tools (e.g. state order, units, binary record layouts). To avoid silent mismatches, we define a small schema ID.
+
+- `FW_MODEL_SCHEMA` (int): bumped only when a *breaking* contract change happens
+  - examples: state vector order/meaning, frame conventions (ENU/NED), log binary layout, telemetry payload layout
+  - non-examples: tuning changes, bugfixes, parameter tweaks
+
+Where it shows up:
+- Firmware: compiled constant (e.g. `#define FW_MODEL_SCHEMA 1`) and written into session `meta.json` / boot event
+- Tools: `usv_sim.digital_twin.current.MODEL_SCHEMA` (or similar) and checked when loading a dataset
+
+Recommended dataset check:
+- analysis/parsers should fail fast if `dataset.schema != tool.schema`
+
 ## Event bus (contract)
 Events are emitted at the source and may have multiple consumers (SD logging, live link, etc.).
 Producers must not care who consumes the event.
