@@ -25,10 +25,10 @@ Per-motor commands:
 - $u_R$: right motor command
 
 We use average + difference:
-$$
+```math
 u_s = \tfrac12(u_L + u_R), \qquad
 u_d = \tfrac12(u_R - u_L).
-$$
+```
 
 Process input vector:
 ```math
@@ -85,15 +85,17 @@ v_{k+1} = v_k + \Delta t\left(-\tfrac{1}{\tau_v}v_k + k_v u_{s,k}\right),
 \qquad
 r_{k+1} = r_k + \Delta t\left(-\tfrac{1}{\tau_r}r_k + k_r u_{d,k}\right),
 \qquad
-b_{g,k+1} = b_{g,k} + w_{b,k}.
+b_{g,k+1} = b_{g,k}.
 ```
 
 Process noise is applied as
 ```math
 \vec{x}_{k+1} = f(\vec{x}_k,\vec{u}_k) + \vec{w}_k,
 \qquad
-\vec{w}_k \sim \mathcal N(\vec{0},\mathbf{Q}_k).
+\vec{w}_k \sim \mathcal N(\vec{0},\mathbf{Q}_k),
 ```
+
+where the $(b_g,b_g)$ entry in $\mathbf{Q}_k$ models the bias random walk.
 
 ## Parameters and identification
 - $\tau_v,\tau_r$: time constants for surge and yaw-rate response

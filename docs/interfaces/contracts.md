@@ -21,6 +21,7 @@ To make the dataflow explicit, we name the *thing being published* (topic) and t
 - `MISSION_STATE` → `mission_state_t`
 - `GUIDANCE_REF` → `guidance_ref_t`
 - `ACTUATOR_CMD` → `actuator_cmd_t`
+- `MIXER_FEEDBACK` → `mixer_feedback_t`
 - `ESC_OUTPUT` → `esc_output_t`
 
 (Exact RTOS wiring is described in [rtos_tasks.md](rtos_tasks.md) and [dataflow.md](dataflow.md).)
@@ -52,17 +53,29 @@ To make the dataflow explicit, we name the *thing being published* (topic) and t
   - timestamp: `t_us`
 
 ### Control / actuation
-- `actuator_cmd_t` (published by controller, consumed by actuator shaping)
+- `actuator_cmd_t` (published by controller, consumed by mixer/limits)
   - canonical internal form: `u_s`, `u_d` (preferred, matches process input)
     - `u_s` is average thrust command
     - `u_d` is differential thrust command
   - validity flags (armed / failsafe)
   - timestamp: `t_us`
 
+- `mixer_feedback_t` (published by mixer/limits, consumed by controllers for anti-windup)
+  - achieved commands after mixing + clamping:
+    - `u_s_ach`, `u_d_ach`
+  - saturation flags:
+    - `sat_L`, `sat_R`, `sat_any`
+  - optional: `u_L_ach`, `u_R_ach` (only if needed for debugging/logging)
+  - timestamp: `t_us`
+
 - `esc_output_t` (final output to hardware)
-  - per-motor commands: `u_L`, `u_R` (normalized)
+  - per-motor commands: `u_L`, `u_R` (normalized internal convention)
   - arm/disarm + output validity
   - timestamp: `t_us`
+
+Notes:
+- The controller should not need to know whether the ESC supports reverse. That mapping is owned by the ESC driver.
+- For anti-windup, controllers should use `u_s_ach` / `u_d_ach` (or `sat_any`) rather than guessing limits.
 
 ## Modes / state machine
 - `mode_t`: enum of modes (manual, autopilot, tests, abort, idle, ...)
@@ -112,4 +125,5 @@ Suggested function naming:
 ## TODO / Open questions
 - Which fields in `nav_solution_t` are required for V1 telemetry vs log-only
 - Do we keep `v_cap`/errors in `guidance_ref_t` or log them separately
+- Should `mixer_feedback_t` always be published, or only when saturation occurs
 - Which structs must be shared with the ground station (and versioned)

@@ -48,9 +48,9 @@ z^{\mathrm{mag}}_{\psi} = \psi + n_{\psi}.
 ```
 
 Important:
-- Innovation must be wrapped:
+- Residual must be wrapped:
   ```math
-  \nu_\psi = \mathrm{wrap}(z^{\mathrm{mag}}_{\psi} - \hat{\psi}^-).
+  \tilde{z}_\psi = \mathrm{wrap}\!\left(z^{\mathrm{mag}}_{\psi} - \hat{\psi}^-\right).
   ```
 
 ### GNSS speed and course (might leave out for V1)
