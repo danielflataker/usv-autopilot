@@ -16,26 +16,26 @@ Key idea: many parts of the pipeline may want to *cap* the segment speed. We app
 
 ## Pipeline
 1) Start with mission speed:
-$$
+```math
 v_0 \stackrel{\text{def}}{=} v_{\mathrm{seg}}.
-$$
+```
 
 2) Apply any number of *caps* (each rule computes an upper bound $v_{\max,i}$):
-$$
+```math
 v_{i+1} \stackrel{\text{def}}{=} \min\!\left(v_i,\; v_{\max,i}\right).
-$$
+```
 
 After all rules:
-$$
+```math
 v_{\mathrm{cap}} \stackrel{\text{def}}{=} v_N.
-$$
+```
 
 3) Ramp the controller setpoint toward the capped target:
-$$
+```math
 \Delta v \stackrel{\text{def}}{=} \mathrm{sat}\!\left(v_{\mathrm{cap}} - v_d,\; -a_{\downarrow}\Delta t,\; a_{\uparrow}\Delta t\right),
 \qquad
 v_{d}^{+} \stackrel{\text{def}}{=} v_d + \Delta v.
-$$
+```
 
 Finally, output $v_d \leftarrow v_d^{+}$.
 

@@ -11,12 +11,12 @@ This is the baseline process model used by the EKF in V1. It’s deliberately si
 Coordinate frames and sign conventions are defined in [architecture.md](../architecture.md).
 
 ## State
-$$
+```math
 \vec{x} =
 \begin{bmatrix}
 x & y & \psi & v & r & b_g
 \end{bmatrix}^{\mathsf T},
-$$
+```
 where $b_g$ is gyro bias for yaw-rate (random walk in V1).
 
 ## Inputs (motor commands)
@@ -31,69 +31,69 @@ u_d = \tfrac12(u_R - u_L).
 $$
 
 Process input vector:
-$$
+```math
 \vec{u} =
 \begin{bmatrix}
 u_s \\
 u_d
 \end{bmatrix}.
-$$
+```
 
 Inverse mapping (used by the mixer):
-$$
+```math
 u_L = u_s - u_d, \qquad
 u_R = u_s + u_d.
-$$
+```
 
 ## Continuous-time dynamics
 Kinematics:
-$$
+```math
 \dot x = v\cos\psi, \qquad
 \dot y = v\sin\psi, \qquad
 \dot\psi = r.
-$$
+```
 
 Lumped 1st-order dynamics:
-$$
+```math
 \dot v = -\tfrac{1}{\tau_v}v + k_v u_s + w_v, \qquad
 \dot r = -\tfrac{1}{\tau_r}r + k_r u_d + w_r, \qquad
 \dot b_g = w_b.
-$$
+```
 
 Compact form (for EKF notation):
-$$
+```math
 \dot{\vec{x}} = f(\vec{x},\vec{u}) + \vec{w}, \qquad
 \vec{w} =
 \begin{bmatrix}
 0 & 0 & 0 & w_v & w_r & w_b
 \end{bmatrix}^{\mathsf T}.
-$$
+```
 
 Here $\tau_v,\tau_r,k_v,k_r$ are parameters, and $w_\star$ captures model mismatch.
 
 ## Discrete-time model (Euler)
 With sample time $\Delta t$:
-$$
+```math
 x_{k+1} = x_k + \Delta t\, v_k\cos\psi_k,
 \qquad
 y_{k+1} = y_k + \Delta t\, v_k\sin\psi_k,
 \qquad
 \psi_{k+1} = \mathrm{wrap}\!\left(\psi_k + \Delta t\,r_k\right),
-$$
-$$
+```
+```math
 v_{k+1} = v_k + \Delta t\left(-\tfrac{1}{\tau_v}v_k + k_v u_{s,k}\right),
 \qquad
 r_{k+1} = r_k + \Delta t\left(-\tfrac{1}{\tau_r}r_k + k_r u_{d,k}\right),
 \qquad
 b_{g,k+1} = b_{g,k} + w_{b,k}.
-$$
+```
 
 Process noise is applied as
-$$
+```math
 \vec{x}_{k+1} = f(\vec{x}_k,\vec{u}_k) + \vec{w}_k,
 \qquad
 \vec{w}_k \sim \mathcal N(\vec{0},\mathbf{Q}_k).
-$$
+```
 
 ## Parameters and identification
 - $\tau_v,\tau_r$: time constants for surge and yaw-rate response

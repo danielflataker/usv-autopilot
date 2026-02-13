@@ -14,17 +14,17 @@ Outputs:
 
 ## Lookahead target
 Let the segment direction be:
-$$
+```math
 \vec{d} \overset{\text{def}}{=}
 \begin{bmatrix}
 x_1-x_0\\
 y_1-y_0
 \end{bmatrix}, \qquad
 \hat{\vec{t}} \overset{\text{def}}{=} \frac{\vec{d}}{\lVert \vec{d}\rVert}.
-$$
+```
 
 Project current position onto the line to get a closest point $(x_c,y_c)$, then pick a lookahead point along the segment:
-$$
+```math
 \begin{bmatrix}
 x_\ell\\
 y_\ell
@@ -35,12 +35,12 @@ x_c\\
 y_c
 \end{bmatrix}
 + L\,\hat{\vec{t}}.
-$$
+```
 
 Desired heading:
-$$
+```math
 \psi_d \overset{\text{def}}{=} \mathrm{atan2}(y_\ell - y,\; x_\ell - x).
-$$
+```
 
 ## Notes
 - Clamp the lookahead point to the segment (V1) so we don’t “look beyond” the next waypoint too far.
