@@ -55,7 +55,7 @@ Keep the initial set small so parsing + plotting is easy:
   - `psi_d, v_d`, optional `e_y, e_psi`
 
 - `REC_ACTUATOR_CMD`
-  - `u_s, u_d` (command stage, i.e. $u_s^{cmd},u_d^{cmd}$)
+  - `u_s_cmd, u_d_cmd` (command stage, i.e. $u_s^{cmd},u_d^{cmd}$)
 
 - `REC_ESC_OUTPUT`
   - `u_L, u_R`

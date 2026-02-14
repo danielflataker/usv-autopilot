@@ -19,6 +19,7 @@ It complements [contracts.md](contracts.md) by showing the pipeline.
   - consume: controller, logging, telemetry
 
 - `ACTUATOR_CMD` (`actuator_cmd_t`)
+  - fields: `u_s_cmd`, `u_d_cmd` (+ validity/timestamp)
   - publish: controller (or mode, depending on architecture)
   - consume: actuator shaping / mixer, logging (optional)
 

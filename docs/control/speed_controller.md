@@ -9,7 +9,7 @@ Yaw control produces $u_d^{cmd}$ separately; the mixer later maps $(u_s^{cmd},u_
 - sample time $\Delta t$
 
 ## Output
-- average motor command $u_s^{cmd}$ (normalized; carried as `u_s` in `actuator_cmd_t`)
+- average motor command $u_s^{cmd}$ (normalized; carried as `u_s_cmd` in `actuator_cmd_t`)
 - optional debug: $e_v$, integrator state, saturation flags
 
 ## Error signal

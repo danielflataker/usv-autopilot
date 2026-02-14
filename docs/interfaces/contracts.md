@@ -54,10 +54,10 @@ To make the dataflow explicit, we name the *thing being published* (topic) and t
 
 ### Control / actuation
 - `actuator_cmd_t` (published by controller, consumed by mixer/limits)
-  - canonical internal form: `u_s`, `u_d` (preferred, matches process input)
+  - canonical internal form: `u_s_cmd`, `u_d_cmd` (explicit command-stage names; preferred)
     - math form in this stage: $u_s^{cmd}, u_d^{cmd}$
-    - `u_s` is commanded average thrust
-    - `u_d` is commanded differential thrust
+    - `u_s_cmd` is commanded average thrust
+    - `u_d_cmd` is commanded differential thrust
   - validity flags (armed / failsafe)
   - timestamp: `t_us`
 

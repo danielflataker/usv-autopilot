@@ -11,7 +11,7 @@ The controller outputs the canonical internal actuator commands (command stage):
 - average command $u_s^{cmd}$ (surge)
 - differential command $u_d^{cmd}$ (yaw)
 
-In payloads these are still carried as `u_s`, `u_d` inside `actuator_cmd_t` (see `interfaces/contracts.md`).
+In payloads these are carried as `u_s_cmd`, `u_d_cmd` inside `actuator_cmd_t` (see `interfaces/contracts.md`).
 They are mixed into per-motor commands $(u_L,u_R)$ in [`mixer_and_limits.md`](mixer_and_limits.md) and then mapped to PWM by the ESC driver.
 
 ## Files

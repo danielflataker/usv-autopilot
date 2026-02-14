@@ -7,7 +7,7 @@ Track a desired heading $\psi_d$ (from LOS) by commanding $u_d^{cmd}$.
 
 ## Inputs / outputs
 - Inputs: $\psi_d$, $\psi$, $r$, $\Delta t$
-- Output: $u_d^{cmd}$ (normalized differential command; carried as `u_d` in `actuator_cmd_t`)
+- Output: $u_d^{cmd}$ (normalized differential command; carried as `u_d_cmd` in `actuator_cmd_t`)
 
 ## Core idea
 1) Heading loop: $e_\psi = \mathrm{wrap}(\psi_d - \psi) \rightarrow r_d$  

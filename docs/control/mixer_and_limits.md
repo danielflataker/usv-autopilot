@@ -12,7 +12,7 @@ Goal: make it easy to swap allocation policy (speed-priority vs yaw-priority vs 
 
 ## Inputs / outputs
 Inputs:
-- $(u_s^{cmd},u_d^{cmd})$ from control via `ACTUATOR_CMD → actuator_cmd_t`
+- $(u_s^{cmd},u_d^{cmd})$ from control via `ACTUATOR_CMD → actuator_cmd_t` (`u_s_cmd`, `u_d_cmd`)
 - motor limits + policy params + $\Delta t$
 
 Outputs:
@@ -118,7 +118,7 @@ If we later want Newtons:
 
   * $F_L \approx f(u_L)$, $F_R \approx f(u_R)$ (possibly nonlinear)
   * optional inverse mapping for feedforward
-* keep the controller’s primary output as $(u_s^{cmd},u_d^{cmd})$ (carried as `u_s`,`u_d` in `actuator_cmd_t`) unless we *explicitly* redesign control to output force.
+* keep the controller’s primary output as $(u_s^{cmd},u_d^{cmd})$ (carried as `u_s_cmd`,`u_d_cmd` in `actuator_cmd_t`) unless we *explicitly* redesign control to output force.
 
 ## Open questions
 
