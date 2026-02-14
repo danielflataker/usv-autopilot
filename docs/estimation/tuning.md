@@ -10,7 +10,7 @@ References:
 
 ## What gets tuned
 - Measurement noise $\mathbf{R}$ (how much we trust sensors)
-- Process noise $\mathbf{Q}$ (how much we trust the model)
+- Process noise $\mathbf{Q}$ (how much we trust the model; this models unmodeled process disturbances/model mismatch)
 - Gating thresholds (reject outliers)
 
 ## Starting point (safe defaults)
@@ -33,7 +33,7 @@ References:
 
 ### Process noise $\mathbf{Q}$
 - Model mismatch lives here (waves, current, thrust nonlinearity)
-- Decide which states get most process noise (typically $v$, $r$, and $b_g$)
+- Decide which states get most process noise variance (typically $v$, $r$, and $b_g$)
 - Decide how $\mathbf{Q}$ scales with $\Delta t$
 
 ### Gating / outlier rejection

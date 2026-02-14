@@ -18,7 +18,7 @@ References:
 - Measurement: $\vec{z}$
 - Process model: $f(\cdot)$
 - Measurement model: $h(\cdot)$
-- Process noise: $\vec{w}_k \sim \mathcal{N}(\vec{0}, \mathbf{Q}_k)$
+- Process noise (models unmodeled process disturbances/model mismatch): $\vec{w}_k \sim \mathcal{N}(\vec{0}, \mathbf{Q}_k)$
 - Measurement noise: $\vec{n}_k \sim \mathcal{N}(\vec{0}, \mathbf{R}_k)$
 - Angle wrap: $\mathrm{wrap}(\cdot)$ maps to $[-\pi,\pi)$
 
@@ -46,7 +46,7 @@ where
 Interpretation:
 - $\hat{\vec{x}}^-_{k+1}$ is the best guess from physics + inputs alone.
 - $\mathbf{P}^-_{k+1}$ is uncertainty after propagation.
-- $\mathbf{Q}_k$ injects uncertainty for unmodeled effects (waves/current/model mismatch).
+- $\mathbf{Q}_k$ injects process-noise uncertainty for unmodeled disturbances (waves/current/model mismatch).
 
 ### Jacobian $\mathbf{F}_k$ for V1 (Euler discretization)
 With state order $[x,y,\psi,v,r,b_g]$ and sample time $\Delta t$:

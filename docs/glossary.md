@@ -22,7 +22,7 @@ State (V1): $\vec{x} = [x, y, \psi, v, r, b_g]^{\mathsf T}$
 - $v$: surge speed estimate [m/s]
 - $r$: yaw rate [rad/s]
 - $b_g$: gyro bias (slow drift; modeled as random walk) [rad/s]
-- $\mathbf{Q}$: process noise covariance
+- $\mathbf{Q}$: process noise covariance (stochastic model of unmodeled process disturbances/model mismatch)
 - $\mathbf{R}$: measurement noise covariance
 
 | Math | Code name |
