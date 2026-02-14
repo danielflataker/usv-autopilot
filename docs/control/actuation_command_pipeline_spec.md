@@ -70,25 +70,17 @@ Rules:
 ## Stage 1 — command shaping (mode-specific)
 Purpose: shape request before allocator.
 
+Detailed stage definition is documented in [`command_shaping.md`](command_shaping.md).
+
 Inputs:
 - $u_s^{req}, u_d^{req}$
-- mode-specific shaping params (`k_*`, deadband/expo/rate-limit if enabled)
+- mode-specific shaping parameters
+- command envelopes
 
-Operations (ordered):
-1. Optional deadband/expo (typically `MANUAL` only)
-2. Axis scaling
-   - $\tilde u_s = k_s^{mode} u_s^{req}$
-   - $\tilde u_d = k_d^{mode} u_d^{req}$
-3. Clamp to command envelopes
-   - $u_s^{cmd} \in [u_s^{min}, u_s^{max}]$
-   - $u_d^{cmd} \in [-u_{d,max}^{-},\;u_{d,max}^{+}]$
-
-Outputs:
+Output:
 - $u_s^{cmd}, u_d^{cmd}$ (`ACTUATOR_CMD`)
 
-Notes:
-- This is the stage where manual stick sensitivity is tuned.
-- This stage is also where project-level attenuation can be applied in autopilot.
+Command shaping owns source feel/sensitivity and pre-allocation command envelopes.
 
 ## Stage 2 — allocator (policy + feasibility)
 Purpose: enforce feasibility and priority policy in $(u_s,u_d)$ space.

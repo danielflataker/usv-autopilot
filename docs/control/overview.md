@@ -17,6 +17,7 @@ The final mapping to $(u_L,u_R)$ is defined in [`mixer_and_limits.md`](mixer_and
 ## Files
 - [`cascaded_heading_yawrate.md`](cascaded_heading_yawrate.md) — yaw control: $e_\psi \rightarrow r_d \rightarrow u_d^{req}$
 - [`speed_controller.md`](speed_controller.md) — speed control: $e_v \rightarrow u_s^{req}$
+- [`command_shaping.md`](command_shaping.md) — $(u_s^{req},u_d^{req}) \rightarrow (u_s^{cmd},u_d^{cmd})$ with scaling/deadband/envelope clamp
 - [`mixer_and_limits.md`](mixer_and_limits.md) — $(u_s^{cmd},u_d^{cmd}) \rightarrow (u_L,u_R)$ + clamp/idle/slew
 
 ## V1 control pipeline (short)
