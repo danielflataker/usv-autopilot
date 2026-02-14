@@ -37,6 +37,7 @@ from tools.log_io.layout import (
     FILE_HEADER_STRUCT,
     MAGIC,
     RECORD_HEADER_STRUCT,
+    REC_ACTUATOR_REQ,
     REC_ACTUATOR_CMD,
     REC_EKF_DIAG,
     REC_ESC_OUTPUT,
@@ -53,6 +54,7 @@ from tools.log_io.layout import (
 
 NAV_STRUCT = DEFAULT_RECORD_LAYOUTS[REC_NAV_SOLUTION].payload_struct
 GUIDANCE_STRUCT = DEFAULT_RECORD_LAYOUTS[REC_GUIDANCE_REF].payload_struct
+ACTUATOR_REQ_STRUCT = DEFAULT_RECORD_LAYOUTS[REC_ACTUATOR_REQ].payload_struct
 ACTUATOR_STRUCT = DEFAULT_RECORD_LAYOUTS[REC_ACTUATOR_CMD].payload_struct
 ESC_STRUCT = DEFAULT_RECORD_LAYOUTS[REC_ESC_OUTPUT].payload_struct
 MISSION_STATE_STRUCT = DEFAULT_RECORD_LAYOUTS[REC_MISSION_STATE].payload_struct
@@ -140,6 +142,7 @@ def _write_timeseries_bin(
     counts: dict[str, int] = {
         "REC_NAV_SOLUTION": 0,
         "REC_GUIDANCE_REF": 0,
+        "REC_ACTUATOR_REQ": 0,
         "REC_ACTUATOR_CMD": 0,
         "REC_ESC_OUTPUT": 0,
         "REC_MISSION_STATE": 0,
@@ -258,10 +261,12 @@ def _write_timeseries_bin(
             i_r = float(np.clip(i_r + (ki_r * e_r * dt_s), -0.8, 0.8))
             u_d_raw = float((kp_r * e_r) + i_r)
 
-            u_s_cmd = float(np.clip(u_s_raw, -1.0, 1.0))
-            u_d_cmd = float(np.clip(u_d_raw, -1.0, 1.0))
-            sat_u_s = int(abs(u_s_cmd - u_s_raw) > 1e-6)
-            sat_u_d = int(abs(u_d_cmd - u_d_raw) > 1e-6)
+            u_s_req = float(u_s_raw)
+            u_d_req = float(u_d_raw)
+            u_s_cmd = float(np.clip(u_s_req, -1.0, 1.0))
+            u_d_cmd = float(np.clip(u_d_req, -1.0, 1.0))
+            sat_u_s = int(abs(u_s_cmd - u_s_req) > 1e-6)
+            sat_u_d = int(abs(u_d_cmd - u_d_req) > 1e-6)
 
             u_l_pre = float(u_s_cmd - u_d_cmd)
             u_r_pre = float(u_s_cmd + u_d_cmd)
@@ -330,7 +335,7 @@ def _write_timeseries_bin(
                 v_hat,
                 e_v,
                 u_s_raw,
-                u_s_cmd,
+                u_s_req,
                 i_v,
                 sat_u_s,
             )
@@ -344,11 +349,16 @@ def _write_timeseries_bin(
                 r_d,
                 r_hat,
                 e_r,
-                u_d_cmd,
+                u_d_req,
                 sat_u_d,
             )
             _write_record(fh, tk, REC_YAW_CTRL_DEBUG, yaw_ctrl_payload)
             counts["REC_YAW_CTRL_DEBUG"] += 1
+
+            src = 0  # ACT_SRC_AUTOPILOT in dummy pipeline
+            actuator_req_payload = ACTUATOR_REQ_STRUCT.pack(u_s_req, u_d_req, src)
+            _write_record(fh, tk, REC_ACTUATOR_REQ, actuator_req_payload)
+            counts["REC_ACTUATOR_REQ"] += 1
 
             actuator_payload = ACTUATOR_STRUCT.pack(u_s_cmd, u_d_cmd)
             _write_record(fh, tk, REC_ACTUATOR_CMD, actuator_payload)

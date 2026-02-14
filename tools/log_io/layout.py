@@ -17,16 +17,17 @@ RECORD_HEADER_STRUCT: Final[struct.Struct] = struct.Struct("<QHH")
 
 REC_NAV_SOLUTION: Final[int] = 1
 REC_GUIDANCE_REF: Final[int] = 2
-REC_ACTUATOR_CMD: Final[int] = 3
-REC_ESC_OUTPUT: Final[int] = 4
-REC_MISSION_STATE: Final[int] = 5
-REC_MIXER_FEEDBACK: Final[int] = 6
-REC_SPEED_SCHED_DEBUG: Final[int] = 7
-REC_SPEED_CTRL_DEBUG: Final[int] = 8
-REC_YAW_CTRL_DEBUG: Final[int] = 9
-REC_EKF_DIAG: Final[int] = 10
-REC_SENSOR_GNSS: Final[int] = 11
-REC_SENSOR_GYRO: Final[int] = 12
+REC_ACTUATOR_REQ: Final[int] = 3
+REC_ACTUATOR_CMD: Final[int] = 4
+REC_ESC_OUTPUT: Final[int] = 5
+REC_MISSION_STATE: Final[int] = 6
+REC_MIXER_FEEDBACK: Final[int] = 7
+REC_SPEED_SCHED_DEBUG: Final[int] = 8
+REC_SPEED_CTRL_DEBUG: Final[int] = 9
+REC_YAW_CTRL_DEBUG: Final[int] = 10
+REC_EKF_DIAG: Final[int] = 11
+REC_SENSOR_GNSS: Final[int] = 12
+REC_SENSOR_GYRO: Final[int] = 13
 
 
 @dataclass(frozen=True, slots=True)
@@ -49,6 +50,12 @@ DEFAULT_RECORD_LAYOUTS: Final[dict[int, RecordLayout]] = {
         name="REC_GUIDANCE_REF",
         fields=("psi_d", "v_d", "e_y", "e_psi"),
         payload_struct=struct.Struct("<4f"),
+    ),
+    REC_ACTUATOR_REQ: RecordLayout(
+        type_id=REC_ACTUATOR_REQ,
+        name="REC_ACTUATOR_REQ",
+        fields=("u_s_req", "u_d_req", "src"),
+        payload_struct=struct.Struct("<2fB3x"),
     ),
     REC_ACTUATOR_CMD: RecordLayout(
         type_id=REC_ACTUATOR_CMD,
@@ -83,13 +90,13 @@ DEFAULT_RECORD_LAYOUTS: Final[dict[int, RecordLayout]] = {
     REC_SPEED_CTRL_DEBUG: RecordLayout(
         type_id=REC_SPEED_CTRL_DEBUG,
         name="REC_SPEED_CTRL_DEBUG",
-        fields=("v_d", "v_hat", "e_v", "u_s_raw", "u_s_cmd", "i_v", "sat_u_s"),
+        fields=("v_d", "v_hat", "e_v", "u_s_raw", "u_s_req", "i_v", "sat_u_s"),
         payload_struct=struct.Struct("<6fB3x"),
     ),
     REC_YAW_CTRL_DEBUG: RecordLayout(
         type_id=REC_YAW_CTRL_DEBUG,
         name="REC_YAW_CTRL_DEBUG",
-        fields=("psi_d", "psi", "e_psi", "r_d", "r", "e_r", "u_d_cmd", "sat_u_d"),
+        fields=("psi_d", "psi", "e_psi", "r_d", "r", "e_r", "u_d_req", "sat_u_d"),
         payload_struct=struct.Struct("<7fB3x"),
     ),
     REC_EKF_DIAG: RecordLayout(

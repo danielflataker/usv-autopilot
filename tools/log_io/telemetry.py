@@ -81,6 +81,8 @@ def iter_mavlink_telemetry(
     ekf = timeseries.records.get("REC_EKF_DIAG")
     speed_ctrl = timeseries.records.get("REC_SPEED_CTRL_DEBUG")
     yaw_ctrl = timeseries.records.get("REC_YAW_CTRL_DEBUG")
+    actuator_req = timeseries.records.get("REC_ACTUATOR_REQ")
+    actuator_cmd = timeseries.records.get("REC_ACTUATOR_CMD")
     mixer = timeseries.records.get("REC_MIXER_FEEDBACK")
 
     t_nav = nav["t_us"].astype(np.uint64)
@@ -183,8 +185,11 @@ def iter_mavlink_telemetry(
                 },
             )
 
-            if include_custom_messages and speed_ctrl is not None and yaw_ctrl is not None and mixer is not None:
-                if i < len(speed_ctrl["t_us"]) and i < len(yaw_ctrl["t_us"]) and i < len(mixer["t_us"]):
+            if include_custom_messages and speed_ctrl is not None and yaw_ctrl is not None and mixer is not None and actuator_req is not None and actuator_cmd is not None:
+                if (
+                    i < len(speed_ctrl["t_us"]) and i < len(yaw_ctrl["t_us"]) and i < len(mixer["t_us"]) and
+                    i < len(actuator_req["t_us"]) and i < len(actuator_cmd["t_us"])
+                ):
                     yield TelemetryMessage(
                         t_us=t_us,
                         name=CUSTOM_MAVLINK_MESSAGES["ctrl_debug"],
@@ -192,8 +197,10 @@ def iter_mavlink_telemetry(
                         payload={
                             "v_d": float(speed_ctrl["v_d"][i]),
                             "v_hat": float(speed_ctrl["v_hat"][i]),
-                            "u_s_cmd": float(speed_ctrl["u_s_cmd"][i]),
-                            "u_d_cmd": float(yaw_ctrl["u_d_cmd"][i]),
+                            "u_s_req": float(actuator_req["u_s_req"][i]),
+                            "u_d_req": float(actuator_req["u_d_req"][i]),
+                            "u_s_cmd": float(actuator_cmd["u_s_cmd"][i]),
+                            "u_d_cmd": float(actuator_cmd["u_d_cmd"][i]),
                             "e_psi": float(yaw_ctrl["e_psi"][i]),
                         },
                     )
