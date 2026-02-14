@@ -10,7 +10,8 @@ Quick reference for shared vocabulary across the docs. Math uses $\,\cdot\,$, co
 - $\mathrm{wrap}(\cdot)$: wrap angle differences (e.g. to $[-\pi,\pi)$).
 - For control commands, use superscripts to show stage in the pipeline:
   - $u_*^{cmd}$: command requested by controller.
-  - $u_*^{ach}$: command achieved after allocator/mixer/limits.
+  - $u_*^{ach}$: final command achieved at hardware output stage (after allocator/mixer/limits).
+  - $u_*^{alloc}$: optional intermediate allocator-stage command (debug/tuning only).
   - $u_*^{*}$: raw/unclamped controller output (before saturation/anti-windup logic).
 - In code/log field names, stage uses explicit suffixes consistently:
   - command stage: `u_s_cmd`, `u_d_cmd`
@@ -53,7 +54,8 @@ Key relations:
 | $u_s$ | `u_s` | average input (normalized) |
 | $u_d$ | `u_d` | differential input (normalized) |
 | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd,u_d_cmd` in `actuator_cmd_t` | commanded average/differential input |
-| $u_s^{ach},u_d^{ach}$ | `u_s_ach,u_d_ach` | achieved average/differential input after limits |
+| $u_s^{ach},u_d^{ach}$ | `u_s_ach,u_d_ach` | final achieved average/differential input after limits |
+| $u_s^{alloc},u_d^{alloc}$ | `u_s_alloc,u_d_alloc` (optional) | intermediate allocator-stage output (debug/tuning) |
 | $u_s^{*},u_d^{*}$ | `u_s_raw,u_d_raw` | raw controller outputs before clamp/anti-windup |
 | $s_L,s_R,s_{any}$ | `sat_L,sat_R,sat_any` | per-motor/any saturation indicators |
 
@@ -63,8 +65,9 @@ To make simulator/hardware swap straightforward, we standardize the stage names 
 
 | Stage | Canonical math | Firmware/log field names | Simulator/process-model names |
 |---|---|---|---|
-| Controller command | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd`,`u_d_cmd` | used as upstream input to allocator/mixer logic |
-| Achieved actuation | $u_s^{ach},u_d^{ach}$ | `u_s_ach`,`u_d_ach` | `u_s_ach`,`u_d_ach` (`u_s`,`u_d` accepted only as compact algebraic aliases) |
+| Controller command | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd`,`u_d_cmd` | required for control/anti-windup reference |
+| Allocator intermediate (optional) | $u_s^{alloc},u_d^{alloc}$ | `u_s_alloc`,`u_d_alloc` | optional debugging/tuning visibility |
+| Achieved actuation | $u_s^{ach},u_d^{ach}$ | `u_s_ach`,`u_d_ach` | required feedback from final output stage (`u_s`,`u_d` accepted only as compact algebraic aliases) |
 
 Sign convention reminder:
 - Positive $u_d$ means right motor command exceeds left motor command ($u_R > u_L$), i.e. in mixer form $u_R=u_s+u_d$, $u_L=u_s-u_d$.

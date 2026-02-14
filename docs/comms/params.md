@@ -27,6 +27,20 @@ This is about behavior and rules, not UI implementation details.
 - Units + min/max + default
 - Grouping (control, guidance, EKF, safety, logging)
 
+Minimum actuator/saturation params that should exist for V1:
+
+- **Hardware-absolute (read-only in normal ops):**
+  - `act.hw.u_norm_min`, `act.hw.u_norm_max` (typically `[-1,1]` or `[0,1]` depending on reverse support)
+- **Software envelopes (runtime-tunable):**
+  - `act.sw.u_s_min`, `act.sw.u_s_max`
+  - `act.sw.u_d_min`, `act.sw.u_d_max`
+  - `act.sw.u_motor_min`, `act.sw.u_motor_max`
+- **Allocator behavior:**
+  - `act.alloc.policy` (`speed_priority`, `yaw_priority`, later `weighted`)
+  - (optional) `act.alloc.w_s`, `act.alloc.w_d` for weighted allocation
+
+Document each param with unit (`normalized`), default, safe range, and whether it is mode-restricted.
+
 ### Update messages
 - `PARAM_SET` (single)
 - `PARAM_SET_BATCH` (recommended default)
