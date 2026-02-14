@@ -107,15 +107,27 @@ def process_step(
         raise ValueError("dt must be > 0")
     if not isinstance(params, ProcessParams):
         raise TypeError(f"params must be ProcessParams, got {type(params).__name__}")
+    tau_v = float(params.tau_v)
+    tau_r = float(params.tau_r)
+    k_v = float(params.k_v)
+    k_r = float(params.k_r)
+    if not np.isfinite(tau_v) or tau_v <= 0.0:
+        raise ValueError("params.tau_v must be finite and > 0")
+    if not np.isfinite(tau_r) or tau_r <= 0.0:
+        raise ValueError("params.tau_r must be finite and > 0")
+    if not np.isfinite(k_v):
+        raise ValueError("params.k_v must be finite")
+    if not np.isfinite(k_r):
+        raise ValueError("params.k_r must be finite")
 
     x_next = _process_step_core(
         x=x,
         u=u,
         dt=float(dt),
-        tau_v=float(params.tau_v),
-        tau_r=float(params.tau_r),
-        k_v=float(params.k_v),
-        k_r=float(params.k_r),
+        tau_v=tau_v,
+        tau_r=tau_r,
+        k_v=k_v,
+        k_r=k_r,
     )
 
     if w is not None:

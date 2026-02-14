@@ -87,6 +87,19 @@ class EstimationTests(unittest.TestCase):
         self.assertTrue(np.allclose(ekf.P, ekf.P.T, atol=1e-12))
         self.assertTrue(np.isfinite(ekf.x[IX_PSI]))
 
+    def test_process_step_rejects_non_positive_time_constants(self) -> None:
+        x = np.zeros(STATE_DIM, dtype=float)
+        u = np.zeros(2, dtype=float)
+        dt = 0.1
+
+        bad_tau_v = ProcessParams(tau_v=0.0, tau_r=1.0, k_v=0.8, k_r=1.2)
+        with self.assertRaisesRegex(ValueError, "params.tau_v must be finite and > 0"):
+            process_step(x=x, u=u, dt=dt, params=bad_tau_v)
+
+        bad_tau_r = ProcessParams(tau_v=1.0, tau_r=-0.5, k_v=0.8, k_r=1.2)
+        with self.assertRaisesRegex(ValueError, "params.tau_r must be finite and > 0"):
+            process_step(x=x, u=u, dt=dt, params=bad_tau_r)
+
 
 if __name__ == "__main__":
     unittest.main()
