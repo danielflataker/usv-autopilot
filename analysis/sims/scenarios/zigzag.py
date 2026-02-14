@@ -29,7 +29,8 @@ def make_zigzag_ud(
 
     U = np.empty((N, 2), dtype=np.float64)
     U[:, 0] = float(u_s)
-    U[:, 1] = float(u_d_amp) * np.sign(np.sin(2.0 * np.pi * t / float(period)))
+    phase = np.sin(2.0 * np.pi * t / float(period))
+    U[:, 1] = np.where(phase >= 0.0, float(u_d_amp), -float(u_d_amp))
 
     if x0 is None:
         x0 = np.zeros(6, dtype=np.float64)
