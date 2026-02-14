@@ -41,6 +41,7 @@ This folder is the **source of truth** for project architecture, module contract
 - Telemetry: [`comms/telemetry.md`](comms/telemetry.md)
 - Parameters: [`comms/params.md`](comms/params.md)
 - Protocol: [`comms/protocol.md`](comms/protocol.md)
+- QGC integration plan: [`comms/qgc_integration_plan.md`](comms/qgc_integration_plan.md)
 
 ### Hardware notes
 - Overview: [`hw/overview.md`](hw/overview.md)
@@ -70,6 +71,7 @@ This folder is the **source of truth** for project architecture, module contract
 
 ## Decisions (ADRs)
 - [`adr/0001-workflow-and-docs.md`](adr/0001-workflow-and-docs.md)
+- [`adr/0002-qgc-first-mavlink-strategy.md`](adr/0002-qgc-first-mavlink-strategy.md)
 
 ## Conventions (quick)
 - Timestamp: monotonic microseconds `t_us`

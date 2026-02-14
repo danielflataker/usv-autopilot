@@ -1,8 +1,10 @@
 # Ground station overview
 
-This folder describes the ground station used for telemetry, mission upload, and basic UI (map + plots).
+This folder describes the in-repo custom ground station used for telemetry, mission upload, and basic UI (map + plots).
 
-V1 goal: something reliable enough for field tests, not a polished product.
+V1 strategy note:
+- Primary field operations should work with QGroundControl via MAVLink (see ADR 0002 and `docs/comms/qgc_integration_plan.md`).
+- This custom ground station is therefore optional/non-blocking for V1, and mainly a path for project-specific visualization and tooling.
 
 ## Pieces
 - Backend: [backend.md](backend.md)
@@ -11,5 +13,5 @@ V1 goal: something reliable enough for field tests, not a polished product.
 - Dev setup: [dev_setup.md](dev_setup.md)
 
 ## TODO
-- Decide first V1 features (map position + mode + basic commands)
-- Document message flow (link to `docs/comms/telemetry.md` and `docs/comms/protocol.md`)
+- Keep minimal custom GS path for diagnostics that standard GCS tools do not cover.
+- Document message flow (link to `docs/comms/telemetry.md` and `docs/comms/protocol.md`).

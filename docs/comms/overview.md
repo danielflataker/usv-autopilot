@@ -15,6 +15,7 @@ Keep this practical and avoid duplicating internal structs from `interfaces/`.
 - `params.md` — param IDs/names/types, apply rules, and logging of param changes
 - `mavlink_mapping.md` — which V1 telemetry uses predefined MAVLink vs custom messages
 - `telemetry_implementation_plan.md` — milestone plan and acceptance criteria for dummy -> real telemetry
+- `qgc_integration_plan.md` — concrete MAVLink compatibility checklist for QGC-first operations
 
 ## References
 - Internal contracts/structs: `../interfaces/contracts.md`
@@ -24,9 +25,10 @@ Keep this practical and avoid duplicating internal structs from `interfaces/`.
 - Define link assumptions (SiK rate, expected packet loss, max payload)
 - Decide message set for V1 (minimal telemetry + events + param ack)
 - Decide protocol approach (subset of MAVLink vs custom framing)
+- Prefer QGC-first compatibility path for V1 mission operations
 - Define mission upload transaction (start → chunks → commit → ack)
 - Define parameter update behavior (batch apply, rate limiting, safe apply rules)
 
 ## Open questions
-- Use MAVLink (common tooling) or custom (simpler to control)?
+- Is any custom framing still justified after QGC-first decision?
 - How much reliability is needed for each message type (telemetry best-effort vs commands reliable)?
