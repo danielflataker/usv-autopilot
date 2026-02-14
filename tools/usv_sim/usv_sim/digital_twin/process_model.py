@@ -56,7 +56,6 @@ def _process_step_core(
     b_g = float(x[IX_BG])
 
     # unpack achieved actuation inputs: u_ach = [u_s_ach, u_d_ach]
-    # Compact algebraic aliases used below: u_s := u_s_ach, u_d := u_d_ach
     u_s_ach = float(u[0])
     u_d_ach = float(u[1])
 

@@ -25,7 +25,7 @@ Maybe later: feedforward $u_{ff}$ once the thrust-to-speed mapping is identified
 - $u_s^{*} = u_{ff}(v_d) + u_P + u_I$
 
 ## Saturation and anti-windup
-The physical output range is limited, so clamp before sending onward:
+Request stage passes raw controller output; command-stage limits are applied in command shaping:
 - $u_s^{req} = u_s^{*}$ (request stage; command-stage clamp happens in command shaping)
 
 Anti-windup (we choose one implementation):

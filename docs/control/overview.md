@@ -28,7 +28,7 @@ The final mapping to $(u_L,u_R)$ is defined in [`mixer_and_limits.md`](mixer_and
 Detailed stage definitions and naming invariants are specified in [`actuation_command_pipeline_spec.md`](actuation_command_pipeline_spec.md).
 
 ## Notes
-- Saturation happens after mixing, so controllers should use mixer feedback (`MIXER_FEEDBACK`) for anti-windup (see `interfaces/contracts.md`).
+- Saturation happens after mixing, so controllers use mixer feedback (`MIXER_FEEDBACK`) for anti-windup (see `interfaces/contracts.md`).
 
 ## Open questions
 - Controller forms: P vs PI for heading loop, PI for speed/yaw-rate loops

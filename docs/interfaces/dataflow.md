@@ -28,8 +28,13 @@ It complements [contracts.md](contracts.md) by showing the pipeline.
   - publish: command shaping
   - consume: allocator/mixer, logging (optional)
 
+- `MIXER_FEEDBACK` (`mixer_feedback_t`)
+  - fields: `u_s_ach`, `u_d_ach`, saturation flags (+ timestamp)
+  - publish: allocator/mixer
+  - consume: controllers (anti-windup), logging (optional)
+
 - `ESC_OUTPUT` (`esc_output_t`)
-  - publish: actuator shaping / mixer
+  - publish: allocator/mixer
   - consume: ESC driver
 
 ## Timing model (V1)

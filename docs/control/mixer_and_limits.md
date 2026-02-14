@@ -7,8 +7,8 @@ Canonical stage-by-stage I/O and naming rules are defined in [`actuation_command
 Goal: V1 keeps allocation policy swappable (speed-priority, yaw-priority, later cost/QP) without rewriting the rest of the module.
 
 ## What this module does (in order)
-1) **Allocator**: choose achievable $(u_s^{ach},u_d^{ach})$ given limits + policy  
-2) **Mixer**: map $(u_s^{ach},u_d^{ach}) \rightarrow (u_L,u_R)$  
+1) **Allocator**: choose feasible $(u_s^{alloc},u_d^{alloc})$ given limits + policy  
+2) **Mixer**: map $(u_s^{alloc},u_d^{alloc}) \rightarrow (u_L,u_R)$  
 3) **Shaping**: trims, clamp, idle/deadband, slew-rate  
 4) **Feedback**: publish what was actually achieved for anti-windup
 
@@ -31,7 +31,7 @@ The allocator decides what part of the requested command is feasible under motor
 It owns the “what to preserve under saturation” policy.
 
 Inputs: $(u_s^{cmd},u_d^{cmd})$  
-Outputs: $(u_s^{ach},u_d^{ach})$ + saturation flags
+Outputs: $(u_s^{alloc},u_d^{alloc})$ + saturation flags
 
 Policies (V1 candidates):
 - **Speed-priority:** preserve $u_s^{cmd}$ as much as possible, reduce $u_d^{cmd}$ when needed
@@ -67,10 +67,10 @@ Practical V1 structure:
 
 Then allocator + mixer enforce feasibility under both software envelopes and hardware limits.
 
-Recommended limit names (all tunable):
-- motor absolute max/min: `u_LR_max`, `u_LR_min` (math: $u_{LR,max}, u_{LR,min}$)
-- surge envelope: `u_s_max`, `u_s_min` (math: $u_s^{max}, u_s^{min}$)
-- differential envelope: `u_d_max_pos`, `u_d_max_neg` (math: $u_{d,max}^{+}, u_{d,max}^{-}$)
+Canonical limit names in the pipeline:
+- motor absolute max/min: `u_LR_max`, `u_LR_min` (math: $u_{LR,max}, u_{LR,min}$; hardware-absolute)
+- surge envelope: `u_s_max`, `u_s_min` (math: $u_s^{max}, u_s^{min}$; software)
+- differential envelope: `u_d_max_pos`, `u_d_max_neg` (math: $u_{d,max}^{+}, u_{d,max}^{-}$; software)
 
 When reverse is disabled, V1 uses separate positive/negative limits for `u_d` because feasible yaw authority is direction-dependent.
 
@@ -99,20 +99,21 @@ Useful special case (symmetric range, e.g. `[-1,1]`):
 |u_d| \le u_{LR,max} - |u_s|.
 ```
 
-No-reverse case (range `[0,1]`) is asymmetric:
-- positive `u_d` is limited by `1-u_s`
-- negative `u_d` is limited by `u_s`
+No-reverse case (range `[0,1]`) gives explicit bounds from the same general formula:
+- $u_d \in [\max(u_s-1,\;-u_s),\;\min(u_s,\;1-u_s)]$
+- positive authority limit: $u_d^{+} \le 1-u_s$
+- negative authority limit: $u_d^{-} \ge -u_s$
 
-So if `u_s` is high, there is little room left for positive `u_d`; if `u_s` is low, there is little room left for negative `u_d`.
-A software surge cap (for example `u_s_max=0.7`) still preserves differential margin, but available margin depends on direction when reverse is not allowed.
+So if `u_s` is high, positive `u_d` margin is small; if `u_s` is low, negative `u_d` margin is small.
+A software surge cap (for example `u_s_max=0.7`) preserves differential margin, and the remaining margin is direction-dependent when reverse is disabled.
 
 ## 2) Mixer (pure mapping)
 
-Once $(u_s^{ach},u_d^{ach})$ are decided, mixing is just algebra:
+Once $(u_s^{alloc},u_d^{alloc})$ are decided, mixing is just algebra:
 
 ```math
-u_L = u_s^{ach} - u_d^{ach}, \qquad
-u_R = u_s^{ach} + u_d^{ach}.
+u_L = u_s^{alloc} - u_d^{alloc}, \qquad
+u_R = u_s^{alloc} + u_d^{alloc}.
 ```
 
 Inverse (useful for feedback/debug):
@@ -173,8 +174,8 @@ Keep the signal set small so it is easy to reason about saturation.
 
 Required in V1 control logic:
 
-1. **Requested command** (`u_*^{cmd}`)
-   - what the controller/PID asked for
+1. **Command-stage command** (`u_*^{cmd}`)
+   - shaped command delivered to allocator
 2. **Final achieved command** (`u_*^{ach}` from final motor outputs)
    - what was actually sent to the plant
 
@@ -189,8 +190,8 @@ Treat `u_*^{alloc}` as debug/tuning data, not as a required control input.
 V1 tracks command (`u_*^{cmd}`) and final achieved output (`u_*^{ach}`) as mandatory signals; allocator-stage signals are optional diagnostics.
 
 Notation reminder (for consistency across docs):
-- $u_*^{cmd}$: from command shaping to allocator (`ACTUATOR_CMD`)
-- $u_*^{alloc}$: optional allocator/intermediate result (debug/tuning)
+- $u_*^{cmd}$: command-stage output from command shaping (`ACTUATOR_CMD`)
+- $u_*^{alloc}$: allocator output before motor-stage shaping (optional debug/tuning)
 - $u_*^{ach}$: final achieved command returned by mixer/limits (`MIXER_FEEDBACK`)
 
 ## About thrust/force models and unit conversions
