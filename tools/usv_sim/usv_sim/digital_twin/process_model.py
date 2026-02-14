@@ -55,7 +55,7 @@ def _process_step_core(
     r = float(x[IX_R])
     b_g = float(x[IX_BG])
 
-    # unpack inputs: u = [u_s, u_d]
+    # unpack effective/achieved actuation inputs: u = [u_s, u_d]
     u_s = float(u[0])
     u_d = float(u[1])
 
@@ -92,7 +92,7 @@ def process_step(
 
     Args:
         x: state, shape (6,)
-        u: input, shape (2,) where u = [u_s, u_d]
+        u: effective/achieved actuation input, shape (2,) where u = [u_s, u_d]
         dt: timestep [s]
         params: model parameters (tau_v, tau_r, k_v, k_r)
         w: optional additive noise, shape (6,) applied after propagation

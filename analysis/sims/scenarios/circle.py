@@ -15,7 +15,7 @@ def make_constant_turn(
     x0: np.ndarray | None = None,
     params: ProcessParams | None = None,
 ) -> Scenario:
-    """Constant u_s and u_d. Often yields a curved path (approx circle-ish)."""
+    """Constant u_s and u_d (effective/achieved inputs). Often yields a curved path."""
     if dt <= 0.0:
         raise ValueError("dt must be > 0")
     if T <= 0.0:

@@ -16,7 +16,10 @@ def make_zigzag_ud(
     x0: np.ndarray | None = None,
     params: ProcessParams | None = None,
 ) -> Scenario:
-    """Square-wave in u_d (left/right), constant u_s. Returns U[:,0]=u_s, U[:,1]=u_d."""
+    """Square-wave in u_d (left/right), constant u_s. Returns U[:,0]=u_s, U[:,1]=u_d.
+
+    Inputs are interpreted as effective/achieved in the current process model.
+    """
     if dt <= 0.0:
         raise ValueError("dt must be > 0")
     if T <= 0.0:

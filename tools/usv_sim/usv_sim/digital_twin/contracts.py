@@ -13,10 +13,11 @@ IX_R: Final[int] = 4
 IX_BG: Final[int] = 5
 
 STATE_DIM: Final[int] = 6
-INPUT_DIM: Final[int] = 2  # u = [u_s, u_d]
+INPUT_DIM: Final[int] = 2  # process-model input u = [u_s, u_d] (effective/achieved actuation)
 
 STATE_NAMES: Final[tuple[str, ...]] = ("x", "y", "psi", "v", "r", "b_g")
 INPUT_NAMES: Final[tuple[str, ...]] = ("u_s", "u_d")
+# Stage semantics: these correspond to effective/achieved actuator effect in the process model.
 
 
 def as_state_vector(

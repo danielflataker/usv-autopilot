@@ -17,7 +17,10 @@ def make_step_us(
     x0: np.ndarray | None = None,
     params: ProcessParams | None = None,
 ) -> Scenario:
-    """Step in u_s at t_step. u_d held constant. Returns U[:,0]=u_s, U[:,1]=u_d."""
+    """Step in u_s at t_step. u_d held constant. Returns U[:,0]=u_s, U[:,1]=u_d.
+
+    In the current digital-twin model these are interpreted as effective/achieved inputs.
+    """
     if dt <= 0.0:
         raise ValueError("dt must be > 0")
     if T <= 0.0:
