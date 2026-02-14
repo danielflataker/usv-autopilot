@@ -17,7 +17,7 @@ Inputs:
 
 Outputs:
 - `ESC_OUTPUT → esc_output_t`: $(u_L,u_R)$ (internal motor commands; ESC driver maps to PWM)
-- `MIXER_FEEDBACK → mixer_feedback_t` (recommended): achieved $(u_s,u_d)$ + saturation flags for anti-windup
+- `MIXER_FEEDBACK → mixer_feedback_t` (recommended): achieved $(u_s^{ach},u_d^{ach})$ + saturation flags for anti-windup
 
 (Exact payload fields are defined in [`interfaces/contracts.md`](../interfaces/contracts.md).)
 
@@ -56,8 +56,8 @@ u_R = u_s^{ach} + u_d^{ach}.
 Inverse (useful for feedback/debug):
 
 ```math
-u_s = \tfrac12(u_L+u_R), \qquad
-u_d = \tfrac12(u_R-u_L).
+u_s^{ach} = \tfrac12(u_L+u_R), \qquad
+u_d^{ach} = \tfrac12(u_R-u_L).
 ```
 
 ## 3) Shaping (limits, idle, slew)
@@ -95,6 +95,10 @@ Controllers then do anti-windup using either:
 
 * **Freeze/clamp integration** when saturated in the “wrong” direction, or
 * **Back-calculation (tracking):** use $(u_*^{ach}-u_*^{cmd})$.
+
+Notation reminder (for consistency across docs):
+- $u_*^{cmd}$: from controller to allocator (`ACTUATOR_CMD`)
+- $u_*^{ach}$: returned by mixer/limits (`MIXER_FEEDBACK`)
 
 ## About thrust/force models and unit conversions
 
