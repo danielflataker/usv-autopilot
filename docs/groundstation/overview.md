@@ -4,7 +4,7 @@ This folder describes the in-repo custom ground station used for telemetry, miss
 
 V1 strategy note:
 - Primary field operations should work with QGroundControl via MAVLink (see ADR 0002 and `docs/comms/qgc_integration_plan.md`).
-- This custom ground station is therefore optional/non-blocking for V1, and mainly a path for project-specific visualization and tooling.
+- The custom ground station remains in scope, but is de-prioritized for V1 and mainly used for project-specific visualization/tooling.
 
 ## Pieces
 - Backend: [backend.md](backend.md)

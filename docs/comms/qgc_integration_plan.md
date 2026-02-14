@@ -15,7 +15,7 @@ Non-goals (V1):
 
 ## Message checklist
 
-## 1) Core heartbeat/status
+### 1) Core heartbeat/status
 
 Required:
 - `HEARTBEAT`
@@ -26,7 +26,7 @@ Recommended:
 - stable autopilot/type/mode signaling in `HEARTBEAT`
 - regular cadence (e.g., 1 Hz status baseline)
 
-## 2) Pose / estimator visibility
+### 2) Pose / estimator visibility
 
 Required:
 - `LOCAL_POSITION_NED`
@@ -36,26 +36,21 @@ Recommended:
 - `ESTIMATOR_STATUS`
 - optional global position message path when map UX needs it
 
-## 3) Mission protocol (primary)
+### 3) Mission protocol (primary)
 
 Required for practical mission workflow:
-- `MISSION_COUNT`
-- `MISSION_REQUEST_INT`
-- `MISSION_ITEM_INT`
-- `MISSION_ACK`
-- `MISSION_CLEAR_ALL`
-- `MISSION_SET_CURRENT`
+- Upload path: `MISSION_COUNT`, `MISSION_REQUEST_INT` (or `MISSION_REQUEST` fallback), `MISSION_ITEM_INT`, `MISSION_ACK`
+- Control path: `MISSION_CLEAR_ALL`, `MISSION_SET_CURRENT`
 
 Strongly recommended:
-- `MISSION_CURRENT`
-- `MISSION_ITEM_REACHED`
-- list/download flow support (`MISSION_REQUEST_LIST`, etc.)
+- Status path: `MISSION_CURRENT`, `MISSION_ITEM_REACHED`
+- Readback path: `MISSION_REQUEST_LIST`, `MISSION_COUNT`, `MISSION_REQUEST_INT`/`MISSION_REQUEST`, `MISSION_ITEM_INT`/`MISSION_ITEM`, `MISSION_ACK`
 
 Notes:
-- Prefer `*_INT` mission item path for waypoint precision/compatibility.
+- Prefer `*_INT` mission item path for waypoint precision/compatibility, but be robust to clients that use non-INT fallback.
 - Treat mission transactions as reliable with clear timeout/retry behavior.
 
-## 4) Parameter protocol
+### 4) Parameter protocol
 
 Required:
 - `PARAM_REQUEST_LIST`
@@ -65,12 +60,13 @@ Required:
 
 Optional/advanced:
 - `PARAM_EXT_*` where long strings/types are needed
+- Do not require `PARAM_EXT_*` for V1 unless a specific GCS flow depends on it
 
 Notes:
 - Parameter names are project-defined; protocol is standardized.
 - Expose only parameters safe for field tuning in V1, gate unsafe writes by mode/armed state.
 
-## 5) Command protocol
+### 5) Command protocol
 
 Required:
 - `COMMAND_LONG`
@@ -87,7 +83,7 @@ Recommended:
 4. Verify command acknowledgments and negative paths (unsupported/denied).
 5. Repeat smoke test with one alternate client (optional but recommended).
 
-## Acceptance criteria (V1)
+## Acceptance criteria (V1, QGC-first)
 
 - QGC can upload and read back missions without custom tooling.
 - QGC can display live vehicle status/pose at expected update rates.

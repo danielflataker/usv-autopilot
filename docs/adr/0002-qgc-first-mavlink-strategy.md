@@ -1,7 +1,7 @@
 # ADR 0002: QGC-first strategy for ground operations (V1)
 
 ## Status
-Accepted
+Proposed (pending team sign-off)
 
 ## Context
 
@@ -17,12 +17,12 @@ basic field missions if robust logs are available for post-run analysis.
 
 ## Decision
 
-For V1 and near-term milestones, we adopt a **QGC-first** strategy:
+For V1 and near-term milestones, we propose a **QGC-first** strategy:
 
 1. Prioritize compatibility with existing MAVLink ground control software
    (QGroundControl first, optionally Mission Planner for cross-checks).
-2. Treat the in-repo custom ground station as a **later/optional** track for
-   advanced visualizations and project-specific diagnostics.
+2. Treat the in-repo custom ground station as a **de-prioritized / optional** track for
+   advanced visualizations and project-specific diagnostics (not removed).
 3. Focus implementation on the standard MAVLink mission/parameter/command flows
    needed for practical planning, upload, execution control, and status visibility.
 
@@ -46,7 +46,8 @@ Telemetry baseline (already aligned in docs):
 - `LOCAL_POSITION_NED`
 - `ATTITUDE`
 - `STATUSTEXT`
-- `PARAM_EXT_ACK` (or equivalent param ack semantics)
+- `PARAM_VALUE` + core parameter flow (`PARAM_REQUEST_LIST`, `PARAM_REQUEST_READ`, `PARAM_SET`)
+- `PARAM_EXT_ACK` only if extended parameter semantics are needed
 
 Mission planning/control baseline:
 - `MISSION_COUNT`
