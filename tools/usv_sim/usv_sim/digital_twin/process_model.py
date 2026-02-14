@@ -6,14 +6,16 @@ from typing import Optional
 
 import numpy as np
 
-
-# State layout: x = [x, y, psi, v, r, b_g]
-IX_X = 0
-IX_Y = 1
-IX_PSI = 2
-IX_V = 3
-IX_R = 4
-IX_BG = 5
+from .contracts import (
+    IX_BG,
+    IX_PSI,
+    IX_R,
+    IX_V,
+    IX_X,
+    IX_Y,
+    as_input_vector,
+    as_state_vector,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -99,13 +101,8 @@ def process_step(
     Returns:
         x_next: propagated state, shape (6,)
     """
-    x = np.asarray(x, dtype=float)
-    u = np.asarray(u, dtype=float)
-
-    if x.shape != (6,):
-        raise ValueError(f"x must have shape (6,), got {x.shape}")
-    if u.shape != (2,):
-        raise ValueError(f"u must have shape (2,), got {u.shape}")
+    x = as_state_vector(x, name="x", dtype=float)
+    u = as_input_vector(u, name="u", dtype=float)
     if dt <= 0.0:
         raise ValueError("dt must be > 0")
     if not isinstance(params, ProcessParams):

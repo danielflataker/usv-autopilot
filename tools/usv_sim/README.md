@@ -16,5 +16,7 @@ pip install -e ./tools/usv_sim
 - `usv_sim.digital_twin.process_model.process_step()`
 - `usv_sim.digital_twin.simulate.simulate()`
 - `usv_sim.digital_twin.simulate.simulate_with_inputs()`
+- `usv_sim.digital_twin.estimation.ExtendedKalmanFilter`
+- `usv_sim.digital_twin.estimation.predict_step()`
 - `usv_sim.digital_twin.current.FW_MODEL_ID`
 - `usv_sim.digital_twin.current.FW_MODEL_SCHEMA`
