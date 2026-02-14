@@ -13,6 +13,8 @@ Keep this practical and avoid duplicating internal structs from `interfaces/`.
 - `telemetry.md` — message types, fields, units, and recommended rates
 - `protocol.md` — serial framing + ACK/retry + mission upload flow
 - `params.md` — param IDs/names/types, apply rules, and logging of param changes
+- `mavlink_mapping.md` — which V1 telemetry uses predefined MAVLink vs custom messages
+- `telemetry_implementation_plan.md` — milestone plan and acceptance criteria for dummy -> real telemetry
 
 ## References
 - Internal contracts/structs: `../interfaces/contracts.md`

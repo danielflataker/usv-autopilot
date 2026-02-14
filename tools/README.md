@@ -34,3 +34,15 @@ python -c "from tools.log_io import read_timeseries_bin; d=read_timeseries_bin('
 ```
 
 Shared record layout contract lives in `tools/log_io/layout.py`.
+
+## Dummy telemetry emitter
+
+Replay a log session as MAVLink-aligned telemetry JSONL:
+
+```bash
+python tools/emit_dummy_telemetry.py --session-dir logs/20260214_120000 --out telemetry.jsonl
+```
+
+This emits a minimal V1 set using predefined MAVLink names (`HEARTBEAT`, `SYS_STATUS`,
+`ESTIMATOR_STATUS`, `LOCAL_POSITION_NED`, `ATTITUDE`, `STATUSTEXT`, `PARAM_EXT_ACK`)
+and can optionally add custom debug messages with `--include-custom`.

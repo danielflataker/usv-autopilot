@@ -4,6 +4,12 @@ from .io import (
     UnknownRecord,
     read_timeseries_bin,
 )
+from .telemetry import (
+    CUSTOM_MAVLINK_MESSAGES,
+    PREDEFINED_MAVLINK_MESSAGES,
+    TelemetryMessage,
+    iter_mavlink_telemetry,
+)
 from .layout import (
     DEFAULT_RECORD_LAYOUTS,
     ENDIAN_LITTLE,
@@ -47,5 +53,9 @@ __all__ = [
     "TimeseriesData",
     "TimeseriesHeader",
     "UnknownRecord",
+    "CUSTOM_MAVLINK_MESSAGES",
+    "PREDEFINED_MAVLINK_MESSAGES",
+    "TelemetryMessage",
+    "iter_mavlink_telemetry",
     "read_timeseries_bin",
 ]
