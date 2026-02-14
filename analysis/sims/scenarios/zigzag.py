@@ -10,13 +10,13 @@ def make_zigzag_ud(
     *,
     dt: float,
     T: float,
-    u_s: float,
-    u_d_amp: float,
+    u_s_ach: float,
+    u_d_ach_amp: float,
     period: float,
     x0: np.ndarray | None = None,
     params: ProcessParams | None = None,
 ) -> Scenario:
-    """Square-wave in u_d (left/right), constant u_s. Returns U[:,0]=u_s, U[:,1]=u_d."""
+    """Square-wave in u_d_ach (left/right), constant u_s_ach. Returns U[:,0]=u_s_ach, U[:,1]=u_d_ach."""
     if dt <= 0.0:
         raise ValueError("dt must be > 0")
     if T <= 0.0:
@@ -28,9 +28,9 @@ def make_zigzag_ud(
     t = np.arange(N, dtype=np.float64) * float(dt)
 
     U = np.empty((N, 2), dtype=np.float64)
-    U[:, 0] = float(u_s)
+    U[:, 0] = float(u_s_ach)
     phase = np.sin(2.0 * np.pi * t / float(period))
-    U[:, 1] = np.where(phase >= 0.0, float(u_d_amp), -float(u_d_amp))
+    U[:, 1] = np.where(phase >= 0.0, float(u_d_ach_amp), -float(u_d_ach_amp))
 
     if x0 is None:
         x0 = np.zeros(6, dtype=np.float64)

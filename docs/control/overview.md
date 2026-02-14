@@ -7,22 +7,23 @@ Inputs:
 - state estimates from [`docs/estimation/`](../estimation/overview.md)
 
 ## What control produces (internal)
-The controller outputs the canonical internal actuator commands:
-- average command $u_s$ (surge)
-- differential command $u_d$ (yaw)
+The controller outputs the canonical internal actuator commands (command stage):
+- average command $u_s^{cmd}$ (surge)
+- differential command $u_d^{cmd}$ (yaw)
 
-These are mixed into per-motor commands $(u_L,u_R)$ in [`mixer_and_limits.md`](mixer_and_limits.md) and then mapped to PWM by the ESC driver.
+In payloads these are carried as `u_s_cmd`, `u_d_cmd` inside `actuator_cmd_t` (see `interfaces/contracts.md`).
+They are mixed into per-motor commands $(u_L,u_R)$ in [`mixer_and_limits.md`](mixer_and_limits.md) and then mapped to PWM by the ESC driver.
 
 ## Files
-- [`cascaded_heading_yawrate.md`](cascaded_heading_yawrate.md) — yaw control: $e_\psi \rightarrow r_d \rightarrow u_d$
-- [`speed_controller.md`](speed_controller.md) — speed control: $e_v \rightarrow u_s$
-- [`mixer_and_limits.md`](mixer_and_limits.md) — $(u_s,u_d) \rightarrow (u_L,u_R)$ + clamp/idle/slew
+- [`cascaded_heading_yawrate.md`](cascaded_heading_yawrate.md) — yaw control: $e_\psi \rightarrow r_d \rightarrow u_d^{cmd}$
+- [`speed_controller.md`](speed_controller.md) — speed control: $e_v \rightarrow u_s^{cmd}$
+- [`mixer_and_limits.md`](mixer_and_limits.md) — $(u_s^{cmd},u_d^{cmd}) \rightarrow (u_L,u_R)$ + clamp/idle/slew
 
 ## V1 control pipeline (short)
 1) Guidance provides $\psi_d$ and $v_d$
-2) Yaw control computes $u_d$
-3) Speed control computes $u_s$
-4) Mixer + limits produce $(u_L,u_R)$ for the ESCs
+2) Yaw control computes $u_d^{cmd}$
+3) Speed control computes $u_s^{cmd}$
+4) Mixer + limits produce $(u_L,u_R)$ and feedback $(u_s^{ach},u_d^{ach})$
 
 ## Notes
 - Saturation happens after mixing, so controllers should use mixer feedback (`MIXER_FEEDBACK`) for anti-windup (see `interfaces/contracts.md`).

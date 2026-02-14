@@ -95,8 +95,8 @@ def build_scenario(name: str, dt: float, duration: float, params: ProcessParams)
         sc = make_zigzag_ud(
             dt=dt,
             T=duration,
-            u_s=0.35,
-            u_d_amp=0.2,
+            u_s_ach=0.35,
+            u_d_ach_amp=0.2,
             period=8.0,
             x0=x0,
             params=params,
@@ -105,8 +105,8 @@ def build_scenario(name: str, dt: float, duration: float, params: ProcessParams)
         sc = make_constant_turn(
             dt=dt,
             T=duration,
-            u_s=0.8,
-            u_d=0.13,
+            u_s_ach=0.8,
+            u_d_ach=0.13,
             x0=x0,
             params=params,
         )
@@ -114,10 +114,10 @@ def build_scenario(name: str, dt: float, duration: float, params: ProcessParams)
         sc = make_step_us(
             dt=dt,
             T=duration,
-            u_s0=0.0,
-            u_s1=0.4,
+            u_s0_ach=0.0,
+            u_s1_ach=0.4,
             t_step=6.0,
-            u_d=0.08,
+            u_d_ach=0.08,
             x0=x0,
             params=params,
         )

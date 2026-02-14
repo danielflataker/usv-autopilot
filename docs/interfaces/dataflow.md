@@ -19,6 +19,7 @@ It complements [contracts.md](contracts.md) by showing the pipeline.
   - consume: controller, logging, telemetry
 
 - `ACTUATOR_CMD` (`actuator_cmd_t`)
+  - fields: `u_s_cmd`, `u_d_cmd` (+ validity/timestamp)
   - publish: controller (or mode, depending on architecture)
   - consume: actuator shaping / mixer, logging (optional)
 
@@ -37,7 +38,7 @@ It complements [contracts.md](contracts.md) by showing the pipeline.
 - Mission manager owns waypoint switching
 - LOS owns $\psi_d$ and geometry errors
 - Speed scheduler owns $v_d$ ramping and speed caps
-- Controller owns mapping $(\psi_d, v_d)$ → `actuator_cmd_t`
+- Controller owns mapping $(\psi_d, v_d)$ → `actuator_cmd_t` (command stage: $u_s^{cmd},u_d^{cmd}$)
 - Actuator shaping owns clamp/deadband/slew + mapping to `u_L,u_R`
 
 ## Transport between modules/tasks

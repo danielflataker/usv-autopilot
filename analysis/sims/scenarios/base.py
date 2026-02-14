@@ -24,6 +24,6 @@ DEFAULT_PARAMS = ProcessParams(
 class Scenario:
     name: str
     dt: float
-    U: Array  # shape (N, 2) = [u_s, u_d]
+    U: Array  # shape (N, 2) = [u_s_ach, u_d_ach] achieved actuation in process-model convention
     x0: Array  # shape (6,)
     params: ProcessParams
