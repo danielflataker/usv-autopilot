@@ -45,11 +45,11 @@ Each tick runs without blocking:
 - `mission_manager`: active segment + waypoint switching
 - `los_guidance`: compute lookahead target → desired heading `psi_d` + errors (`e_y`, `e_psi`)
 - `speed_scheduler`: start from segment speed `v_seg`, apply caps (WP proximity, |e_psi|, …), then ramp → `v_d`
-- `control_cascade`: heading loop (`e_psi` → `r_d`) + yaw-rate loop (`e_r` → `u_d`/`DeltaT`) + speed loop (`e_v` → `u_s`/`T`)
+- `control_cascade`: heading loop (`e_psi` → `r_d`) + yaw-rate loop (`e_r` → `u_d^{cmd}`/`DeltaT`) + speed loop (`e_v` → `u_s^{cmd}`/`T`)
 
 5) **Actuator shaping + ESC output**
 - clamp/deadband/slew-rate limiting
-- differential thrust mixing → per-motor `u_L`, `u_R`
+- differential thrust mixing `(u_s^{cmd},u_d^{cmd}) → (u_L,u_R)` + publish achieved feedback `(u_s^{ach},u_d^{ach})`
 - write to ESC output (non-blocking)
 
 6) **Log + event emission**
