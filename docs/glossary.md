@@ -12,10 +12,10 @@ Quick reference for shared vocabulary across the docs. Math uses $\,\cdot\,$, co
   - $u_*^{cmd}$: command requested by controller.
   - $u_*^{ach}$: command achieved after allocator/mixer/limits.
   - $u_*^{*}$: raw/unclamped controller output (before saturation/anti-windup logic).
-- In code/log field names, stage can be encoded either by payload context or suffixes:
-  - in `actuator_cmd_t`, command stage is carried as `u_s_cmd`, `u_d_cmd`
-  - in `mixer_feedback_t`, achieved stage uses explicit suffixes `u_s_ach`, `u_d_ach`
-  - raw controller terms are typically logged as `u_s_raw`/`u_d_raw` (or equivalent).
+- In code/log field names, stage uses explicit suffixes consistently:
+  - command stage: `u_s_cmd`, `u_d_cmd`
+  - achieved stage: `u_s_ach`, `u_d_ach`
+  - raw (pre-saturation) stage: `u_s_raw`, `u_d_raw`
 
 ## Estimation symbols (EKF)
 State (V1): $\vec{x} = [x, y, \psi, v, r, b_g]^{\mathsf T}$
@@ -54,6 +54,20 @@ Key relations:
 | $u_d$ | `u_d` | differential input (normalized) |
 | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd,u_d_cmd` in `actuator_cmd_t` | commanded average/differential input |
 | $u_s^{ach},u_d^{ach}$ | `u_s_ach,u_d_ach` | achieved average/differential input after limits |
+| $u_s^{*},u_d^{*}$ | `u_s_raw,u_d_raw` | raw controller outputs before clamp/anti-windup |
+| $s_L,s_R,s_{any}$ | `sat_L,sat_R,sat_any` | per-motor/any saturation indicators |
+
+## Cross-domain actuator mapping (firmware ↔ sim)
+
+To make simulator/hardware swap straightforward, we standardize the stage names and allow one explicit legacy alias in process-model math:
+
+| Stage | Canonical math | Firmware/log field names | Simulator/process-model names |
+|---|---|---|---|
+| Controller command | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd`,`u_d_cmd` | used as upstream input to allocator/mixer logic |
+| Achieved actuation | $u_s^{ach},u_d^{ach}$ | `u_s_ach`,`u_d_ach` | `u_s_ach`,`u_d_ach` (`u_s`,`u_d` accepted only as compact algebraic aliases) |
+
+Sign convention reminder:
+- Positive $u_d$ means right motor command exceeds left motor command ($u_R > u_L$), i.e. in mixer form $u_R=u_s+u_d$, $u_L=u_s-u_d$.
 
 ## Sensors and measurements
 - GNSS: Global Navigation Satellite System

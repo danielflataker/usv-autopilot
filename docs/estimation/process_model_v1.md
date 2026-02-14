@@ -6,7 +6,7 @@ This is the baseline process model used by the EKF in V1. It’s deliberately si
 - Planar motion (roll/pitch ignored).
 - Forward speed $v$ is along heading $\psi$ (no sway state in V1).
 - Motor commands are normalized (e.g. $u_L,u_R \in [-1,1]$).
-- For estimation, these represent effective/achieved actuation (not raw requested controller command before limits).
+- For estimation, these represent achieved actuation (not raw requested controller command before limits).
 - Unmodelled effects (waves, current, thrust nonlinearity) are handled as process noise.
 
 Coordinate frames and sign conventions are defined in [architecture.md](../architecture.md).
@@ -20,7 +20,7 @@ x & y & \psi & v & r & b_g
 ```
 where $b_g$ is gyro bias for yaw-rate (random walk in V1).
 
-## Inputs (motor commands, effective/achieved)
+## Inputs (motor commands, achieved)
 Per-motor commands:
 - $u_L$: left motor command
 - $u_R$: right motor command

@@ -99,11 +99,11 @@ def simulate_with_inputs(
     """Simulate forward in time using a precomputed input sequence.
 
     This is a thin wrapper around `simulate()` for the common case where you already
-    have `U[k] = [u_s, u_d]` for each step (interpreted as effective/achieved actuation).
+    have `U[k] = [u_s_ach, u_d_ach]` for each step (achieved actuation).
 
     Args:
         x0: initial state, shape (STATE_DIM,)
-        U_in: effective/achieved actuation array, shape (n_steps, INPUT_DIM)
+        U_in: achieved actuation array, shape (n_steps, INPUT_DIM)
         dt: time step [s]
         params: process model parameters
         t0: initial time [s]

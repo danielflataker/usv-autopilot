@@ -55,9 +55,10 @@ def _process_step_core(
     r = float(x[IX_R])
     b_g = float(x[IX_BG])
 
-    # unpack effective/achieved actuation inputs: u = [u_s, u_d]
-    u_s = float(u[0])
-    u_d = float(u[1])
+    # unpack achieved actuation inputs: u_ach = [u_s_ach, u_d_ach]
+    # Compact algebraic aliases used below: u_s := u_s_ach, u_d := u_d_ach
+    u_s_ach = float(u[0])
+    u_d_ach = float(u[1])
 
     cpsi = float(np.cos(psi))
     spsi = float(np.sin(psi))
@@ -67,8 +68,8 @@ def _process_step_core(
     py_next = py + dt * v * spsi
     psi_next = wrap_pi(psi + dt * r)
 
-    v_dot = -(1.0 / tau_v) * v + k_v * u_s
-    r_dot = -(1.0 / tau_r) * r + k_r * u_d
+    v_dot = -(1.0 / tau_v) * v + k_v * u_s_ach
+    r_dot = -(1.0 / tau_r) * r + k_r * u_d_ach
 
     v_next = v + dt * v_dot
     r_next = r + dt * r_dot
@@ -92,7 +93,7 @@ def process_step(
 
     Args:
         x: state, shape (6,)
-        u: effective/achieved actuation input, shape (2,) where u = [u_s, u_d]
+        u: achieved actuation input, shape (2,) where u = [u_s_ach, u_d_ach]
         dt: timestep [s]
         params: model parameters (tau_v, tau_r, k_v, k_r)
         w: optional additive noise, shape (6,) applied after propagation

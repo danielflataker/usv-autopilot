@@ -9,7 +9,7 @@ References:
 
 ## Notation (quick)
 - State: $\vec{x} = [x, y, \psi, v, r, b_g]^{\mathsf T}$
-- Input: $\vec{u} = [u_s, u_d]^{\mathsf T}$ (effective/achieved actuation for prediction)
+- Input: $\vec{u}_{ach} = [u_s^{ach}, u_d^{ach}]^{\mathsf T}$ (achieved actuation for prediction; compact alias $[u_s,u_d]$ is allowed in equations)
 - Measurement: $\vec{z}$
 - Process noise: $\vec{w}_k \sim \mathcal{N}(\vec{0}, \mathbf{Q}_k)$
 - Measurement noise: $\vec{n}_k \sim \mathcal{N}(\vec{0}, \mathbf{R}_k)$

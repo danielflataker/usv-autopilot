@@ -57,7 +57,7 @@ To make the dataflow explicit, we name the *thing being published* (topic) and t
   - canonical internal form: `u_s_cmd`, `u_d_cmd` (explicit command-stage names; preferred)
     - math form in this stage: $u_s^{cmd}, u_d^{cmd}$
     - `u_s_cmd` is commanded average thrust
-    - `u_d_cmd` is commanded differential thrust
+    - `u_d_cmd` is commanded differential thrust (positive means $u_R > u_L$ after mixing)
   - validity flags (armed / failsafe)
   - timestamp: `t_us`
 

@@ -10,12 +10,12 @@ def make_constant_turn(
     *,
     dt: float,
     T: float,
-    u_s: float,
-    u_d: float,
+    u_s_ach: float,
+    u_d_ach: float,
     x0: np.ndarray | None = None,
     params: ProcessParams | None = None,
 ) -> Scenario:
-    """Constant u_s and u_d (effective/achieved inputs). Often yields a curved path."""
+    """Constant u_s_ach and u_d_ach (achieved inputs). Often yields a curved path."""
     if dt <= 0.0:
         raise ValueError("dt must be > 0")
     if T <= 0.0:
@@ -23,8 +23,8 @@ def make_constant_turn(
 
     N = int(np.ceil(T / dt))
     U = np.empty((N, 2), dtype=np.float64)
-    U[:, 0] = float(u_s)
-    U[:, 1] = float(u_d)
+    U[:, 0] = float(u_s_ach)
+    U[:, 1] = float(u_d_ach)
 
     if x0 is None:
         x0 = np.zeros(6, dtype=np.float64)

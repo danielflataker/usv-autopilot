@@ -60,6 +60,8 @@ u_s^{ach} = \tfrac12(u_L+u_R), \qquad
 u_d^{ach} = \tfrac12(u_R-u_L).
 ```
 
+Sign convention (explicit): positive differential command means right motor command is larger than left motor command ($u_R>u_L$).
+
 ## 3) Shaping (limits, idle, slew)
 
 Shaping is applied to $(u_L,u_R)$ after mixing.
