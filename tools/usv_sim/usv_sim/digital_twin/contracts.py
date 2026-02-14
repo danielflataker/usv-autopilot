@@ -17,7 +17,7 @@ INPUT_DIM: Final[int] = 2  # process-model input u_ach = [u_s_ach, u_d_ach]
 
 STATE_NAMES: Final[tuple[str, ...]] = ("x", "y", "psi", "v", "r", "b_g")
 INPUT_NAMES: Final[tuple[str, ...]] = ("u_s_ach", "u_d_ach")
-# Process-model shorthand still uses u = [u_s, u_d] in equations, where u_s:=u_s_ach and u_d:=u_d_ach.
+# Process-model equations use canonical achieved input names: u = [u_s_ach, u_d_ach].
 
 
 def as_state_vector(

@@ -14,7 +14,7 @@ References:
 
 ## Notation
 - State: $\vec{x} = [x, y, \psi, v, r, b_g]^{\mathsf T}$
-- Input: $\vec{u}_{ach} = [u_s^{ach}, u_d^{ach}]^{\mathsf T}$ (achieved actuation for prediction; compact alias $[u_s,u_d]$ is allowed in equations)
+- Input: $\vec{u}_{ach} = [u_s^{ach}, u_d^{ach}]^{\mathsf T}$ (achieved actuation used for prediction)
 - Measurement: $\vec{z}$
 - Process model: $f(\cdot)$
 - Measurement model: $h(\cdot)$

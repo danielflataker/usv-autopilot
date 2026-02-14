@@ -32,6 +32,20 @@ State (V1): $\vec{x} = [x, y, \psi, v, r, b_g]^{\mathsf T}$
 | $\mathbf{Q}$ | `Q` |
 | $\mathbf{R}$ | `R` |
 
+## Actuator limits (hardware vs software)
+
+These limits are all in normalized command units and should have unique names.
+
+| Category | Math | Code/param name | Meaning |
+|---|---|---|---|
+| Hardware motor limits | $u_{LR,min},u_{LR,max}$ | `act.hw.u_LR_min`, `act.hw.u_LR_max` | absolute command bounds that must never be exceeded |
+| Software motor envelope | $u_{LR,min}^{sw},u_{LR,max}^{sw}$ | `act.sw.u_LR_min`, `act.sw.u_LR_max` | operational cap for motor command, inside hardware limits |
+| Software surge envelope | $u_s^{min},u_s^{max}$ | `act.sw.u_s_min`, `act.sw.u_s_max` | operational cap for average command |
+| Software differential envelope | $u_{d,max}^{+},u_{d,max}^{-}$ | `act.sw.u_d_max_pos`, `act.sw.u_d_max_neg` | operational cap for differential command (can be asymmetric) |
+
+Recommended invariant:
+- `act.hw.u_LR_min <= act.sw.u_LR_min <= act.sw.u_LR_max <= act.hw.u_LR_max`
+
 ## Guidance + control symbols (math ↔ code)
 Key relations:
 - $e_v = v_d - v$
@@ -56,20 +70,18 @@ Key relations:
 | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd,u_d_cmd` in `actuator_cmd_t` | commanded average/differential input |
 | $u_s^{ach},u_d^{ach}$ | `u_s_ach,u_d_ach` | final achieved average/differential input after limits |
 | $u_s^{alloc},u_d^{alloc}$ | `u_s_alloc,u_d_alloc` (optional) | intermediate allocator-stage output (debug/tuning) |
-| $u_{LR}^{max},u_{LR}^{min}$ | `u_LR_max,u_LR_min` | motor-stage max/min command limits |
-| $u_d^{max+},u_d^{max-}$ | `u_d_max_pos,u_d_max_neg` | positive/negative differential limits (can be asymmetric) |
 | $u_s^{*},u_d^{*}$ | `u_s_raw,u_d_raw` | raw controller outputs before clamp/anti-windup |
 | $s_L,s_R,s_{any}$ | `sat_L,sat_R,sat_any` | per-motor/any saturation indicators |
 
 ## Cross-domain actuator mapping (firmware ↔ sim)
 
-To make simulator/hardware swap straightforward, we standardize the stage names and allow one explicit legacy alias in process-model math:
+To make simulator/hardware swap straightforward, we use one canonical set of stage names across firmware, logging, and simulator models:
 
 | Stage | Canonical math | Firmware/log field names | Simulator/process-model names |
 |---|---|---|---|
 | Controller command | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd`,`u_d_cmd` | required for control/anti-windup reference |
 | Allocator intermediate (optional) | $u_s^{alloc},u_d^{alloc}$ | `u_s_alloc`,`u_d_alloc` | optional debugging/tuning visibility |
-| Achieved actuation | $u_s^{ach},u_d^{ach}$ | `u_s_ach`,`u_d_ach` | required feedback from final output stage (`u_s`,`u_d` accepted only as compact algebraic aliases) |
+| Achieved actuation | $u_s^{ach},u_d^{ach}$ | `u_s_ach`,`u_d_ach` | required feedback from final output stage |
 
 Sign convention reminder:
 - Positive $u_d$ means right motor command exceeds left motor command ($u_R > u_L$), i.e. in mixer form $u_R=u_s+u_d$, $u_L=u_s-u_d$.
