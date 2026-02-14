@@ -31,6 +31,7 @@ conda activate usv-autopilot
 If the env already exists and `environment.yml` is updated:
 
 ```bash
+conda activate usv-autopilot
 conda env update -f environment.yml --prune
 ```
 
