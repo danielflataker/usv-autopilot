@@ -176,4 +176,7 @@ A lightweight naming check is available to catch drift across core documents:
 python tools/check_docs_contracts.py
 ```
 
-The script validates required topics (`ACTUATOR_REQ`, `ACTUATOR_CMD`, `MIXER_FEEDBACK`) and stage naming (`req/cmd/alloc/ach`) across core control/interface/logging docs.
+The script validates required topics (`ACTUATOR_REQ`, `ACTUATOR_CMD`, `MIXER_FEEDBACK`) and stage naming (`req/cmd/alloc/ach`) across:
+- `docs/interfaces/contracts.md`
+- `docs/interfaces/dataflow.md`
+- `docs/control/mixer_and_limits.md`

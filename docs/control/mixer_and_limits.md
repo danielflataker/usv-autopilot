@@ -72,7 +72,7 @@ Canonical limit names in the pipeline:
 - surge envelope: `u_s_max`, `u_s_min` (math: $u_s^{max}, u_s^{min}$; software)
 - differential envelope: `u_d_max_pos`, `u_d_max_neg` (math: $u_{d,max}^{+}, u_{d,max}^{-}$; software)
 
-When reverse is disabled, V1 uses separate positive/negative limits for `u_d` because feasible yaw authority is direction-dependent.
+When reverse is disabled, V1 can still use separate positive/negative limits for `u_d` (policy/tuning choice), even though the basic `[0,1]` motor-feasibility bound at fixed `u_s` is symmetric.
 
 This directly enables the use-case "hold `u_s=0.7`, then add yaw authority" by reserving motor headroom through `u_s_max < u_LR_max`.
 Trade-off: reduced max straight-line acceleration/top speed.
@@ -104,8 +104,10 @@ No-reverse case (range `[0,1]`) gives explicit bounds from the same general form
 - positive authority limit: $u_d^{+} \le 1-u_s$
 - negative authority limit: $u_d^{-} \ge -u_s$
 
-As `u_s` moves toward either 0 or 1, available differential margin shrinks in magnitude.
+For fixed `u_s`, this interval is symmetric around zero, with half-width `min(u_s, 1-u_s)`.
+As `u_s` moves toward either 0 or 1, that symmetric margin shrinks in magnitude.
 A software surge cap (for example `u_s_max=0.7`) preserves differential margin at higher surge command values.
+Any direction asymmetry then comes from configured software limits (`u_d_max_pos` vs `u_d_max_neg`), not from the `[0,1]` motor bounds alone.
 
 ### Worked numeric example (no reverse, motor range [0,1])
 
