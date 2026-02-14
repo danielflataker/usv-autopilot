@@ -40,11 +40,11 @@ Recommended:
 
 Required for practical mission workflow:
 - Upload path: `MISSION_COUNT`, `MISSION_REQUEST_INT` (or `MISSION_REQUEST` fallback), `MISSION_ITEM_INT`, `MISSION_ACK`
+- Readback path: `MISSION_REQUEST_LIST`, `MISSION_COUNT`, `MISSION_REQUEST_INT`/`MISSION_REQUEST`, `MISSION_ITEM_INT`/`MISSION_ITEM`, `MISSION_ACK`
 - Control path: `MISSION_CLEAR_ALL`, `MISSION_SET_CURRENT`
 
 Strongly recommended:
 - Status path: `MISSION_CURRENT`, `MISSION_ITEM_REACHED`
-- Readback path: `MISSION_REQUEST_LIST`, `MISSION_COUNT`, `MISSION_REQUEST_INT`/`MISSION_REQUEST`, `MISSION_ITEM_INT`/`MISSION_ITEM`, `MISSION_ACK`
 
 Notes:
 - Prefer `*_INT` mission item path for waypoint precision/compatibility, but be robust to clients that use non-INT fallback.
@@ -83,7 +83,7 @@ Recommended:
 4. Verify command acknowledgments and negative paths (unsupported/denied).
 5. Repeat smoke test with one alternate client (optional but recommended).
 
-## Acceptance criteria (V1, QGC-first)
+## Acceptance criteria (V1, QGC-first, mission readback is required)
 
 - QGC can upload and read back missions without custom tooling.
 - QGC can display live vehicle status/pose at expected update rates.
