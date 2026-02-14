@@ -2,6 +2,8 @@
 
 This page defines the *actuator pipeline* from controller commands $(u_s^{cmd},u_d^{cmd})$ to per-motor outputs $(u_L,u_R)$, and where saturation/feedback is generated.
 
+Canonical stage-by-stage I/O and naming rules are defined in [`actuation_command_pipeline_spec.md`](actuation_command_pipeline_spec.md).
+
 Goal: V1 keeps allocation policy swappable (speed-priority, yaw-priority, later cost/QP) without rewriting the rest of the module.
 
 ## What this module does (in order)

@@ -30,6 +30,7 @@ This folder is the **source of truth** for project architecture, module contract
 - Cascaded heading/yaw-rate control: [`control/cascaded_heading_yawrate.md`](control/cascaded_heading_yawrate.md)
 - Speed controller: [`control/speed_controller.md`](control/speed_controller.md)
 - Mixer + limits: [`control/mixer_and_limits.md`](control/mixer_and_limits.md)
+- Actuation command pipeline spec: [`control/actuation_command_pipeline_spec.md`](control/actuation_command_pipeline_spec.md)
 
 ### Logging
 - Overview: [`logging/overview.md`](logging/overview.md)

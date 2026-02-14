@@ -25,6 +25,8 @@ They are mixed into per-motor commands $(u_L,u_R)$ in [`mixer_and_limits.md`](mi
 3) Speed control computes $u_s^{cmd}$
 4) Mixer + limits produce $(u_L,u_R)$ and feedback $(u_s^{ach},u_d^{ach})$
 
+Detailed stage definitions and naming invariants are specified in [`actuation_command_pipeline_spec.md`](actuation_command_pipeline_spec.md).
+
 ## Notes
 - Saturation happens after mixing, so controllers should use mixer feedback (`MIXER_FEEDBACK`) for anti-windup (see `interfaces/contracts.md`).
 
