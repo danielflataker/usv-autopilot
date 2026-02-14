@@ -12,8 +12,10 @@ Quick reference for shared vocabulary across the docs. Math uses $\,\cdot\,$, co
   - $u_*^{cmd}$: command requested by controller.
   - $u_*^{ach}$: command achieved after allocator/mixer/limits.
   - $u_*^{*}$: raw/unclamped controller output (before saturation/anti-windup logic).
-- In code/log field names, superscripts become suffixes:
-  - $u_s^{cmd} \leftrightarrow$ `u_s_cmd`, $u_s^{ach} \leftrightarrow$ `u_s_ach`, $u_s^{*} \leftrightarrow$ `u_s_raw` (or equivalent).
+- In code/log field names, stage can be encoded either by payload context or suffixes:
+  - in `actuator_cmd_t`, command stage is carried as `u_s`, `u_d` (meaning $u_s^{cmd},u_d^{cmd}$)
+  - in `mixer_feedback_t`, achieved stage uses explicit suffixes `u_s_ach`, `u_d_ach`
+  - raw controller terms are typically logged as `u_s_raw`/`u_d_raw` (or equivalent).
 
 ## Estimation symbols (EKF)
 State (V1): $\vec{x} = [x, y, \psi, v, r, b_g]^{\mathsf T}$
@@ -50,7 +52,7 @@ Key relations:
 | $u_R$ | `u_R` | right motor command (normalized) |
 | $u_s$ | `u_s` | average input (normalized) |
 | $u_d$ | `u_d` | differential input (normalized) |
-| $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd,u_d_cmd` | commanded average/differential input |
+| $u_s^{cmd},u_d^{cmd}$ | `u_s,u_d` in `actuator_cmd_t` | commanded average/differential input |
 | $u_s^{ach},u_d^{ach}$ | `u_s_ach,u_d_ach` | achieved average/differential input after limits |
 
 ## Sensors and measurements

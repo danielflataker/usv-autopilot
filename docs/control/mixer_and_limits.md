@@ -1,6 +1,6 @@
 # Mixer, allocator, and limits (V1)
 
-This page defines the *actuator pipeline* from controller commands $(u_s,u_d)$ to per-motor outputs $(u_L,u_R)$, and where saturation/feedback is generated.
+This page defines the *actuator pipeline* from controller commands $(u_s^{cmd},u_d^{cmd})$ to per-motor outputs $(u_L,u_R)$, and where saturation/feedback is generated.
 
 Goal: make it easy to swap allocation policy (speed-priority vs yaw-priority vs later cost/QP) without rewriting the rest.
 
@@ -32,9 +32,9 @@ Inputs: $(u_s^{cmd},u_d^{cmd})$
 Outputs: $(u_s^{ach},u_d^{ach})$ + saturation flags
 
 Policies (V1 candidates):
-- **Speed-priority:** preserve $u_s$ as much as possible, reduce $u_d$ when needed
-- **Yaw-priority:** preserve $u_d$ as much as possible, adjust $u_s$ when needed
-- **Later:** weighted least-squares / QP (minimize error in $u_s$ and $u_d$ under constraints)
+- **Speed-priority:** preserve $u_s^{cmd}$ as much as possible, reduce $u_d^{cmd}$ when needed
+- **Yaw-priority:** preserve $u_d^{cmd}$ as much as possible, adjust $u_s^{cmd}$ when needed
+- **Later:** weighted least-squares / QP (minimize error in $u_s^{cmd}$ and $u_d^{cmd}$ under constraints)
 
 Notes:
 - The allocator should be a small, swappable function with a stable signature.
@@ -118,7 +118,7 @@ If we later want Newtons:
 
   * $F_L \approx f(u_L)$, $F_R \approx f(u_R)$ (possibly nonlinear)
   * optional inverse mapping for feedforward
-* keep the controller’s primary output as $(u_s,u_d)$ unless we *explicitly* redesign control to output force.
+* keep the controller’s primary output as $(u_s^{cmd},u_d^{cmd})$ (carried as `u_s`,`u_d` in `actuator_cmd_t`) unless we *explicitly* redesign control to output force.
 
 ## Open questions
 
