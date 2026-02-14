@@ -22,7 +22,7 @@ Some contracts must match exactly (state order/meaning, units, record layouts). 
 - `timeseries.bin` header stores the same `fw_model_schema`
 - tools should fail fast if dataset schema != tool schema
 
-See: [`record_formats.md`](record_formats.md) and [`interfaces/contracts.md`](../interfaces/contracts.md).
+See: [`record_formats.md`](record_formats.md), [`interfaces/contracts.md`](../interfaces/contracts.md), and [`contract_sync.md`](contract_sync.md).
 
 ## High-rate time series (binary)
 - single append-only file: `timeseries.bin`

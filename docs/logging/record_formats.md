@@ -76,5 +76,5 @@ Optional (if needed for tuning/debug):
 ## TODO / Open questions
 - float precision: float32 vs float64 (V1 likely float32 for size)
 - record IDs: enumerate in one header (`record_types.h`) and mirror in python parser
-- Python parser location + minimal API (`read_timeseries_bin()` → pandas/np arrays)
+- Python parser API currently lives in `tools/log_io/io.py` (`read_timeseries_bin()`).
 - Do we want an optional per-record CRC later (probably not for SD)

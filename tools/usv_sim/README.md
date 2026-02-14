@@ -20,3 +20,6 @@ pip install -e ./tools/usv_sim
 - `usv_sim.digital_twin.estimation.predict_step()`
 - `usv_sim.digital_twin.current.FW_MODEL_ID`
 - `usv_sim.digital_twin.current.FW_MODEL_SCHEMA`
+
+Log parsing is provided by shared tooling in `tools/log_io`:
+- `from tools.log_io import read_timeseries_bin`
