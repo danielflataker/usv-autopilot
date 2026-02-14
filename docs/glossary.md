@@ -34,7 +34,7 @@ State (V1): $\vec{x} = [x, y, \psi, v, r, b_g]^{\mathsf T}$
 
 ## Actuator limits (hardware vs software)
 
-These limits are all in normalized command units and should have unique names.
+These limits are all in normalized command units and use unique names.
 
 | Category | Math | Code/param name | Meaning |
 |---|---|---|---|
@@ -75,7 +75,7 @@ Key relations:
 
 ## Cross-domain actuator mapping (firmware ↔ sim)
 
-To make simulator/hardware swap straightforward, we use one canonical set of stage names across firmware, logging, and simulator models:
+To make simulator/hardware swap straightforward, the project uses one canonical set of stage names across firmware, logging, and simulator models:
 
 | Stage | Canonical math | Firmware/log field names | Simulator/process-model names |
 |---|---|---|---|

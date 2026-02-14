@@ -2,7 +2,7 @@
 
 This page defines the *actuator pipeline* from controller commands $(u_s^{cmd},u_d^{cmd})$ to per-motor outputs $(u_L,u_R)$, and where saturation/feedback is generated.
 
-Goal: make it easy to swap allocation policy (speed-priority vs yaw-priority vs later cost/QP) without rewriting the rest.
+Goal: V1 keeps allocation policy swappable (speed-priority, yaw-priority, later cost/QP) without rewriting the rest of the module.
 
 ## What this module does (in order)
 1) **Allocator**: choose achievable $(u_s^{ach},u_d^{ach})$ given limits + policy  
@@ -17,7 +17,7 @@ Inputs:
 
 Outputs:
 - `ESC_OUTPUT → esc_output_t`: $(u_L,u_R)$ (internal motor commands; ESC driver maps to PWM)
-- `MIXER_FEEDBACK → mixer_feedback_t` (recommended): achieved $(u_s^{ach},u_d^{ach})$ + saturation flags for anti-windup
+- `MIXER_FEEDBACK → mixer_feedback_t`: achieved $(u_s^{ach},u_d^{ach})$ + saturation flags for anti-windup
 
 (Exact payload fields are defined in [`interfaces/contracts.md`](../interfaces/contracts.md).)
 
@@ -34,23 +34,23 @@ Outputs: $(u_s^{ach},u_d^{ach})$ + saturation flags
 Policies (V1 candidates):
 - **Speed-priority:** preserve $u_s^{cmd}$ as much as possible, reduce $u_d^{cmd}$ when needed
 - **Yaw-priority:** preserve $u_d^{cmd}$ as much as possible, adjust $u_s^{cmd}$ when needed
-- **Later:** weighted least-squares / QP (minimize error in $u_s^{cmd}$ and $u_d^{cmd}$ under constraints)
+- **Weighted/cost-based (later):** weighted least-squares / QP (minimize error in $u_s^{cmd}$ and $u_d^{cmd}$ under constraints)
 
 Notes:
-- The allocator should be a small, swappable function with a stable signature.
-- It should not know about PWM, only normalized commands + limits.
+- The allocator is implemented as a small, swappable function with a stable signature.
+- The allocator operates on normalized commands + limits and does not include PWM details.
 
 Open questions:
 - Default policy for AUTOPILOT vs MANUAL?
 - How to handle “no reverse” (clamp negative motor commands) in the feasible set?
 
-### Hardware limits vs software envelopes (recommended split)
+### Hardware limits vs software envelopes
 
-Yes — keep these as two separate layers:
+V1 uses two separate layers:
 
 1. **Hardware limits (absolute):** what ESC + propulsion can physically do.
    - Internal normalization still means `u=1.0` is “max physically possible”.
-   - These limits should almost never change at runtime.
+   - These limits change rarely at runtime.
 2. **Software envelopes (operational):** what we *allow* in normal operation.
    - Safety/tuning choices, e.g. cap surge authority to reduce aggressive behavior.
    - These are mode- and mission-dependent and can be parameters.
@@ -70,7 +70,7 @@ Recommended limit names (all tunable):
 - surge envelope: `u_s_max`, `u_s_min` (math: $u_s^{max}, u_s^{min}$)
 - differential envelope: `u_d_max_pos`, `u_d_max_neg` (math: $u_{d,max}^{+}, u_{d,max}^{-}$)
 
-Using separate positive/negative limits for `u_d` is recommended when reverse is disabled, because feasible yaw authority is direction-dependent.
+When reverse is disabled, V1 uses separate positive/negative limits for `u_d` because feasible yaw authority is direction-dependent.
 
 This directly enables the use-case “hold `u_s=0.7`, then add yaw authority” by reserving motor headroom through `u_s_max < u_LR_max`.
 Trade-off: reduced max straight-line acceleration/top speed.
@@ -153,7 +153,7 @@ To avoid integrator windup, publish `MIXER_FEEDBACK` based on what was actually 
 * achieved commands: $u_s^{ach},u_d^{ach}$
 * flags: `sat_L`, `sat_R`, `sat_any`
 
-Recommended extra diagnostics (V1.1 when available):
+Extra diagnostics (V1.1):
 
 * `sat_cmd_stage` (command envelope active)
 * `sat_alloc` (allocator had to change `u_s/u_d` for feasibility)
@@ -184,7 +184,7 @@ Optional intermediate stage:
 
 Treat `u_*^{alloc}` as debug/tuning data, not as a required control input.
 
-In short: always track command (`u_*^{cmd}`) and final achieved output (`u_*^{ach}`); add allocator-stage signals only when needed for diagnostics.
+V1 tracks command (`u_*^{cmd}`) and final achieved output (`u_*^{ach}`) as mandatory signals; allocator-stage signals are optional diagnostics.
 
 Notation reminder (for consistency across docs):
 - $u_*^{cmd}$: from controller to allocator (`ACTUATOR_CMD`)
@@ -193,7 +193,7 @@ Notation reminder (for consistency across docs):
 
 ## About thrust/force models and unit conversions
 
-We keep this module in **normalized command space**. Anything like “$u \rightarrow$ Newton” or “$u \rightarrow$ steady-state speed” is a *propulsion model* and should live elsewhere.
+This module uses **normalized command space**. Any mapping like “$u \rightarrow$ Newton” or “$u \rightarrow$ steady-state speed” belongs to a separate *propulsion model* document.
 
 Proposed separation:
 

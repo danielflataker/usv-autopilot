@@ -27,7 +27,7 @@ This is about behavior and rules, not UI implementation details.
 - Units + min/max + default
 - Grouping (control, guidance, EKF, safety, logging)
 
-Minimum actuator/saturation params that should exist for V1:
+V1 actuator/saturation parameter set:
 
 - **Hardware-absolute limits (still enforced in software):**
   - `act.hw.u_LR_min`, `act.hw.u_LR_max`
@@ -41,11 +41,11 @@ Minimum actuator/saturation params that should exist for V1:
   - (optional) `act.alloc.w_s`, `act.alloc.w_d` for weighted policy
 
 Document each param with unit (`normalized`), default, safe range, and whether it is mode-restricted.
-Recommended invariants to validate on load: `act.hw.u_LR_min <= act.sw.u_LR_min <= act.sw.u_LR_max <= act.hw.u_LR_max`.
+Load-time invariant: `act.hw.u_LR_min <= act.sw.u_LR_min <= act.sw.u_LR_max <= act.hw.u_LR_max`.
 
 ### Update messages
 - `PARAM_SET` (single)
-- `PARAM_SET_BATCH` (recommended default)
+- `PARAM_SET_BATCH` (default in V1)
 - `PARAM_GET` / `PARAM_LIST` (optional, but useful for UI sync)
 - `PARAM_ACK` (seq + status + what was applied)
 
@@ -55,9 +55,9 @@ Recommended invariants to validate on load: `act.hw.u_LR_min <= act.sw.u_LR_min 
 - What happens on reject (keep old value, ack with error code)
 
 ### Rate limiting and dedupe
-- UI can change values freely, but only commits should be sent
+- UI can change values freely, but only commits are sent
 - Backend and/or firmware can rate-limit (e.g. max 1 Hz per param)
-- Firmware should ignore “no-op” updates (new ~= old)
+- Firmware ignores “no-op” updates (new ~= old)
 
 ### Logging
 - Log `PARAM_BATCH_APPLY(seq)` as an event

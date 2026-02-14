@@ -79,7 +79,7 @@ For a measurement $\vec{z}$ with model $h(\cdot)$:
 ```
 
 Interpretation:
-- Innovation $\tilde{\vec{z}}$ is “what sensors say minus what model predicted sensors should say.”
+- Innovation $\tilde{\vec{z}}$ is “what sensors report minus what the model predicts.”
 - $\mathbf{K}$ decides correction strength per state component.
 - Large measurement noise in $\mathbf{R}$ means less trust in that sensor channel.
 

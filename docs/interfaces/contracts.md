@@ -3,7 +3,7 @@
 Purpose: define the internal software contracts inside the firmware (and any shared code).
 This is the canonical place for shared structs, enums, and module APIs.
 
-If a type crosses a module/task boundary, it should be defined here (or referenced from here).
+If a type crosses a module/task boundary, it is defined here (or referenced from here).
 
 ## Scope
 - Firmware-internal contracts (estimation, guidance, control, modes, logging, comms)
@@ -66,7 +66,7 @@ To make the dataflow explicit, we name the *thing being published* (topic) and t
     - `u_s_ach`, `u_d_ach`
   - saturation flags:
     - `sat_L`, `sat_R`, `sat_any`
-    - recommended extension: `sat_cmd_stage`, `sat_alloc`, `sat_motor_stage`
+    - optional extension: `sat_cmd_stage`, `sat_alloc`, `sat_motor_stage`
   - optional: `u_L_ach`, `u_R_ach` (only if needed for debugging/logging)
   - optional: effective limits used this cycle (`u_s_max_eff`, `u_d_max_pos_eff`, `u_d_max_neg_eff`, `u_LR_max_eff`, `u_LR_min_eff`)
   - timestamp: `t_us`
@@ -81,8 +81,8 @@ Guideline for signal count (to avoid naming overload):
   - timestamp: `t_us`
 
 Notes:
-- The controller should not need to know whether the ESC supports reverse. That mapping is owned by the ESC driver.
-- For anti-windup, controllers should use `u_s_ach` / `u_d_ach` (or `sat_any`) rather than guessing limits.
+- ESC reverse/non-reverse mapping is handled by the ESC driver, not by the controller.
+- Anti-windup uses `u_s_ach` / `u_d_ach` (or `sat_any`) rather than guessed limits.
 
 ## Modes / state machine
 - `mode_t`: enum of modes (manual, autopilot, tests, abort, idle, ...)
@@ -113,7 +113,7 @@ Where it shows up:
 - Tools: `usv_sim.digital_twin.current.FW_MODEL_SCHEMA` and checked when loading a dataset
 
 Recommended dataset check:
-- analysis/parsers should fail fast if `dataset.schema != tool.schema`
+- analysis/parsers fail fast if `dataset.schema != tool.schema`
 
 ## Event bus (contract)
 Events are emitted at the source and may have multiple consumers (SD logging, live link, etc.).
