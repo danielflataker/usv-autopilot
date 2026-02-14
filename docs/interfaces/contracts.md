@@ -68,7 +68,7 @@ To make the dataflow explicit, we name the *thing being published* (topic) and t
     - `sat_L`, `sat_R`, `sat_any`
     - recommended extension: `sat_cmd_stage`, `sat_alloc`, `sat_motor_stage`
   - optional: `u_L_ach`, `u_R_ach` (only if needed for debugging/logging)
-  - optional: effective limits used this cycle (`u_s_max_eff`, `u_d_max_eff`, `u_motor_max_eff`)
+  - optional: effective limits used this cycle (`u_s_max_eff`, `u_d_max_pos_eff`, `u_d_max_neg_eff`, `u_LR_max_eff`, `u_LR_min_eff`)
   - timestamp: `t_us`
 
 Guideline for signal count (to avoid naming overload):

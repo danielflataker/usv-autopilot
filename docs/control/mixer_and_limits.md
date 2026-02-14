@@ -158,7 +158,7 @@ Recommended extra diagnostics (V1.1 when available):
 * `sat_cmd_stage` (command envelope active)
 * `sat_alloc` (allocator had to change `u_s/u_d` for feasibility)
 * `sat_motor_stage` (motor clamp/slew active)
-* effective limits used this cycle (`u_s_max_eff`, `u_d_max_eff`, `u_motor_max_eff`)
+* effective limits used this cycle (`u_s_max_eff`, `u_d_max_pos_eff`, `u_d_max_neg_eff`, `u_LR_max_eff`, `u_LR_min_eff`)
 
 Controllers then do anti-windup using either:
 
