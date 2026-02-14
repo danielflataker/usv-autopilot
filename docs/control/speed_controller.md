@@ -1,7 +1,7 @@
 # Speed controller (V1)
 
-Purpose: track desired surge speed $v_d$ by producing the average motor command $u_s^{cmd}$.
-Yaw control produces $u_d^{cmd}$ separately; the mixer later maps $(u_s^{cmd},u_d^{cmd})\rightarrow(u_L,u_R)$.
+Purpose: track desired surge speed $v_d$ by producing the average request $u_s^{req}$.
+Yaw control produces $u_d^{req}$ separately; command shaping then maps requests to command-stage terms $(u_s^{cmd},u_d^{cmd})$.
 
 ## Inputs
 - desired speed $v_d$ (from `docs/guidance/`)
@@ -9,7 +9,7 @@ Yaw control produces $u_d^{cmd}$ separately; the mixer later maps $(u_s^{cmd},u_
 - sample time $\Delta t$
 
 ## Output
-- average motor command $u_s^{cmd}$ (normalized; carried as `u_s_cmd` in `actuator_cmd_t`)
+- average request $u_s^{req}$ (normalized request stage)
 - optional debug: $e_v$, integrator state, saturation flags
 
 ## Error signal
@@ -26,7 +26,7 @@ Maybe later: feedforward $u_{ff}$ once the thrust-to-speed mapping is identified
 
 ## Saturation and anti-windup
 The physical output range is limited, so clamp before sending onward:
-- $u_s^{cmd} = \mathrm{sat}(u_s^{*})$
+- $u_s^{req} = u_s^{*}$ (request stage; command-stage clamp happens in command shaping)
 
 Anti-windup (we choose one implementation):
 - **freeze integrator** when saturated and $e_v$ pushes further into saturation
@@ -41,7 +41,7 @@ Anti-windup (we choose one implementation):
 ## Logging (recommended)
 Log at control rate:
 - $v_d$, $\hat v$, $e_v$
-- $u_s^{*}$, $u_s^{cmd}$, saturation flag
+- $u_s^{*}$, $u_s^{req}$, saturation flag
 - integrator value (for tuning / debugging)
 
 ## Saturation + anti-windup (V1)
@@ -67,4 +67,4 @@ Notes:
 ## TODO / Open questions
 - PI vs PID
 - add $u_{ff}(v_d)$ after identifying $(k_v,\tau_v)$ from water tests
-- define limits for $u_s^{cmd}$ and when to reset the integrator (e.g. on mode switch)
+- define limits for $u_s^{req}$ and command-stage shaping behavior on mode switch

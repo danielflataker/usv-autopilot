@@ -17,7 +17,7 @@ These are supported by common GCS tooling and keep V1 simple.
 ## Keep custom messages for structured debug
 
 - `USV_EVENT` for structured event payloads (machine-readable full fields)
-- `USV_CTRL_DEBUG` for control internals (`v_d`, `u_s_cmd`, `u_d_cmd`, errors)
+- `USV_CTRL_DEBUG` for control internals (`v_d`, `u_s_req`, `u_d_req`, `u_s_cmd`, `u_d_cmd`, errors)
 - `USV_MIXER_FEEDBACK` for saturation/achieved actuation terms
 
 Reason: predefined messages do not carry the full project-specific control and mixer chain cleanly.

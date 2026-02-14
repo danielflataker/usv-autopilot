@@ -18,10 +18,15 @@ It complements [contracts.md](contracts.md) by showing the pipeline.
   - publish: guidance (LOS + speed scheduler)
   - consume: controller, logging, telemetry
 
+- `ACTUATOR_REQ` (`actuator_req_t`)
+  - fields: `u_s_req`, `u_d_req`, `src` (+ validity/timestamp)
+  - publish: controller or RC mapping (mode-dependent)
+  - consume: command shaping, logging (optional)
+
 - `ACTUATOR_CMD` (`actuator_cmd_t`)
   - fields: `u_s_cmd`, `u_d_cmd` (+ validity/timestamp)
-  - publish: controller (or mode, depending on architecture)
-  - consume: actuator shaping / mixer, logging (optional)
+  - publish: command shaping
+  - consume: allocator/mixer, logging (optional)
 
 - `ESC_OUTPUT` (`esc_output_t`)
   - publish: actuator shaping / mixer
@@ -38,8 +43,9 @@ It complements [contracts.md](contracts.md) by showing the pipeline.
 - Mission manager owns waypoint switching
 - LOS owns $\psi_d$ and geometry errors
 - Speed scheduler owns $v_d$ ramping and speed caps
-- Controller owns mapping $(\psi_d, v_d)$ → `actuator_cmd_t` (command stage: $u_s^{cmd},u_d^{cmd}$)
-- Actuator shaping owns clamp/deadband/slew + mapping to `u_L,u_R`
+- Controller/RC mapping owns source request generation $(u_s^{req},u_d^{req})$
+- Command shaping owns scaling/deadband/expo + command-envelope clamp $(u_s^{req},u_d^{req}) \rightarrow (u_s^{cmd},u_d^{cmd})$
+- Allocator/mixer owns feasibility policy + mapping to `u_L,u_R`
 
 ## Transport between modules/tasks
 Within the same task:

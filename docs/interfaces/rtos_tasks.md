@@ -17,7 +17,7 @@ Does:
 - run mission/guidance (if autopilot enabled)
 - run controllers + actuator shaping
 - write final `ESC_OUTPUT` (non-blocking)
-- publish latest-value snapshots (`NAV_SOLUTION`, `GUIDANCE_REF`, `ACTUATOR_CMD`) via mailbox
+- publish latest-value snapshots (`NAV_SOLUTION`, `GUIDANCE_REF`, `ACTUATOR_REQ`, `ACTUATOR_CMD`) via mailbox
 - push log records into a ringbuffer (non-blocking)
 
 Must never:
@@ -89,7 +89,7 @@ Alternatives (possible later):
 - Heartbeat for telemetry is separate: telemetry task should send a heartbeat at a fixed rate.
 
 ## Buffers / IPC (V1)
-- Mailboxes for latest-value signals: `NAV_SOLUTION`, `GUIDANCE_REF`, `ACTUATOR_CMD`
+- Mailboxes for latest-value signals: `NAV_SOLUTION`, `GUIDANCE_REF`, `ACTUATOR_REQ`, `ACTUATOR_CMD`
 - Event queue for sparse events (mode changes, param updates, rejects)
 - Ringbuffer for high-rate logging (producer: control loop, consumer: logging task)
 - Optional: separate small “priority event” queue to telemetry (so events don’t wait behind bulk data)

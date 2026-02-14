@@ -36,12 +36,16 @@ V1 actuator/saturation parameter set:
   - `act.sw.u_s_min`, `act.sw.u_s_max` (surge envelope)
   - `act.sw.u_d_max_pos`, `act.sw.u_d_max_neg` (differential envelope; positive/negative kept separate)
   - `act.sw.u_LR_min`, `act.sw.u_LR_max` (operational motor cap below hardware max if desired)
+- **Command-shaping scales (new):**
+  - `act.shp.ap.u_s_scale`, `act.shp.ap.u_d_scale`
+  - `act.shp.man.u_s_scale`, `act.shp.man.u_d_scale`
 - **Allocator behavior (modular by design):**
-  - `act.alloc.policy` (`speed_priority`, `yaw_priority`, later `weighted`/cost-function based)
+  - `act.alloc.policy` (`ALLOC_SPEED_PRIORITY`, `ALLOC_YAW_PRIORITY`, later `ALLOC_WEIGHTED`)
   - (optional) `act.alloc.w_s`, `act.alloc.w_d` for weighted policy
 
 Document each param with unit (`normalized`), default, safe range, and whether it is mode-restricted.
 Load-time invariant: `act.hw.u_LR_min <= act.sw.u_LR_min <= act.sw.u_LR_max <= act.hw.u_LR_max`.
+Load-time invariant: `act.shp.ap.u_s_scale >= 0`, `act.shp.ap.u_d_scale >= 0`, `act.shp.man.u_s_scale >= 0`, `act.shp.man.u_d_scale >= 0`.
 
 ### Update messages
 - `PARAM_SET` (single)

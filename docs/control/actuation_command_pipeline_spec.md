@@ -25,7 +25,7 @@ The goal is a stable structure that stays clean when small features are added la
 ### Core actuation variables
 | Stage | Math symbol | Field names | Description |
 |---|---|---|---|
-| Source request | $u_s^{req}, u_d^{req}$ | `u_s_req`, `u_d_req` (internal only) | Raw request from controller or RC mapping |
+| Source request | $u_s^{req}, u_d^{req}$ | `u_s_req`, `u_d_req` (`ACTUATOR_REQ`) | Raw request from controller or RC mapping |
 | Command-stage output | $u_s^{cmd}, u_d^{cmd}$ | `u_s_cmd`, `u_d_cmd` (`ACTUATOR_CMD`) | Shaped request forwarded to allocator |
 | Allocator output | $u_s^{alloc}, u_d^{alloc}$ | `u_s_alloc`, `u_d_alloc` (optional debug) | Feasible command before motor-stage shaping |
 | Achieved output | $u_s^{ach}, u_d^{ach}$ | `u_s_ach`, `u_d_ach` (`MIXER_FEEDBACK`) | Final achieved command after motor constraints |
@@ -96,15 +96,15 @@ Purpose: enforce feasibility and priority policy in $(u_s,u_d)$ space.
 Inputs:
 - $u_s^{cmd}, u_d^{cmd}$
 - software motor envelope and hardware motor bounds
-- allocator policy (`speed_priority`, `yaw_priority`, later `weighted`)
+- allocator policy (`ALLOC_SPEED_PRIORITY`, `ALLOC_YAW_PRIORITY`, later `ALLOC_WEIGHTED`)
 
 Output:
 - $u_s^{alloc}, u_d^{alloc}$
 
 Policy contract:
-- `speed_priority`: preserve $u_s$ first, reduce $u_d$ as needed
-- `yaw_priority`: preserve $u_d$ first, reduce $u_s$ as needed
-- `weighted`: minimize weighted command error under constraints
+- `ALLOC_SPEED_PRIORITY`: preserve $u_s$ first, reduce $u_d$ as needed
+- `ALLOC_YAW_PRIORITY`: preserve $u_d$ first, reduce $u_s$ as needed
+- `ALLOC_WEIGHTED`: minimize weighted command error under constraints
 
 ## Stage 3 — mixer + motor-stage shaping
 Purpose: convert allocator output to per-motor command and enforce motor-side constraints.
@@ -169,6 +169,6 @@ Control rule:
 ## Integration plan (documentation-first)
 1. Add this spec and make it the naming reference for actuation pipeline changes.
 2. Update `control/overview.md` and `control/mixer_and_limits.md` to link this spec as canonical stage definition.
-3. Update `interfaces/contracts.md` to include optional `u_s_req/u_d_req` and shaping-scale params in parameter catalog references.
+3. Keep `interfaces/contracts.md` and `interfaces/dataflow.md` aligned with `ACTUATOR_REQ` + `ACTUATOR_CMD` stage contracts.
 4. Add logging field plan for optional `u_*_req` and `u_*_alloc` visibility.
 5. Implement in code in small steps: Stage 1 shaping first, then allocator policy parameterization, then diagnostics.

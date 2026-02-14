@@ -1,6 +1,6 @@
 # Mixer, allocator, and limits (V1)
 
-This page defines the *actuator pipeline* from controller commands $(u_s^{cmd},u_d^{cmd})$ to per-motor outputs $(u_L,u_R)$, and where saturation/feedback is generated.
+This page defines the backend actuation pipeline from command-stage inputs $(u_s^{cmd},u_d^{cmd})$ to per-motor outputs $(u_L,u_R)$, and where saturation/feedback is generated.
 
 Canonical stage-by-stage I/O and naming rules are defined in [`actuation_command_pipeline_spec.md`](actuation_command_pipeline_spec.md).
 
@@ -14,7 +14,7 @@ Goal: V1 keeps allocation policy swappable (speed-priority, yaw-priority, later 
 
 ## Inputs / outputs
 Inputs:
-- $(u_s^{cmd},u_d^{cmd})$ from control via `ACTUATOR_CMD → actuator_cmd_t` (`u_s_cmd`, `u_d_cmd`)
+- $(u_s^{cmd},u_d^{cmd})$ from command shaping via `ACTUATOR_CMD → actuator_cmd_t` (`u_s_cmd`, `u_d_cmd`)
 - motor limits + policy params + $\Delta t$
 
 Outputs:
@@ -59,7 +59,7 @@ V1 uses two separate layers:
 
 Practical V1 structure:
 
-- Envelope A (command-stage): clamp controller outputs before allocation
+- Envelope A (command-stage): clamp shaped command outputs before allocation
   - `u_s_cmd ∈ [u_s_min, u_s_max]`
   - `u_d_cmd ∈ [-u_d_max_neg, u_d_max_pos]`
 - Envelope B (motor-stage): clamp mixed outputs before ESC output
@@ -189,7 +189,7 @@ Treat `u_*^{alloc}` as debug/tuning data, not as a required control input.
 V1 tracks command (`u_*^{cmd}`) and final achieved output (`u_*^{ach}`) as mandatory signals; allocator-stage signals are optional diagnostics.
 
 Notation reminder (for consistency across docs):
-- $u_*^{cmd}$: from controller to allocator (`ACTUATOR_CMD`)
+- $u_*^{cmd}$: from command shaping to allocator (`ACTUATOR_CMD`)
 - $u_*^{alloc}$: optional allocator/intermediate result (debug/tuning)
 - $u_*^{ach}$: final achieved command returned by mixer/limits (`MIXER_FEEDBACK`)
 
@@ -211,7 +211,7 @@ If we later want Newtons:
 
   * $F_L \approx f(u_L)$, $F_R \approx f(u_R)$ (possibly nonlinear)
   * optional inverse mapping for feedforward
-* keep the controller’s primary output as $(u_s^{cmd},u_d^{cmd})$ (carried as `u_s_cmd`,`u_d_cmd` in `actuator_cmd_t`) unless we *explicitly* redesign control to output force.
+* keep the command-stage contract as $(u_s^{cmd},u_d^{cmd})$ (carried as `u_s_cmd`,`u_d_cmd` in `actuator_cmd_t`) unless the actuation architecture is explicitly redesigned.
 
 ## Open questions
 

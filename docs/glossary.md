@@ -14,9 +14,10 @@ Quick reference for shared vocabulary across the docs. Math uses $\,\cdot\,$, co
   - $u_*^{alloc}$: optional intermediate allocator-stage command (debug/tuning only).
   - $u_*^{*}$: raw/unclamped controller output (before saturation/anti-windup logic).
 - In code/log field names, stage uses explicit suffixes consistently:
+  - request stage: `u_s_req`, `u_d_req`
   - command stage: `u_s_cmd`, `u_d_cmd`
   - achieved stage: `u_s_ach`, `u_d_ach`
-  - raw (pre-saturation) stage: `u_s_raw`, `u_d_raw`
+  - raw controller output (pre-request shaping): `u_s_raw`, `u_d_raw`
 
 ## Estimation symbols (EKF)
 State (V1): $\vec{x} = [x, y, \psi, v, r, b_g]^{\mathsf T}$
@@ -67,7 +68,8 @@ Key relations:
 | $u_R$ | `u_R` | right motor command (normalized) |
 | $u_s$ | `u_s` | average input (normalized) |
 | $u_d$ | `u_d` | differential input (normalized) |
-| $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd,u_d_cmd` in `actuator_cmd_t` | commanded average/differential input |
+| $u_s^{req},u_d^{req}$ | `u_s_req,u_d_req` in `actuator_req_t` | request-stage average/differential input from source logic |
+| $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd,u_d_cmd` in `actuator_cmd_t` | shaped average/differential command after command-shaping |
 | $u_s^{ach},u_d^{ach}$ | `u_s_ach,u_d_ach` | final achieved average/differential input after limits |
 | $u_s^{alloc},u_d^{alloc}$ | `u_s_alloc,u_d_alloc` (optional) | intermediate allocator-stage output (debug/tuning) |
 | $u_s^{*},u_d^{*}$ | `u_s_raw,u_d_raw` | raw controller outputs before clamp/anti-windup |
@@ -79,7 +81,8 @@ To make simulator/hardware swap straightforward, the project uses one canonical 
 
 | Stage | Canonical math | Firmware/log field names | Simulator/process-model names |
 |---|---|---|---|
-| Controller command | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd`,`u_d_cmd` | required for control/anti-windup reference |
+| Source request | $u_s^{req},u_d^{req}$ | `u_s_req`,`u_d_req` | request stage from controller/RC mapping |
+| Command stage | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd`,`u_d_cmd` | shaped command used by allocator/mixer and anti-windup reference |
 | Allocator intermediate (optional) | $u_s^{alloc},u_d^{alloc}$ | `u_s_alloc`,`u_d_alloc` | optional debugging/tuning visibility |
 | Achieved actuation | $u_s^{ach},u_d^{ach}$ | `u_s_ach`,`u_d_ach` | required feedback from final output stage |
 
