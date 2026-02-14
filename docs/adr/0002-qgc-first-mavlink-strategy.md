@@ -50,19 +50,16 @@ Telemetry baseline (already aligned in docs):
 - `PARAM_EXT_ACK` only if extended parameter semantics are needed
 
 Mission planning/control baseline:
-- `MISSION_COUNT`
-- `MISSION_REQUEST_INT` (prefer `*_INT` path)
-- `MISSION_ITEM_INT`
-- `MISSION_ACK`
-- `MISSION_REQUEST_LIST` (required for mission readback/download)
-- `MISSION_REQUEST` + `MISSION_ITEM` fallback handling for non-INT mission clients
-- `MISSION_CLEAR_ALL`
-- `MISSION_SET_CURRENT`
-- `MISSION_CURRENT` (status)
-- `MISSION_ITEM_REACHED` (status/event)
+- Upload path: `MISSION_COUNT`, `MISSION_REQUEST_INT` (prefer `*_INT` path),
+  `MISSION_ITEM_INT`, `MISSION_ACK`
+- Readback path: `MISSION_REQUEST_LIST`, `MISSION_COUNT`,
+  `MISSION_REQUEST_INT`/`MISSION_REQUEST`, `MISSION_ITEM_INT`/`MISSION_ITEM`,
+  `MISSION_ACK`
+- Control path: `MISSION_CLEAR_ALL`, `MISSION_SET_CURRENT`
+- Status path: `MISSION_CURRENT` (status), `MISSION_ITEM_REACHED` (status/event)
 
-For V1, support both mission upload and mission readback flows so QGC can verify
-downloaded mission contents after upload.
+For V1, mission upload and mission readback are both required so QGC can verify
+mission contents after upload.
 
 Vehicle command baseline:
 - `COMMAND_LONG` handling for start/stop/safety-relevant control actions used by GCS
