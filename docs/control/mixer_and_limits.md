@@ -58,17 +58,24 @@ Yes — keep these as two separate layers:
 Practical V1 structure:
 
 - Envelope A (command-stage): clamp controller outputs before allocation
-  - `u_s_cmd ∈ [u_s_min_sw, u_s_max_sw]`
-  - `u_d_cmd ∈ [u_d_min_sw, u_d_max_sw]`
+  - `u_s_cmd ∈ [u_s_min, u_s_max]`
+  - `u_d_cmd ∈ [-u_d_max_neg, u_d_max_pos]`
 - Envelope B (motor-stage): clamp mixed outputs before ESC output
-  - `u_L,u_R ∈ [u_motor_min_sw, u_motor_max_sw]`
+  - `u_L,u_R ∈ [u_LR_min, u_LR_max]`
 
 Then allocator + mixer enforce feasibility under both software envelopes and hardware limits.
 
-This directly enables the use-case “hold `u_s=0.7`, then add yaw authority” by reserving motor headroom through `u_s_max_sw < u_motor_max_sw`.
+Recommended limit names (all tunable):
+- motor absolute max/min: `u_LR_max`, `u_LR_min` (math: $u_{LR,max}, u_{LR,min}$)
+- surge envelope: `u_s_max`, `u_s_min` (math: $u_s^{max}, u_s^{min}$)
+- differential envelope: `u_d_max_pos`, `u_d_max_neg` (math: $u_{d,max}^{+}, u_{d,max}^{-}$)
+
+Using separate positive/negative limits for `u_d` is recommended when reverse is disabled, because feasible yaw authority is direction-dependent.
+
+This directly enables the use-case “hold `u_s=0.7`, then add yaw authority” by reserving motor headroom through `u_s_max < u_LR_max`.
 Trade-off: reduced max straight-line acceleration/top speed.
 
-### Feasibility intuition (why the headroom helps)
+### Feasibility intuition (why headroom helps)
 
 With
 
@@ -76,14 +83,26 @@ With
 u_L = u_s - u_d,\qquad u_R = u_s + u_d,
 ```
 
-motor limits imply
+and motor limits `u_{LR,min} <= u_L,u_R <= u_{LR,max}`, the feasible `u_d` interval is:
 
 ```math
-|u_d| \le u_{motor,max} - |u_s|.
+u_d \in [\max(u_s-u_{LR,max},\;u_{LR,min}-u_s),\;\min(u_s-u_{LR,min},\;u_{LR,max}-u_s)].
 ```
 
-So if `u_s` is already near motor max, little differential authority remains.
-Setting a software surge cap (e.g. `u_s_max_sw=0.7`) deliberately preserves differential margin.
+This is the general form and works both with and without reverse thrust.
+
+Useful special case (symmetric range, e.g. `[-1,1]`):
+
+```math
+|u_d| \le u_{LR,max} - |u_s|.
+```
+
+No-reverse case (range `[0,1]`) is asymmetric:
+- positive `u_d` is limited by `1-u_s`
+- negative `u_d` is limited by `u_s`
+
+So if `u_s` is high, there is little room left for positive `u_d`; if `u_s` is low, there is little room left for negative `u_d`.
+A software surge cap (for example `u_s_max=0.7`) still preserves differential margin, but available margin depends on direction when reverse is not allowed.
 
 ## 2) Mixer (pure mapping)
 

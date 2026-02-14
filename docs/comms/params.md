@@ -29,17 +29,19 @@ This is about behavior and rules, not UI implementation details.
 
 Minimum actuator/saturation params that should exist for V1:
 
-- **Hardware-absolute (read-only in normal ops):**
-  - `act.hw.u_norm_min`, `act.hw.u_norm_max` (typically `[-1,1]` or `[0,1]` depending on reverse support)
+- **Hardware-absolute limits (still enforced in software):**
+  - `act.hw.u_LR_min`, `act.hw.u_LR_max`
+  - Meaning: absolute physical command range for each motor (`u_L`, `u_R`), typically `[-1,1]` (with reverse) or `[0,1]` (no reverse)
 - **Software envelopes (runtime-tunable):**
-  - `act.sw.u_s_min`, `act.sw.u_s_max`
-  - `act.sw.u_d_min`, `act.sw.u_d_max`
-  - `act.sw.u_motor_min`, `act.sw.u_motor_max`
-- **Allocator behavior:**
-  - `act.alloc.policy` (`speed_priority`, `yaw_priority`, later `weighted`)
-  - (optional) `act.alloc.w_s`, `act.alloc.w_d` for weighted allocation
+  - `act.sw.u_s_min`, `act.sw.u_s_max` (surge envelope)
+  - `act.sw.u_d_max_pos`, `act.sw.u_d_max_neg` (differential envelope; positive/negative kept separate)
+  - `act.sw.u_LR_min`, `act.sw.u_LR_max` (operational motor cap below hardware max if desired)
+- **Allocator behavior (modular by design):**
+  - `act.alloc.policy` (`speed_priority`, `yaw_priority`, later `weighted`/cost-function based)
+  - (optional) `act.alloc.w_s`, `act.alloc.w_d` for weighted policy
 
 Document each param with unit (`normalized`), default, safe range, and whether it is mode-restricted.
+Recommended invariants to validate on load: `act.hw.u_LR_min <= act.sw.u_LR_min <= act.sw.u_LR_max <= act.hw.u_LR_max`.
 
 ### Update messages
 - `PARAM_SET` (single)

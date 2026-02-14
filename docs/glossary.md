@@ -56,6 +56,8 @@ Key relations:
 | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd,u_d_cmd` in `actuator_cmd_t` | commanded average/differential input |
 | $u_s^{ach},u_d^{ach}$ | `u_s_ach,u_d_ach` | final achieved average/differential input after limits |
 | $u_s^{alloc},u_d^{alloc}$ | `u_s_alloc,u_d_alloc` (optional) | intermediate allocator-stage output (debug/tuning) |
+| $u_{LR}^{max},u_{LR}^{min}$ | `u_LR_max,u_LR_min` | motor-stage max/min command limits |
+| $u_d^{max+},u_d^{max-}$ | `u_d_max_pos,u_d_max_neg` | positive/negative differential limits (can be asymmetric) |
 | $u_s^{*},u_d^{*}$ | `u_s_raw,u_d_raw` | raw controller outputs before clamp/anti-windup |
 | $s_L,s_R,s_{any}$ | `sat_L,sat_R,sat_any` | per-motor/any saturation indicators |
 
