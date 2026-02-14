@@ -164,3 +164,16 @@ Control rule:
 3. Keep `interfaces/contracts.md` and `interfaces/dataflow.md` aligned with `ACTUATOR_REQ` + `ACTUATOR_CMD` stage contracts.
 4. Add logging field plan for optional `u_*_req` and `u_*_alloc` visibility.
 5. Implement in code in small steps: Stage 1 shaping first, then allocator policy parameterization, then diagnostics.
+
+
+---
+
+## Docs consistency check
+
+A lightweight naming check is available to catch drift across core documents:
+
+```bash
+python tools/check_docs_contracts.py
+```
+
+The script validates required topics (`ACTUATOR_REQ`, `ACTUATOR_CMD`, `MIXER_FEEDBACK`) and stage naming (`req/cmd/alloc/ach`) across core control/interface/logging docs.

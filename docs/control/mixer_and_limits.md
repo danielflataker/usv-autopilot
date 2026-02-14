@@ -28,7 +28,7 @@ Outputs:
 ## 1) Allocator (policy layer)
 
 The allocator decides what part of the requested command is feasible under motor limits.
-It owns the “what to preserve under saturation” policy.
+It owns the "what to preserve under saturation" policy.
 
 Inputs: $(u_s^{cmd},u_d^{cmd})$  
 Outputs: $(u_s^{alloc},u_d^{alloc})$ + saturation flags
@@ -44,14 +44,14 @@ Notes:
 
 Open questions:
 - Default policy for AUTOPILOT vs MANUAL?
-- How to handle “no reverse” (clamp negative motor commands) in the feasible set?
+- How to handle "no reverse" (clamp negative motor commands) in the feasible set?
 
 ### Hardware limits vs software envelopes
 
 V1 uses two separate layers:
 
 1. **Hardware limits (absolute):** what ESC + propulsion can physically do.
-   - Internal normalization still means `u=1.0` is “max physically possible”.
+   - Internal normalization still means `u=1.0` is "max physically possible".
    - These limits change rarely at runtime.
 2. **Software envelopes (operational):** what we *allow* in normal operation.
    - Safety/tuning choices, e.g. cap surge authority to reduce aggressive behavior.
@@ -74,7 +74,7 @@ Canonical limit names in the pipeline:
 
 When reverse is disabled, V1 uses separate positive/negative limits for `u_d` because feasible yaw authority is direction-dependent.
 
-This directly enables the use-case “hold `u_s=0.7`, then add yaw authority” by reserving motor headroom through `u_s_max < u_LR_max`.
+This directly enables the use-case "hold `u_s=0.7`, then add yaw authority" by reserving motor headroom through `u_s_max < u_LR_max`.
 Trade-off: reduced max straight-line acceleration/top speed.
 
 ### Feasibility intuition (why headroom helps)
@@ -104,8 +104,55 @@ No-reverse case (range `[0,1]`) gives explicit bounds from the same general form
 - positive authority limit: $u_d^{+} \le 1-u_s$
 - negative authority limit: $u_d^{-} \ge -u_s$
 
-So if `u_s` is high, positive `u_d` margin is small; if `u_s` is low, negative `u_d` margin is small.
-A software surge cap (for example `u_s_max=0.7`) preserves differential margin, and the remaining margin is direction-dependent when reverse is disabled.
+As `u_s` moves toward either 0 or 1, available differential margin shrinks in magnitude.
+A software surge cap (for example `u_s_max=0.7`) preserves differential margin at higher surge command values.
+
+### Worked numeric example (no reverse, motor range [0,1])
+
+Assume motor-side limits are `u_L,u_R ∈ [0,1]` and command `u_s` is fixed.
+Using
+
+```math
+u_d \in [\max(u_s-1,\;-u_s),\;\min(u_s,\;1-u_s)],
+```
+
+the feasible differential range becomes:
+
+| Fixed `u_s` | feasible `u_d` interval | Positive yaw margin | Negative yaw margin |
+|---|---|---|---|
+| `0.2` | `[-0.2, 0.2]` | small | small |
+| `0.5` | `[-0.5, 0.5]` | balanced | balanced |
+| `0.8` | `[-0.2, 0.2]` | small | small |
+
+Interpretation:
+- At `u_s=0.8`, only ±0.2 differential is available before a motor saturates.
+- Reserving surge headroom (for example `u_s_max=0.7`) keeps extra room for differential control.
+
+### Tuning cheat sheet (turn aggressiveness)
+
+Quick effects of key parameters:
+
+- `u_d_max_pos`, `u_d_max_neg` (command envelope)
+  - Increasing values allows stronger differential demand before command-stage clipping.
+  - In no-reverse setups, keep positive/negative values separate when yaw authority is asymmetric.
+
+- `u_s_max` (surge command envelope)
+  - Lower `u_s_max` reserves motor headroom for turning at speed.
+  - Higher `u_s_max` increases straight-line authority but reduces available differential margin near top command.
+
+- `act.shp.*.u_d_scale` (source-dependent differential scaling)
+  - Lower scale softens turn response from controller/RC requests without changing hard limits.
+  - Higher scale makes turn response more aggressive, so command-stage clipping is reached earlier.
+
+- `act.shp.*.u_s_scale` (source-dependent surge scaling)
+  - Lower scale indirectly improves turn margin by reducing requested surge.
+  - Higher scale increases surge request and can reduce available differential authority in saturation.
+
+Suggested tuning order for stable iteration:
+1. Set hardware/software motor envelopes and verify safe operation.
+2. Set `u_s_max` for desired high-speed stability margin.
+3. Set `u_d_max_pos/neg` for maximum allowed turn authority.
+4. Tune shaping scales (`u_s_scale`, `u_d_scale`) for manual feel and controller aggressiveness.
 
 ## 2) Mixer (pure mapping)
 
@@ -165,7 +212,7 @@ Extra diagnostics (V1.1):
 
 Controllers then do anti-windup using either:
 
-* **Freeze/clamp integration** when saturated in the “wrong” direction, or
+* **Freeze/clamp integration** when saturated in the "wrong" direction, or
 * **Back-calculation (tracking):** use $(u_*^{ach}-u_*^{cmd})$.
 
 ### Recommended signal stages
@@ -196,7 +243,7 @@ Notation reminder (for consistency across docs):
 
 ## About thrust/force models and unit conversions
 
-This module uses **normalized command space**. Any mapping like “$u \rightarrow$ Newton” or “$u \rightarrow$ steady-state speed” belongs to a separate *propulsion model* document.
+This module uses **normalized command space**. Any mapping like "$u \rightarrow$ Newton" or "$u \rightarrow$ steady-state speed" belongs to a separate *propulsion model* document.
 
 Proposed separation:
 
