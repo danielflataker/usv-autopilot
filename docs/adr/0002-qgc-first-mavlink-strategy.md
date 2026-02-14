@@ -54,10 +54,15 @@ Mission planning/control baseline:
 - `MISSION_REQUEST_INT` (prefer `*_INT` path)
 - `MISSION_ITEM_INT`
 - `MISSION_ACK`
+- `MISSION_REQUEST_LIST` (required for mission readback/download)
+- `MISSION_REQUEST` + `MISSION_ITEM` fallback handling for non-INT mission clients
 - `MISSION_CLEAR_ALL`
 - `MISSION_SET_CURRENT`
 - `MISSION_CURRENT` (status)
 - `MISSION_ITEM_REACHED` (status/event)
+
+For V1, support both mission upload and mission readback flows so QGC can verify
+downloaded mission contents after upload.
 
 Vehicle command baseline:
 - `COMMAND_LONG` handling for start/stop/safety-relevant control actions used by GCS
