@@ -18,8 +18,6 @@ The goal is a stable structure that stays clean when small features are added la
    - motor safety/physical enforcement (motor shaping + ESC mapping)
 4. Anti-windup based on achieved actuation (`u_*^{ach}`), not guessed limits.
 
----
-
 ## Canonical symbols and names
 
 ### Core actuation variables
@@ -48,8 +46,6 @@ The goal is a stable structure that stays clean when small features are added la
 | MANUAL differential scale | $k_d^{man}$ | `act.shp.man.u_d_scale` | RC feel/safety scaling in yaw axis |
 
 Scaling gains are dimensionless and default to `1.0`.
-
----
 
 ## Pipeline definition
 
@@ -133,8 +129,6 @@ Control rule:
   - $u_s^{ach} - u_s^{cmd}$
   - $u_d^{ach} - u_d^{cmd}$
 
----
-
 ## Scaling policy by mode
 
 ### AUTOPILOT
@@ -147,8 +141,6 @@ Control rule:
 - Full-stick behavior is tuned in command shaping, not by bypassing allocator.
 - Backend stages (allocator, mixer, motor shaping, feedback) remain shared with autopilot.
 
----
-
 ## Invariants and validation rules
 1. `act.hw.u_LR_min <= act.sw.u_LR_min <= act.sw.u_LR_max <= act.hw.u_LR_max`
 2. `act.sw.u_d_max_neg >= 0`, `act.sw.u_d_max_pos >= 0`
@@ -156,17 +148,12 @@ Control rule:
 4. `ACTUATOR_CMD` always carries `u_s_cmd`, `u_d_cmd` after command shaping
 5. Anti-windup always uses `MIXER_FEEDBACK` achieved values
 
----
-
 ## Integration plan (documentation-first)
 1. Add this spec and make it the naming reference for actuation pipeline changes.
 2. Update `control/overview.md` and `control/mixer_and_limits.md` to link this spec as canonical stage definition.
 3. Keep `interfaces/contracts.md` and `interfaces/dataflow.md` aligned with `ACTUATOR_REQ` + `ACTUATOR_CMD` stage contracts.
 4. Add logging field plan for optional `u_*_req` and `u_*_alloc` visibility.
 5. Implement in code in small steps: Stage 1 shaping first, then allocator policy parameterization, then diagnostics.
-
-
----
 
 ## Docs consistency check
 

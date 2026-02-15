@@ -23,8 +23,6 @@ Outputs:
 
 (Exact payload fields are defined in [`interfaces/contracts.md`](../interfaces/contracts.md).)
 
----
-
 ## 1) Allocator (policy layer)
 
 The allocator decides what part of the requested command is feasible under motor limits.
