@@ -54,8 +54,15 @@ Keep the initial set small so parsing + plotting is easy:
 - `REC_GUIDANCE_REF`
   - `psi_d, v_d`, optional `e_y, e_psi`
 
+- `REC_ACTUATOR_REQ`
+  - `u_s_req, u_d_req, src` (request stage, i.e. $u_s^{req},u_d^{req}$)
+
 - `REC_ACTUATOR_CMD`
   - `u_s_cmd, u_d_cmd` (command stage, i.e. $u_s^{cmd},u_d^{cmd}$)
+
+- `REC_MIXER_FEEDBACK`
+  - `u_s_ach, u_d_ach, sat_L, sat_R, sat_any`
+  - optional: `u_s_alloc, u_d_alloc`, stage saturation flags, effective limits
 
 - `REC_ESC_OUTPUT`
   - `u_L, u_R`

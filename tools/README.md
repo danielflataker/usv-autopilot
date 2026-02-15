@@ -35,6 +35,17 @@ python -c "from tools.log_io import read_timeseries_bin; d=read_timeseries_bin('
 
 Shared record layout contract lives in `tools/log_io/layout.py`.
 
+## Docs consistency check
+
+Run the minimal docs naming/contract checker from repo root:
+
+```bash
+python tools/check_docs_contracts.py
+```
+
+Scope is intentionally small: it only guards the core actuation stage/topic names
+across `contracts`, `dataflow`, and `mixer_and_limits` to avoid maintenance overhead.
+
 ## Dummy telemetry emitter
 
 Replay a log session as MAVLink-aligned telemetry JSONL:

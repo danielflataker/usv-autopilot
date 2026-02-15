@@ -7,26 +7,29 @@ Inputs:
 - state estimates from [`docs/estimation/`](../estimation/overview.md)
 
 ## What control produces (internal)
-The controller outputs the canonical internal actuator commands (command stage):
-- average command $u_s^{cmd}$ (surge)
-- differential command $u_d^{cmd}$ (yaw)
+The controller produces request-stage actuation terms:
+- average request $u_s^{req}$ (surge)
+- differential request $u_d^{req}$ (yaw)
 
-In payloads these are carried as `u_s_cmd`, `u_d_cmd` inside `actuator_cmd_t` (see `interfaces/contracts.md`).
-They are mixed into per-motor commands $(u_L,u_R)$ in [`mixer_and_limits.md`](mixer_and_limits.md) and then mapped to PWM by the ESC driver.
+Command shaping then produces command-stage terms `u_s_cmd`, `u_d_cmd` for allocation and mixing.
+The final mapping to $(u_L,u_R)$ is defined in [`mixer_and_limits.md`](mixer_and_limits.md).
 
 ## Files
-- [`cascaded_heading_yawrate.md`](cascaded_heading_yawrate.md) — yaw control: $e_\psi \rightarrow r_d \rightarrow u_d^{cmd}$
-- [`speed_controller.md`](speed_controller.md) — speed control: $e_v \rightarrow u_s^{cmd}$
+- [`cascaded_heading_yawrate.md`](cascaded_heading_yawrate.md) — yaw control: $e_\psi \rightarrow r_d \rightarrow u_d^{req}$
+- [`speed_controller.md`](speed_controller.md) — speed control: $e_v \rightarrow u_s^{req}$
+- [`command_shaping.md`](command_shaping.md) — $(u_s^{req},u_d^{req}) \rightarrow (u_s^{cmd},u_d^{cmd})$ with scaling/deadband/envelope clamp
 - [`mixer_and_limits.md`](mixer_and_limits.md) — $(u_s^{cmd},u_d^{cmd}) \rightarrow (u_L,u_R)$ + clamp/idle/slew
 
 ## V1 control pipeline (short)
 1) Guidance provides $\psi_d$ and $v_d$
-2) Yaw control computes $u_d^{cmd}$
-3) Speed control computes $u_s^{cmd}$
-4) Mixer + limits produce $(u_L,u_R)$ and feedback $(u_s^{ach},u_d^{ach})$
+2) Yaw/speed control computes request stage $(u_s^{req},u_d^{req})$
+3) Command shaping computes command stage $(u_s^{cmd},u_d^{cmd})$
+4) Allocator + mixer + limits produce $(u_L,u_R)$ and feedback $(u_s^{ach},u_d^{ach})$
+
+Detailed stage definitions and naming invariants are specified in [`actuation_command_pipeline_spec.md`](actuation_command_pipeline_spec.md).
 
 ## Notes
-- Saturation happens after mixing, so controllers should use mixer feedback (`MIXER_FEEDBACK`) for anti-windup (see `interfaces/contracts.md`).
+- Saturation happens after mixing, so controllers use mixer feedback (`MIXER_FEEDBACK`) for anti-windup (see `interfaces/contracts.md`).
 
 ## Open questions
 - Controller forms: P vs PI for heading loop, PI for speed/yaw-rate loops

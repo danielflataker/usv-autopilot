@@ -3,7 +3,7 @@
 Purpose: define the internal software contracts inside the firmware (and any shared code).
 This is the canonical place for shared structs, enums, and module APIs.
 
-If a type crosses a module/task boundary, it should be defined here (or referenced from here).
+If a type crosses a module/task boundary, it is defined here (or referenced from here).
 
 ## Scope
 - Firmware-internal contracts (estimation, guidance, control, modes, logging, comms)
@@ -20,6 +20,7 @@ To make the dataflow explicit, we name the *thing being published* (topic) and t
 - `NAV_SOLUTION` → `nav_solution_t`
 - `MISSION_STATE` → `mission_state_t`
 - `GUIDANCE_REF` → `guidance_ref_t`
+- `ACTUATOR_REQ` → `actuator_req_t`
 - `ACTUATOR_CMD` → `actuator_cmd_t`
 - `MIXER_FEEDBACK` → `mixer_feedback_t`
 - `ESC_OUTPUT` → `esc_output_t`
@@ -53,21 +54,47 @@ To make the dataflow explicit, we name the *thing being published* (topic) and t
   - timestamp: `t_us`
 
 ### Control / actuation
-- `actuator_cmd_t` (published by controller, consumed by mixer/limits)
-  - canonical internal form: `u_s_cmd`, `u_d_cmd` (explicit command-stage names; preferred)
-    - math form in this stage: $u_s^{cmd}, u_d^{cmd}$
-    - `u_s_cmd` is commanded average thrust
-    - `u_d_cmd` is commanded differential thrust (positive means $u_R > u_L$ after mixing)
+- `actuator_req_t` (published by source logic, consumed by command shaping)
+  - canonical request-stage fields: `u_s_req`, `u_d_req`
+    - math form in this stage: $u_s^{req}, u_d^{req}$
+    - `u_s_req` is raw average request from controller or RC mapping
+    - `u_d_req` is raw differential request (positive means right-turn demand)
+  - source metadata: `src` (`ACT_SRC_AUTOPILOT`, `ACT_SRC_MANUAL`, `ACT_SRC_TEST`)
   - validity flags (armed / failsafe)
   - timestamp: `t_us`
+
+- `actuator_cmd_t` (published by command shaping, consumed by allocator/mixer)
+  - canonical command-stage fields: `u_s_cmd`, `u_d_cmd`
+    - math form in this stage: $u_s^{cmd}, u_d^{cmd}$
+    - `u_s_cmd` is shaped average command after scaling/deadband/command-envelope clamp
+    - `u_d_cmd` is shaped differential command after scaling/deadband/command-envelope clamp
+  - shaping metadata (optional): `k_s_mode`, `k_d_mode`
+  - validity flags (armed / failsafe)
+  - timestamp: `t_us`
+
+- `act_src_t` (request source enum)
+  - `ACT_SRC_AUTOPILOT`
+  - `ACT_SRC_MANUAL`
+  - `ACT_SRC_TEST`
+
+- `alloc_policy_t` (allocator policy enum)
+  - `ALLOC_SPEED_PRIORITY`
+  - `ALLOC_YAW_PRIORITY`
+  - `ALLOC_WEIGHTED` (later)
 
 - `mixer_feedback_t` (published by mixer/limits, consumed by controllers for anti-windup)
   - achieved commands after mixing + clamping:
     - `u_s_ach`, `u_d_ach`
   - saturation flags:
     - `sat_L`, `sat_R`, `sat_any`
+    - optional extension: `sat_cmd_stage`, `sat_alloc`, `sat_motor_stage`
   - optional: `u_L_ach`, `u_R_ach` (only if needed for debugging/logging)
+  - optional: effective limits used this cycle (`u_s_max_eff`, `u_d_max_pos_eff`, `u_d_max_neg_eff`, `u_LR_max_eff`, `u_LR_min_eff`)
   - timestamp: `t_us`
+
+Guideline for signal count (to avoid naming overload):
+- Required for control: `u_*_req`, `u_*_cmd`, and `u_*_ach`
+- Optional for debugging only: intermediate allocator-stage terms (e.g. `u_*_alloc`)
 
 - `esc_output_t` (final output to hardware)
   - per-motor commands: `u_L`, `u_R` (normalized internal convention, achieved after limits)
@@ -75,14 +102,14 @@ To make the dataflow explicit, we name the *thing being published* (topic) and t
   - timestamp: `t_us`
 
 Notes:
-- The controller should not need to know whether the ESC supports reverse. That mapping is owned by the ESC driver.
-- For anti-windup, controllers should use `u_s_ach` / `u_d_ach` (or `sat_any`) rather than guessing limits.
+- ESC reverse/non-reverse mapping is handled by the ESC driver, not by the controller.
+- Anti-windup uses `u_s_ach` / `u_d_ach` (or `sat_any`) against command-stage values `u_s_cmd` / `u_d_cmd`.
 
 ## Modes / state machine
 - `mode_t`: enum of modes (manual, autopilot, tests, abort, idle, ...)
 - `mode_iface_t`: mode callbacks
   - `enter(ctx)`
-  - `update(ctx, dt)` (produces either `guidance_ref_t` or `actuator_cmd_t`, depending on mode)
+  - `update(ctx, dt)` (produces `guidance_ref_t`, `actuator_req_t`, or direct test outputs depending on mode)
   - `exit(ctx)`
 
 (Mode behavior is described in [modes.md](modes.md).)
@@ -107,7 +134,7 @@ Where it shows up:
 - Tools: `usv_sim.digital_twin.current.FW_MODEL_SCHEMA` and checked when loading a dataset
 
 Recommended dataset check:
-- analysis/parsers should fail fast if `dataset.schema != tool.schema`
+- analysis/parsers fail fast if `dataset.schema != tool.schema`
 
 ## Event bus (contract)
 Events are emitted at the source and may have multiple consumers (SD logging, live link, etc.).

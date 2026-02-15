@@ -14,7 +14,7 @@ References:
 
 ## Notation
 - State: $\vec{x} = [x, y, \psi, v, r, b_g]^{\mathsf T}$
-- Input: $\vec{u}_{ach} = [u_s^{ach}, u_d^{ach}]^{\mathsf T}$ (achieved actuation for prediction; compact alias $[u_s,u_d]$ is allowed in equations)
+- Input: $\vec{u}_{ach} = [u_s^{ach}, u_d^{ach}]^{\mathsf T}$ (achieved actuation used for prediction)
 - Measurement: $\vec{z}$
 - Process model: $f(\cdot)$
 - Measurement model: $h(\cdot)$
@@ -79,7 +79,7 @@ For a measurement $\vec{z}$ with model $h(\cdot)$:
 ```
 
 Interpretation:
-- Innovation $\tilde{\vec{z}}$ is “what sensors say minus what model predicted sensors should say.”
+- Innovation $\tilde{\vec{z}}$ is “what sensors report minus what the model predicts.”
 - $\mathbf{K}$ decides correction strength per state component.
 - Large measurement noise in $\mathbf{R}$ means less trust in that sensor channel.
 

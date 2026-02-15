@@ -27,9 +27,29 @@ This is about behavior and rules, not UI implementation details.
 - Units + min/max + default
 - Grouping (control, guidance, EKF, safety, logging)
 
+V1 actuator/saturation parameter set:
+
+- **Hardware-absolute limits (still enforced in software):**
+  - `act.hw.u_LR_min`, `act.hw.u_LR_max`
+  - Meaning: absolute physical command range for each motor (`u_L`, `u_R`), typically `[-1,1]` (with reverse) or `[0,1]` (no reverse)
+- **Software envelopes (runtime-tunable):**
+  - `act.sw.u_s_min`, `act.sw.u_s_max` (surge envelope)
+  - `act.sw.u_d_max_pos`, `act.sw.u_d_max_neg` (differential envelope; positive/negative kept separate)
+  - `act.sw.u_LR_min`, `act.sw.u_LR_max` (operational motor cap below hardware max if desired)
+- **Command-shaping scales (new):**
+  - `act.shp.ap.u_s_scale`, `act.shp.ap.u_d_scale`
+  - `act.shp.man.u_s_scale`, `act.shp.man.u_d_scale`
+- **Allocator behavior (modular by design):**
+  - `act.alloc.policy` (`ALLOC_SPEED_PRIORITY`, `ALLOC_YAW_PRIORITY`, later `ALLOC_WEIGHTED`)
+  - (optional) `act.alloc.w_s`, `act.alloc.w_d` for weighted policy
+
+Document each param with unit (`normalized`), default, safe range, and whether it is mode-restricted.
+Load-time invariant: `act.hw.u_LR_min <= act.sw.u_LR_min <= act.sw.u_LR_max <= act.hw.u_LR_max`.
+Load-time invariant: `act.shp.ap.u_s_scale >= 0`, `act.shp.ap.u_d_scale >= 0`, `act.shp.man.u_s_scale >= 0`, `act.shp.man.u_d_scale >= 0`.
+
 ### Update messages
 - `PARAM_SET` (single)
-- `PARAM_SET_BATCH` (recommended default)
+- `PARAM_SET_BATCH` (default in V1)
 - `PARAM_GET` / `PARAM_LIST` (optional, but useful for UI sync)
 - `PARAM_ACK` (seq + status + what was applied)
 
@@ -39,9 +59,9 @@ This is about behavior and rules, not UI implementation details.
 - What happens on reject (keep old value, ack with error code)
 
 ### Rate limiting and dedupe
-- UI can change values freely, but only commits should be sent
+- UI can change values freely, but only commits are sent
 - Backend and/or firmware can rate-limit (e.g. max 1 Hz per param)
-- Firmware should ignore “no-op” updates (new ~= old)
+- Firmware ignores “no-op” updates (new ~= old)
 
 ### Logging
 - Log `PARAM_BATCH_APPLY(seq)` as an event

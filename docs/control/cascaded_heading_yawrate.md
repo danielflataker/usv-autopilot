@@ -1,17 +1,17 @@
 # Cascaded heading / yaw-rate control (V1)
 
-Baseline yaw control for a twin-prop boat: an outer loop turns heading error into a desired yaw-rate, and an inner loop tracks yaw-rate using the normalized differential command $u_d^{cmd}$.
+Baseline yaw control for a twin-prop boat: an outer loop turns heading error into a desired yaw-rate, and an inner loop tracks yaw-rate using the normalized differential request $u_d^{req}$.
 
 ## Goal
-Track a desired heading $\psi_d$ (from LOS) by commanding $u_d^{cmd}$.
+Track a desired heading $\psi_d$ (from LOS) by commanding $u_d^{req}$.
 
 ## Inputs / outputs
 - Inputs: $\psi_d$, $\psi$, $r$, $\Delta t$
-- Output: $u_d^{cmd}$ (normalized differential command; carried as `u_d_cmd` in `actuator_cmd_t`)
+- Output: $u_d^{req}$ (normalized differential request; command stage is produced later by command shaping)
 
 ## Core idea
 1) Heading loop: $e_\psi = \mathrm{wrap}(\psi_d - \psi) \rightarrow r_d$  
-2) Yaw-rate loop: $e_r = r_d - r \rightarrow u_d^{cmd}$
+2) Yaw-rate loop: $e_r = r_d - r \rightarrow u_d^{req}$
 
 ## Outline (what to define)
 
@@ -30,11 +30,11 @@ Track a desired heading $\psi_d$ (from LOS) by commanding $u_d^{cmd}$.
 - Choose controller type: P/PI (PI is typical)
 - Compute:
   - $e_r = r_d - r$
-  - $u_d^{cmd} = \mathrm{sat}(K_r e_r + I_r,\; u_{d,\max})$
+  - $u_d^{req} = K_r e_r + I_r$
 - Note: a separate D-term is usually not needed since we already use rate feedback ($r$).
 
 ### 4) Saturation + anti-windup
-- Define limits for $r_d$ and $u_d^{cmd}$
+- Define limits for $r_d$ and request-stage behavior for $u_d^{req}$
 - Anti-windup strategy (pick one):
   - freeze/clamp integrator when saturated
   - back-calculation
@@ -46,7 +46,7 @@ Track a desired heading $\psi_d$ (from LOS) by commanding $u_d^{cmd}$.
 ## Tuning notes (short)
 - Tune inner loop first (yaw-rate tracking), then outer loop.
 - Keep $r_{\max}$ conservative to avoid aggressive spins.
-- Verify sign: a positive step in $\psi_d$ should produce $u_d^{cmd}$ that turns the boat the correct way.
+- Verify sign: a positive step in $\psi_d$ should produce $u_d^{req}$ that turns the boat the correct way.
 
 ## Saturation + anti-windup (V1)
 
