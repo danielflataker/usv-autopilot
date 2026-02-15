@@ -55,7 +55,7 @@ Keep the initial set small so parsing + plotting is easy:
   - `psi_d, v_d`, optional `e_y, e_psi`
 
 - `REC_ACTUATOR_REQ`
-  - `u_s_req, u_d_req, src` (request stage, i.e. $u_s^{req},u_d^{req}$)
+  - `u_s_req, u_d_req, src` (request stage, i.e. $\mathbf{q}=[u_s^{req},u_d^{req}]^\top$)
 
 - `REC_ACTUATOR_CMD`
   - `u_s_cmd, u_d_cmd` (command stage, i.e. $u_s^{cmd},u_d^{cmd}$)

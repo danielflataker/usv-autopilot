@@ -20,7 +20,7 @@ It complements [contracts.md](contracts.md) by showing the pipeline.
 
 - `ACTUATOR_REQ` (`actuator_req_t`)
   - fields: `u_s_req`, `u_d_req`, `src` (+ validity/timestamp)
-  - stage/space: request stage in request space
+  - stage/space: request stage in request space, basis $\mathbf{q}=[u_s^{req},u_d^{req}]^\top$
   - publish: controller or RC mapping (mode-dependent)
   - consume: command shaping, logging (optional)
 
@@ -52,8 +52,8 @@ It complements [contracts.md](contracts.md) by showing the pipeline.
 - Mission manager owns waypoint switching
 - LOS owns $\psi_d$ and geometry errors
 - Speed scheduler owns $v_d$ ramping and speed caps
-- Controller/RC mapping owns source request generation $(u_s^{req},u_d^{req})$
-- Command shaping owns scaling/deadband/expo + command-envelope clamp $(u_s^{req},u_d^{req}) \rightarrow (u_s^{cmd},u_d^{cmd})$
+- Controller/RC mapping owns source request generation $\mathbf{q}$
+- Command shaping owns scaling/deadband/expo + command-envelope clamp $\mathbf{q} \rightarrow (u_s^{cmd},u_d^{cmd})$
 - Allocator/mixer owns feasibility policy + mapping to `u_L,u_R`
 
 ## Transport between modules/tasks

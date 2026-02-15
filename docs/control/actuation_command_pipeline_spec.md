@@ -34,16 +34,19 @@ Notes:
 ### Bases
 | Basis | Space | Vector form | Meaning |
 |---|---|---|---|
+| Request surge/differential basis | $\mathcal{R}$ | $\mathbf{q}=[u_s^{req},\ u_d^{req}]^\top$ | Source-intent actuation coordinates |
 | Surge/differential basis | $\mathcal{H}$ | $\mathbf{u}=[u_s,\ u_d]^\top$ | System-level actuation coordinates |
 | Left/right motor basis | $\mathcal{H}$ | $\mathbf{m}=[u_L,\ u_R]^\top$ | Per-motor actuation coordinates |
 
 Notes:
-- Bases are coordinate systems inside $\mathcal{H}$, not separate spaces.
+- A basis is a coordinate system inside a specific space, not a separate space.
+- $\mathbf{q}$ is the request-space basis vector.
+- $\mathbf{u}$ and $\mathbf{m}$ are hardware-space basis vectors.
 
 ### Stages
 | Stage | Symbol | Output space | Output basis | Canonical software variables |
 |---|---|---|---|---|
-| Source request | $req$ | $\mathcal{R}$ | surge/differential | `u_s_req`, `u_d_req` (`ACTUATOR_REQ`) |
+| Source request | $req$ | $\mathcal{R}$ | request surge/differential ($\mathbf{q}$) | `u_s_req`, `u_d_req` (`ACTUATOR_REQ`) |
 | Command stage | $cmd$ | $\mathcal{H}$ | surge/differential | `u_s_cmd`, `u_d_cmd` (`ACTUATOR_CMD`) |
 | Allocator stage | $alloc$ | $\mathcal{H}$ | surge/differential | `u_s_alloc`, `u_d_alloc` (optional diagnostics) |
 | Motor raw stage | $raw$ | $\mathcal{H}$ | left/right | `u_L_raw`, `u_R_raw` (internal) |
@@ -59,6 +62,7 @@ Use `<axis>_<stage>` for scalar fields.
 
 | Concept | Canonical names |
 |---|---|
+| Request-space vector $\mathbf{q}$ | `u_s_req`, `u_d_req` as a paired request-stage representation |
 | Request-stage surge/differential | `u_s_req`, `u_d_req` |
 | Command-stage surge/differential | `u_s_cmd`, `u_d_cmd` |
 | Allocator-stage surge/differential | `u_s_alloc`, `u_d_alloc` |
@@ -93,9 +97,9 @@ Inverse:
 ### Request-to-command mapping
 
 ```math
-\mathbf{u}^{cmd,raw} = \Phi_{mode}\!\left(\mathbf{u}^{req}\right),
+\mathbf{u}^{cmd,raw} = \Phi_{mode}\!\left(\mathbf{q}\right),
 \quad
-\mathbf{u}^{req} = [u_s^{req}, u_d^{req}]^\top \in \mathcal{R}
+\mathbf{q} = [u_s^{req}, u_d^{req}]^\top \in \mathcal{R}
 ```
 
 ### Clamping operators
@@ -122,7 +126,7 @@ Motor-stage clamp in left/right basis:
 ### End-to-end stage equations
 
 ```math
-\mathbf{u}^{cmd,raw} = \Phi_{mode}\!\left(\mathbf{u}^{req}\right)
+\mathbf{u}^{cmd,raw} = \Phi_{mode}\!\left(\mathbf{q}\right)
 ```
 
 ```math
@@ -159,7 +163,7 @@ Inputs:
 - `MANUAL`: RC channels mapped into request space
 
 Output:
-- $\mathbf{u}^{req}$ via `ACTUATOR_REQ`
+- $\mathbf{q}$ via `ACTUATOR_REQ`
 
 Rules:
 - No feasibility logic in this stage.
@@ -169,7 +173,7 @@ Rules:
 Purpose: map request space into hardware-normalized command stage.
 
 Inputs:
-- $\mathbf{u}^{req}$
+- $\mathbf{q}$
 - shaping parameters (`k_s`, `k_d`, deadband/expo settings)
 - command envelopes
 
@@ -227,7 +231,7 @@ Control rule:
 \mathbf{e}_{aw}^{\mathcal{H}} = \mathbf{u}^{ach} - \mathbf{u}^{cmd}
 ```
 
-- Do not compare $\mathbf{u}^{ach}$ directly with $\mathbf{u}^{req}$ without mapping.
+- Do not compare $\mathbf{u}^{ach}$ directly with $\mathbf{q}$ without mapping.
 
 ## Space mapping contract
 

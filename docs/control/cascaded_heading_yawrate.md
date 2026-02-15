@@ -1,13 +1,13 @@
 # Cascaded heading / yaw-rate control (V1)
 
-Baseline yaw control for a twin-prop boat: an outer loop turns heading error into a desired yaw-rate, and an inner loop tracks yaw-rate using the normalized differential request $u_d^{req}$.
+Baseline yaw control for a twin-prop boat: an outer loop turns heading error into a desired yaw-rate, and an inner loop tracks yaw-rate using the normalized differential request component $u_d^{req}$.
 
 ## Goal
 Track a desired heading $\psi_d$ (from LOS) by commanding $u_d^{req}$.
 
 ## Inputs / outputs
 - Inputs: $\psi_d$, $\psi$, $r$, $\Delta t$
-- Output: $u_d^{req}$ (normalized differential request; command stage is produced later by command shaping)
+- Output: $u_d^{req}$ (normalized differential request component of $\mathbf{q}$; command stage is produced later by command shaping)
 
 ## Core idea
 1) Heading loop: $e_\psi = \mathrm{wrap}(\psi_d - \psi) \rightarrow r_d$  

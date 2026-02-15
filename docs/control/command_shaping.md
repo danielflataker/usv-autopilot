@@ -1,6 +1,6 @@
 # Command shaping (V1)
 
-This module maps request-stage actuation in request space to command-stage actuation in hardware-normalized space before allocator feasibility logic.
+This module maps request-stage actuation vector $\mathbf{q}$ in request space to command-stage actuation in hardware-normalized space before allocator feasibility logic.
 
 ## Scope
 - Applies to both `AUTOPILOT` and `MANUAL`
@@ -26,11 +26,15 @@ This module maps request-stage actuation in request space to command-stage actua
 
 The command-shaping stage runs the following ordered operations:
 
-1. Optional deadband/expo on request axes (typically used for `MANUAL` source)
-2. Axis scaling
+1. Request-stage input vector:
+   - $\mathbf{q}=[u_s^{req},u_d^{req}]^\top$
+2. Optional deadband/expo on request axes (typically used for `MANUAL` source)
+3. Axis scaling
    - $\tilde u_s = k_s^{mode} u_s^{req}$
    - $\tilde u_d = k_d^{mode} u_d^{req}$
-3. Command-envelope clamp
+4. Build raw command-stage vector:
+   - $\mathbf{u}^{cmd,raw} = [\tilde u_s,\tilde u_d]^\top$
+5. Command-envelope clamp
    - $u_s^{cmd} \in [u_s^{min},u_s^{max}]$
    - $u_d^{cmd} \in [-u_{d,max}^{-},u_{d,max}^{+}]$
    - equivalently, $\mathbf{u}^{cmd} = C_{cmd}(\mathbf{u}^{cmd,raw})$

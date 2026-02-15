@@ -58,18 +58,19 @@ To make dataflow explicit, name the *thing being published* (topic) and the stru
 - Space convention for actuation:
   - request space `R`: `req` stage only
   - hardware-normalized space `H`: `cmd`, `alloc`, `ach`, and motor commands
+  - request-space basis vector: $\mathbf{q}=[u_s^{req},u_d^{req}]^\top$
   - two bases exist inside `H`: surge/differential (`u_s,u_d`) and left/right (`u_L,u_R`)
   - anti-windup residual is defined in `H`
 
 - Stage-to-topic convention:
-  - request stage (`R`, surge/differential): `ACTUATOR_REQ`
+  - request stage (`R`, basis $\mathbf{q}$): `ACTUATOR_REQ`
   - command stage (`H`, surge/differential): `ACTUATOR_CMD`
   - feedback stage (`H`, surge/differential): `MIXER_FEEDBACK`
   - motor output stage (`H`, left/right): `ESC_OUTPUT`
 
 - `actuator_req_t` (published by source logic, consumed by command shaping)
   - canonical request-stage fields: `u_s_req`, `u_d_req`
-    - math form in this stage: $u_s^{req}, u_d^{req}$ in request space `R`
+    - math form in this stage: $\mathbf{q}=[u_s^{req}, u_d^{req}]^\top$ in request space `R`
     - `u_s_req` is raw average request from controller or RC mapping
     - `u_d_req` is raw differential request (positive means right-turn demand)
   - source metadata: `src` (`ACT_SRC_AUTOPILOT`, `ACT_SRC_MANUAL`, `ACT_SRC_TEST`)

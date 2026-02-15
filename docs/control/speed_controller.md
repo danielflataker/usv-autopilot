@@ -1,7 +1,7 @@
 # Speed controller (V1)
 
-Purpose: track desired surge speed $v_d$ by producing the average request $u_s^{req}$.
-Yaw control produces $u_d^{req}$ separately; command shaping then maps requests to command-stage terms $(u_s^{cmd},u_d^{cmd})$.
+Purpose: track desired surge speed $v_d$ by producing the average request component $u_s^{req}$.
+Yaw control produces $u_d^{req}$ separately; together they form the request-stage vector $\mathbf{q}=[u_s^{req},u_d^{req}]^\top$ before command shaping maps to $(u_s^{cmd},u_d^{cmd})$.
 
 ## Inputs
 - desired speed $v_d$ (from `docs/guidance/`)
