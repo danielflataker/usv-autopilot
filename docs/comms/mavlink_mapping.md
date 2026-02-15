@@ -26,4 +26,6 @@ Reason: predefined messages do not carry the full project-specific control and m
 
 - Dummy and real links should share the same logical message set.
 - Transport can differ (dummy serial/UDP vs real SiK), but mapping should not.
+- Frame/angle/sign conventions are inherited from [architecture.md](../architecture.md); do not add ENU remapping in this layer.
+- V1 estimator/navigation state is planar (`x,y,psi,v,r`), so `LOCAL_POSITION_NED` uses `z=0` and `vz=0`.
 - Start with predefined set first; add custom messages only where data would otherwise be lost.

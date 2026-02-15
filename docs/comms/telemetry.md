@@ -3,8 +3,8 @@
 This document defines what telemetry messages exist and what they mean: fields, units,
 timestamps, frames, and recommended update rates.
 
-How bytes are transported (framing/ACK) lives in `protocol.md`.
-Parameter update behavior lives in `params.md`.
+How bytes are transported (framing/ACK) lives in [protocol.md](protocol.md).
+Parameter update behavior lives in [params.md](params.md).
 
 ## Scope
 - Message set (types + purpose)
@@ -14,13 +14,13 @@ Parameter update behavior lives in `params.md`.
 - Recommended update rates and priorities
 
 ## Not in scope
-- Transport/framing details (see `protocol.md`)
+- Transport/framing details (see [protocol.md](protocol.md))
 - Ground station UI/server implementation (see `docs/groundstation/`)
 
 ## Conventions
 - `t_us`: monotonic microseconds on the boat
 - Units: SI (m, s, rad, m/s)
-- Frames: match `docs/architecture.md` (do not redefine elsewhere)
+- Frames and angle/sign conventions: use canonical definitions in [architecture.md](../architecture.md)
 
 ## TODO / Outline
 
@@ -50,8 +50,8 @@ For each message type:
 - events should include `t_us` of when they happened (not when transmitted)
 
 ### Frame reporting
-- Position: local $(x,y)$ in chosen nav frame (or lat/lon if V1 starts with that)
-- Heading: $\psi$ convention must match `architecture.md`
+- Position: local NED $(x,y)$ as defined in [architecture.md](../architecture.md) (or lat/lon if V1 starts with that)
+- Heading: $\psi$ as defined in [architecture.md](../architecture.md)
 - If lat/lon is used, specify projection responsibility (boat vs ground)
 
 ## Open questions

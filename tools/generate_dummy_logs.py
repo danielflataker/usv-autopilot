@@ -222,6 +222,7 @@ def _write_timeseries_bin(
             if seg_norm > 1e-9:
                 rel_x = x_pos - float(seg_start[0])
                 rel_y = y_pos - float(seg_start[1])
+                # Signed cross-track error (NED): positive means left/port of segment direction.
                 e_y = float((rel_x * seg_dy - rel_y * seg_dx) / seg_norm)
             else:
                 e_y = 0.0

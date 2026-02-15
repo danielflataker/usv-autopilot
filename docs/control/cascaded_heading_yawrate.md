@@ -16,8 +16,7 @@ Track a desired heading $\psi_d$ (from LOS) by commanding $u_d^{req}$.
 ## Outline (what to define)
 
 ### 1) Angle handling
-- Define $\mathrm{wrap}(\cdot)$ to keep errors in $[-\pi,\pi)$
-- Sign conventions for $\psi$ and $r$ must match `docs/architecture.md`
+- Use canonical `wrap`, `psi`, and `r` conventions from [architecture.md](../architecture.md)
 
 ### 2) Outer loop (heading $\rightarrow$ yaw-rate)
 - Choose controller type: P or PI (P is often enough for V1)

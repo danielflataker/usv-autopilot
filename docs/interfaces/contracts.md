@@ -32,6 +32,7 @@ To make dataflow explicit, name the *thing being published* (topic) and the stru
 ### Navigation / estimation
 - `nav_solution_t` (published by estimator)
   - pose: `x, y, psi`
+  - V1 scope: planar state only (no `z`)
   - rates/speeds: `v, r`
   - gyro bias: `b_g`
   - health: `status flags` + optional covariance diag (TBD)
@@ -126,7 +127,7 @@ Typed payloads passed through queues/mailboxes:
 Some data contracts must match exactly between firmware, logs, and analysis tools (e.g. state order, units, binary record layouts). To avoid silent mismatches, define a small schema ID.
 
 - `FW_MODEL_SCHEMA` (int): bumped only when a *breaking* contract change happens
-  - examples: state vector order/meaning, frame conventions (ENU/NED), log binary layout, telemetry payload layout
+  - examples: state vector order/meaning, frame conventions (see [architecture.md](../architecture.md)), log binary layout, telemetry payload layout
   - non-examples: tuning changes, bugfixes, parameter tweaks
 
 Where it shows up:
@@ -140,7 +141,7 @@ Recommended dataset check:
 Events are emitted at the source and may have multiple consumers (SD logging, live link, etc.).
 Producers must not care who consumes the event.
 
-- `event_t`: canonical event payload (see `logging/events.md` for semantics)
+- `event_t`: canonical event payload (see [logging/events.md](../logging/events.md) for semantics)
 - `event_emit(const event_t* e)`: non-blocking
   - returns success/fail (or increments drop counters internally)
   - must be safe to call from the control loop

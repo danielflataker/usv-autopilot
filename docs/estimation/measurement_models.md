@@ -10,7 +10,7 @@ General form:
 Notes on notation:
 - Use $\vec{x}$ for state, $\vec{u}$ for process input.
 - Use $\vec{n}$ for measurement noise (to avoid confusion with the speed state $v$).
-- Angle differences must be wrapped to $[-\pi,\pi)$.
+- Angle/sign conventions (including `wrap`) follow [architecture.md](../architecture.md).
 
 Frame and units conventions are defined in [architecture.md](../architecture.md).
 

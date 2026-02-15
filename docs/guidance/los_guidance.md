@@ -9,8 +9,8 @@ Inputs:
 
 Outputs:
 - desired heading $\psi_d$
-- cross-track error $e_y$ (sign convention must match [architecture.md](../architecture.md))
-- heading error $e_\psi \overset{\text{def}}{=} \mathrm{wrap}(\psi_d - \psi)$
+- cross-track error $e_y$ (signed convention defined in [architecture.md](../architecture.md))
+- heading error $e_\psi$ (using `wrap` defined in [architecture.md](../architecture.md))
 
 ## Lookahead target
 Let the segment direction be:
@@ -44,9 +44,8 @@ Desired heading:
 
 ## Notes
 - Clamp the lookahead point to the segment (V1) to avoid looking too far beyond the next waypoint.
-- Always wrap heading differences: $e_\psi = \mathrm{wrap}(\psi_d - \psi)$.
+- For $e_\psi$ and signed $e_y$, use the canonical definitions in [architecture.md](../architecture.md).
 
 ## TODO / Open questions
 - Constant $L$ in V1, or speed-dependent $L(v)$?
-- Exact definition of signed cross-track error $e_y$ (pick one convention and log it).
 - What to do near waypoint transitions (blend headings vs hard switch)?

@@ -130,5 +130,15 @@ Apply rules and wire format live in [comms/params.md](comms/params.md)
 ## Conventions
 - time: monotonic microseconds `t_us`
 - units: SI (m, rad, m/s, rad/s)
-- coordinate frame conventions are defined here (and referenced everywhere):
-  - *TODO:* pick ENU vs NED and sign convention for `psi` and stick to it globally
+- navigation/world frame: local NED (`x` North, `y` East, `z` Down). V1 assumes planar motion, so `z` is fixed at `0 m`.
+- heading/yaw `psi` [rad]: `psi = 0` when pointing North (`+x`), positive clockwise (toward East / `+y`)
+- yaw-rate `r` [rad/s]: positive clockwise (`r = dpsi/dt`)
+- canonical angle wrapper:
+  - `wrap(theta) = ((theta + pi) mod (2*pi)) - pi`, range `[-pi, pi)`
+  - endpoint rule: `+pi` is represented as `-pi`
+- guidance error signs:
+  - heading error: `e_psi = wrap(psi_d - psi)`
+  - signed cross-track error for segment `(x0,y0) -> (x1,y1)`:
+    - `e_y = ((x - x0)*(y1 - y0) - (y - y0)*(x1 - x0)) / hypot(x1 - x0, y1 - y0)`
+    - `e_y > 0`: vessel is left/port of segment direction `(x0,y0) -> (x1,y1)`
+- these conventions are global for firmware, logs, telemetry, and analysis tools

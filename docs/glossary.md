@@ -6,8 +6,8 @@ Quick reference for shared vocabulary across the docs. Math uses $\,\cdot\,$, co
 - `t_us`: monotonic timestamp in microseconds (code/log field name).
 - Units: SI (m, rad, m/s, rad/s) unless explicitly stated.
 - $(x,y)$: local navigation position (frame defined in [architecture.md](architecture.md)).
-- $\psi$: heading/yaw angle.
-- $\mathrm{wrap}(\cdot)$: wrap angle differences (e.g. to $[-\pi,\pi)$).
+- $\psi$: heading/yaw angle (convention defined in [architecture.md](architecture.md)).
+- $\mathrm{wrap}(\cdot)$: canonical angle wrapper defined in [architecture.md](architecture.md).
 - For control commands, use superscripts to show stage in the pipeline:
   - $u_*^{cmd}$: command requested by controller.
   - $u_*^{ach}$: final command achieved at hardware output stage (after allocator/mixer/limits).
@@ -59,7 +59,7 @@ Key relations:
 | $v_{\mathrm{seg}}$ | `v_seg` | segment target speed [m/s] |
 | $v_d$ | `v_d` | desired speed setpoint after caps+ramp [m/s] |
 | $\psi_d$ | `psi_d` | desired heading from LOS [rad] |
-| $e_y$ | `e_y` | cross-track error [m] |
+| $e_y$ | `e_y` | signed cross-track error [m] (sign from [architecture.md](architecture.md)) |
 | $e_\psi$ | `e_psi` | heading error (wrapped) [rad] |
 | $r_d$ | `r_d` | desired yaw rate [rad/s] |
 | $e_r$ | `e_r` | yaw-rate error [rad/s] |

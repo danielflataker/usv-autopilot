@@ -20,7 +20,7 @@ References:
 - Measurement model: $h(\cdot)$
 - Process noise (models unmodeled process disturbances/model mismatch): $\vec{w}_k \sim \mathcal{N}(\vec{0}, \mathbf{Q}_k)$
 - Measurement noise: $\vec{n}_k \sim \mathcal{N}(\vec{0}, \mathbf{R}_k)$
-- Angle wrap: $\mathrm{wrap}(\cdot)$ maps to $[-\pi,\pi)$
+- Angle/sign conventions (including `wrap`) follow [architecture.md](../architecture.md)
 
 ## Why EKF (not linear KF)
 The kinematics contain $\sin(\psi)$ and $\cos(\psi)$, so dynamics are nonlinear:
