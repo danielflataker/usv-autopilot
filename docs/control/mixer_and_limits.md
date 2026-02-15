@@ -64,13 +64,14 @@ Practical V1 structure:
 - Envelope A (command-stage): clamp shaped command outputs before allocation
   - `u_s_cmd in [u_s_min, u_s_max]`
   - `u_d_cmd in [-u_d_max_neg, u_d_max_pos]`
-- Envelope B (motor-stage): clamp mixed outputs before ESC output
-  - `u_L,u_R in [u_LR_min, u_LR_max]`
+- Envelope B (motor-stage software envelope): clamp mixed outputs before ESC output
+  - `u_L,u_R in [u_LR_min^sw, u_LR_max^sw]`
 
-Then allocator + mixer enforce feasibility under both software envelopes and hardware limits.
+Then allocator + mixer enforce feasibility under both software envelopes and hardware absolute limits.
 
 Canonical limit names in the pipeline:
 - motor absolute max/min: `u_LR_max`, `u_LR_min` (math: $u_{LR,max}, u_{LR,min}$; hardware-absolute)
+- motor software envelope: `act.sw.u_LR_max`, `act.sw.u_LR_min` (math: $u_{LR,max}^{sw}, u_{LR,min}^{sw}$)
 - surge envelope: `u_s_max`, `u_s_min` (math: $u_s^{max}, u_s^{min}$; software)
 - differential envelope: `u_d_max_pos`, `u_d_max_neg` (math: $u_{d,max}^{+}, u_{d,max}^{-}$; software)
 
@@ -129,7 +130,7 @@ the feasible differential range becomes:
 | `0.8` | `[-0.2, 0.2]` | small | small |
 
 Interpretation:
-- At `u_s=0.8`, only ±0.2 differential is available before a motor saturates.
+- At `u_s=0.8`, only +/-0.2 differential is available before a motor saturates.
 - Reserving surge headroom (for example `u_s_max=0.7`) keeps extra room for differential control.
 
 ### Tuning cheat sheet (turn aggressiveness)
@@ -202,7 +203,7 @@ Shaping is applied to $(u_L,u_R)$ after mixing.
 Order (V1):
 
 1. Optional trims/calibration (static offsets/scales)
-2. Clamp to allowed motor range ($u_{\min}, u_{\max}$ per motor)
+2. Clamp to software motor envelope and enforce hardware absolute bounds
 3. Idle/deadband (optional; depends on ESC + reverse support)
 4. Slew-rate limiting on $u_L/u_R$ (up/down may differ)
 5. Write `ESC_OUTPUT` (non-blocking); ESC driver maps internal $(u_L,u_R)$ to PWM
@@ -270,7 +271,7 @@ Notation reminder (for consistency across docs):
 - $u_*^{cmd}$: command-stage output from command shaping (`ACTUATOR_CMD`)
 - $u_*^{alloc}$: allocator output before motor-stage shaping (optional debug/tuning)
 - $u_*^{ach}$: final achieved command returned by mixer/limits (`MIXER_FEEDBACK`)
-- optional derived value: $u_*^{ach,req}$ (request-equivalent achieved value for analysis or controller-space adaptation)
+- optional derived analysis symbol: $u_*^{ach,req}$ (request-equivalent achieved value); not a canonical firmware/log field
 
 ## About thrust/force models and unit conversions
 

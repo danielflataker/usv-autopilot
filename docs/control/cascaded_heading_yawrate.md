@@ -49,7 +49,8 @@ Track a desired heading $\psi_d$ (from LOS) by commanding $u_d^{req}$.
 
 ## Saturation + anti-windup (V1)
 
-Actuator saturation happens *after mixing* (motor limits on $u_L,u_R$), so the controllers must use mixer feedback for anti-windup.
+Actuation may clip at command stage and again at motor stage; final achieved actuation is set by motor-stage limits/slew.
+Controllers should use achieved-vs-command residuals in hardware-normalized space for anti-windup.
 
 Contract:
 - `MIXER_FEEDBACK -> mixer_feedback_t` is defined in [docs/interfaces/contracts.md](../interfaces/contracts.md).

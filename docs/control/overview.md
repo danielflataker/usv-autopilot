@@ -33,7 +33,8 @@ Final motor mapping is defined in [mixer_and_limits.md](mixer_and_limits.md).
 Detailed stage definitions and naming invariants are specified in [actuation_command_pipeline_spec.md](actuation_command_pipeline_spec.md).
 
 ## Notes
-- Saturation happens after mixing, so controllers use mixer feedback (`MIXER_FEEDBACK`) for anti-windup (see `interfaces/contracts.md`).
+- Command clipping can occur at command stage, and motor clipping can occur after mixing in the motor stage.
+- Final plant-facing achieved actuation is determined after motor-stage limits/slew, so controllers use `MIXER_FEEDBACK` for anti-windup (see `interfaces/contracts.md`).
 - Anti-windup residual is measured in hardware-normalized space: $(u_*^{ach} - u_*^{cmd})$.
 - If a controller integrates in request space, map that residual into request space before applying integrator correction.
 

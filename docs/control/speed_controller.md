@@ -26,7 +26,7 @@ Maybe later: feedforward $u_{ff}$ once the thrust-to-speed mapping is identified
 
 ## Saturation and anti-windup
 Request stage passes raw controller output; command-stage limits are applied in command shaping:
-- $u_s^{req} = u_s^{*}$ (request stage; command-stage clamp happens in command shaping)
+- baseline `AUTOPILOT` contract: $u_s^{req} = u_s^{*}$ (source-specific request-space bounds may also be applied before shaping)
 
 Anti-windup (choose one implementation):
 - freeze integrator when saturated and $e_v$ pushes further into saturation
@@ -46,7 +46,8 @@ Log at control rate:
 
 ## Saturation + anti-windup (V1)
 
-Actuator saturation happens *after mixing* (motor limits on $u_L,u_R$), so the controllers must use mixer feedback for anti-windup.
+Actuation may clip at command stage and again at motor stage; final achieved actuation is set by motor-stage limits/slew.
+Controllers should use achieved-vs-command residuals in hardware-normalized space for anti-windup.
 
 Contract:
 - `MIXER_FEEDBACK -> mixer_feedback_t` is defined in [docs/interfaces/contracts.md](../interfaces/contracts.md).

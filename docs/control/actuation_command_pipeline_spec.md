@@ -24,12 +24,13 @@ The goal is unambiguous definitions for space, basis, stage, and transformation.
 ### Spaces
 | Space | Symbol | Meaning |
 |---|---|---|
-| Request space | $\mathcal{R}$ | Source intent. `0` means zero requested throttle on an axis. `1` means maximum allowed request on that axis. |
+| Request space | $\mathcal{R}$ | Source-intent coordinates. Values are dimensionless and source-defined (for example, `MANUAL` is often mapped to `[-1,1]` per axis). |
 | Hardware-normalized space | $\mathcal{H}$ | Actuator-relative command units. In motor basis $\mathbf{m}=[u_L,u_R]^\top$, $u_{L/R}=1$ is the per-motor upper hardware limit (lower limit is configuration-dependent). In surge/differential basis $\mathbf{u}=[u_s,u_d]^\top$, feasible bounds come from mapped motor limits and are basis-dependent. |
 
 Notes:
 - Exactly two spaces are used: $\mathcal{R}$ and $\mathcal{H}$.
 - Limits/clamps define feasible subsets inside a space. They do not define a new space.
+- Request-space bounds are part of a source contract; hard pre-allocation limits are enforced by command-stage envelopes in $\mathcal{H}$.
 - Example (no reverse, motor bounds `[0,1]`): at fixed $u_s$, feasible differential satisfies $|u_d| \le \min(u_s,\ 1-u_s)$.
 
 ### Bases
@@ -69,6 +70,10 @@ Use `<axis>_<stage>` for scalar fields.
 | Allocator-stage surge/differential | `u_s_alloc`, `u_d_alloc` |
 | Motor basis raw/achieved | `u_L_raw`, `u_R_raw`, `u_L_ach`, `u_R_ach` |
 | Feedback-stage surge/differential achieved | `u_s_ach`, `u_d_ach` |
+
+External interface exception:
+- `ESC_OUTPUT` keeps unsuffixed motor fields `u_L`, `u_R` for interface stability.
+- Semantically, `u_L` and `u_R` are motor-basis values in $\mathcal{H}$ at the final output/achieved stage.
 
 ## Transformations
 
@@ -169,6 +174,7 @@ Output:
 Rules:
 - No feasibility logic in this stage.
 - No motor output write in this stage.
+- Source modules define request-space scaling/bounds for their own outputs.
 
 ## Stage 1 - command shaping (mode-specific)
 Purpose: map request space into hardware-normalized command stage.

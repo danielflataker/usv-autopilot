@@ -57,6 +57,7 @@ To make dataflow explicit, name the *thing being published* (topic) and the stru
 ### Control / actuation
 - Space convention for actuation:
   - request space `R`: `req` stage only
+  - request-space bounds are source-defined (e.g. `MANUAL` often maps each axis to `[-1,1]`)
   - hardware-normalized space `H`: `cmd`, `alloc`, `ach`, and motor commands
   - request-space basis vector: $\mathbf{q}=[u_s^{req},u_d^{req}]^\top$
   - two bases exist inside `H`: surge/differential (`u_s,u_d`) and left/right (`u_L,u_R`)
@@ -112,6 +113,7 @@ Guideline for signal count (to avoid naming overload):
 
 - `esc_output_t` (final output to hardware)
   - per-motor commands: `u_L`, `u_R` (hardware-normalized, left/right basis)
+  - note: unsuffixed naming is intentional for output interface stability; semantically these are final motor-basis achieved/output values in `H`
   - arm/disarm + output validity
   - timestamp: `t_us`
 
