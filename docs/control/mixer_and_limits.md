@@ -53,7 +53,7 @@ Open questions:
 V1 uses two separate layers:
 
 1. Hardware limits (absolute): what ESC + propulsion can physically do.
-   - Internal normalization still means `u=1.0` is "max physically possible".
+   - In motor basis, `u_L=1.0` / `u_R=1.0` represent per-motor upper hardware limits (with lower limit set by reverse configuration).
    - These limits change rarely at runtime.
 2. Software envelopes (operational): what is *allowed* in normal operation.
    - Safety/tuning choices, e.g. cap surge authority to reduce aggressive behavior.

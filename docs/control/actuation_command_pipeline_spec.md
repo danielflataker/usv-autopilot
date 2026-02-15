@@ -25,11 +25,12 @@ The goal is unambiguous definitions for space, basis, stage, and transformation.
 | Space | Symbol | Meaning |
 |---|---|---|
 | Request space | $\mathcal{R}$ | Source intent. `0` means zero requested throttle on an axis. `1` means maximum allowed request on that axis. |
-| Hardware-normalized space | $\mathcal{H}$ | Actuator-relative command. `1` means hardware absolute maximum on that axis. |
+| Hardware-normalized space | $\mathcal{H}$ | Actuator-relative command units. In motor basis $\mathbf{m}=[u_L,u_R]^\top$, $u_{L/R}=1$ is the per-motor upper hardware limit (lower limit is configuration-dependent). In surge/differential basis $\mathbf{u}=[u_s,u_d]^\top$, feasible bounds come from mapped motor limits and are basis-dependent. |
 
 Notes:
 - Exactly two spaces are used: $\mathcal{R}$ and $\mathcal{H}$.
 - Limits/clamps define feasible subsets inside a space. They do not define a new space.
+- Example (no reverse, motor bounds `[0,1]`): at fixed $u_s$, feasible differential satisfies $|u_d| \le \min(u_s,\ 1-u_s)$.
 
 ### Bases
 | Basis | Space | Vector form | Meaning |

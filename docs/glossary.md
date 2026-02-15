@@ -67,8 +67,8 @@ Key relations:
 | $e_v$ | `e_v` | speed error [m/s] |
 | $u_L$ | `u_L` | left motor command (normalized) |
 | $u_R$ | `u_R` | right motor command (normalized) |
-| $u_s$ | `u_s` | average input (normalized) |
-| $u_d$ | `u_d` | differential input (normalized) |
+| $u_s$ | `u_s` | average input in surge/differential basis (hardware-normalized; feasible range depends on motor bounds) |
+| $u_d$ | `u_d` | differential input in surge/differential basis (hardware-normalized; feasible range depends on motor bounds and $u_s$) |
 | $\mathbf{q}=[u_s^{req},u_d^{req}]^\top$ | `u_s_req,u_d_req` in `actuator_req_t` | request-space surge/differential vector from source logic |
 | $u_s^{req},u_d^{req}$ | `u_s_req,u_d_req` in `actuator_req_t` | scalar components of $\mathbf{q}$ |
 | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd,u_d_cmd` in `actuator_cmd_t` | shaped average/differential command after command-shaping |
