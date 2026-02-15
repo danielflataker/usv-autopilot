@@ -1,4 +1,4 @@
-# Speed controller (V1)
+﻿# Speed controller (V1)
 
 Purpose: track desired surge speed $v_d$ by producing the average request $u_s^{req}$.
 Yaw control produces $u_d^{req}$ separately; command shaping then maps requests to command-stage terms $(u_s^{cmd},u_d^{cmd})$.
@@ -28,9 +28,9 @@ Maybe later: feedforward $u_{ff}$ once the thrust-to-speed mapping is identified
 Request stage passes raw controller output; command-stage limits are applied in command shaping:
 - $u_s^{req} = u_s^{*}$ (request stage; command-stage clamp happens in command shaping)
 
-Anti-windup (we choose one implementation):
-- **freeze integrator** when saturated and $e_v$ pushes further into saturation
-- **back-calculation** (more work, smoother)
+Anti-windup (choose one implementation):
+- freeze integrator when saturated and $e_v$ pushes further into saturation
+- back-calculation (more work, smoother)
 
 (Exact clamp/slew is handled in `mixer_and_limits.md`, but the controller still needs an anti-windup rule.)
 
@@ -57,8 +57,8 @@ Rule of thumb:
   - yaw-rate loop uses $(u_d^{ach} - u_d^{cmd})$
 
 Typical implementation options (pick one later):
-- **Freeze/clamp integration** when `sat_any` is true and the error would push further into saturation.
-- **Back-calculation (tracking)** using the achieved-vs-commanded difference.
+- Freeze/clamp integration when `sat_any` is true and the error would push further into saturation.
+- Back-calculation (tracking) using the achieved-vs-commanded difference.
 
 Notes:
 - Priority (hold yaw vs hold speed) is owned by the mixer/allocator policy, not by the PI loops.

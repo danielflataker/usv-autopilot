@@ -7,10 +7,10 @@ Canonical stage-by-stage I/O and naming rules are defined in [`actuation_command
 Goal: V1 keeps allocation policy swappable (speed-priority, yaw-priority, later cost/QP) without rewriting the rest of the module.
 
 ## What this module does (in order)
-1) **Allocator**: choose feasible $(u_s^{alloc},u_d^{alloc})$ given limits + policy  
-2) **Mixer**: map $(u_s^{alloc},u_d^{alloc}) \rightarrow (u_L,u_R)$  
-3) **Shaping**: trims, clamp, idle/deadband, slew-rate  
-4) **Feedback**: publish what was actually achieved for anti-windup
+1) Allocator: choose feasible $(u_s^{alloc},u_d^{alloc})$ given limits + policy  
+2) Mixer: map $(u_s^{alloc},u_d^{alloc}) \rightarrow (u_L,u_R)$  
+3) Shaping: trims, clamp, idle/deadband, slew-rate  
+4) Feedback: publish what was actually achieved for anti-windup
 
 ## Inputs / outputs
 Inputs:
@@ -32,9 +32,9 @@ Inputs: $(u_s^{cmd},u_d^{cmd})$
 Outputs: $(u_s^{alloc},u_d^{alloc})$ + saturation flags
 
 Policies (V1 candidates):
-- **Speed-priority:** preserve $u_s^{cmd}$ as much as possible, reduce $u_d^{cmd}$ when needed
-- **Yaw-priority:** preserve $u_d^{cmd}$ as much as possible, adjust $u_s^{cmd}$ when needed
-- **Weighted/cost-based (later):** weighted least-squares / QP (minimize error in $u_s^{cmd}$ and $u_d^{cmd}$ under constraints)
+- Speed-priority: preserve $u_s^{cmd}$ as much as possible, reduce $u_d^{cmd}$ when needed
+- Yaw-priority: preserve $u_d^{cmd}$ as much as possible, adjust $u_s^{cmd}$ when needed
+- Weighted/cost-based (later): weighted least-squares / QP (minimize error in $u_s^{cmd}$ and $u_d^{cmd}$ under constraints)
 
 Notes:
 - The allocator is implemented as a small, swappable function with a stable signature.
@@ -48,10 +48,10 @@ Open questions:
 
 V1 uses two separate layers:
 
-1. **Hardware limits (absolute):** what ESC + propulsion can physically do.
+1. Hardware limits (absolute): what ESC + propulsion can physically do.
    - Internal normalization still means `u=1.0` is "max physically possible".
    - These limits change rarely at runtime.
-2. **Software envelopes (operational):** what we *allow* in normal operation.
+2. Software envelopes (operational): what is *allowed* in normal operation.
    - Safety/tuning choices, e.g. cap surge authority to reduce aggressive behavior.
    - These are mode- and mission-dependent and can be parameters.
 
@@ -212,8 +212,8 @@ Extra diagnostics (V1.1):
 
 Controllers then do anti-windup using either:
 
-* **Freeze/clamp integration** when saturated in the "wrong" direction, or
-* **Back-calculation (tracking):** use $(u_*^{ach}-u_*^{cmd})$.
+* Freeze/clamp integration when saturated in the "wrong" direction, or
+* Back-calculation (tracking): use $(u_*^{ach}-u_*^{cmd})$.
 
 ### Recommended signal stages
 
@@ -221,9 +221,9 @@ Keep the signal set small so it is easy to reason about saturation.
 
 Required in V1 control logic:
 
-1. **Command-stage command** (`u_*^{cmd}`)
+1. Command-stage command (`u_*^{cmd}`)
    - shaped command delivered to allocator
-2. **Final achieved command** (`u_*^{ach}` from final motor outputs)
+2. Final achieved command (`u_*^{ach}` from final motor outputs)
    - what was actually sent to the plant
 
 These two are enough for anti-windup and for analyzing "requested vs achieved" behavior.
@@ -243,17 +243,17 @@ Notation reminder (for consistency across docs):
 
 ## About thrust/force models and unit conversions
 
-This module uses **normalized command space**. Any mapping like "$u \rightarrow$ Newton" or "$u \rightarrow$ steady-state speed" belongs to a separate *propulsion model* document.
+This module uses normalized command space. Any mapping like "$u \rightarrow$ Newton" or "$u \rightarrow$ steady-state speed" belongs to a separate *propulsion model* document.
 
 Proposed separation:
 
-* **Allocator/mixer/shaping**: normalized $u$ only, cares about limits + safety
-* **Propulsion model (later)**: maps $u$ to approximate thrust/force or to a velocity model
+* Allocator/mixer/shaping: normalized $u$ only, cares about limits + safety
+* Propulsion model (later): maps $u$ to approximate thrust/force or to a velocity model
 
   * used for analysis, feedforward, simulation, or future model-based control
   * not required for V1 to work
 
-If we later want Newtons:
+If Newtons are needed later:
 
 * add a `propulsion_model.md` (or `hardware/propulsion.md`) describing:
 
@@ -263,5 +263,5 @@ If we later want Newtons:
 
 ## Open questions
 
-* Do we need a simple static map $u \rightarrow F$ early (for logging/plots), or can it wait?
-* If we add a thrust model, do we apply it before or after shaping (usually after, because shaping changes what is actually commanded)?
+* Is a simple static map $u \rightarrow F$ needed early (for logging/plots), or can it wait?
+* If a thrust model is added, should it be applied before or after shaping (usually after, because shaping changes what is actually commanded)?

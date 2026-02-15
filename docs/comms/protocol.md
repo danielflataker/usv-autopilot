@@ -1,6 +1,6 @@
 # Protocol (boat ↔ ground station)
 
-This document describes **how messages are transported** between boat and ground station:
+This document describes how messages are transported between boat and ground station:
 framing on serial, reliability/ACK rules, and multi-step transactions like mission upload.
 
 Message *content* lives in `telemetry.md`. Parameter semantics live in `params.md`.
@@ -52,5 +52,5 @@ Message *content* lives in `telemetry.md`. Parameter semantics live in `params.m
 
 ## Open questions
 - MAVLink: use existing mission/param messages, or define a small custom set anyway?
-- Do we need reliable delivery for “start/stop/abort”, or do we rely on RC + failsafes?
+- Is reliable delivery needed for “start/stop/abort”, or should RC + failsafes be relied on?
 - Is ground station required to handle partial mission resume, or is restart fine for V1?

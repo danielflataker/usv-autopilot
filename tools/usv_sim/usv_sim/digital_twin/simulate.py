@@ -98,8 +98,8 @@ def simulate_with_inputs(
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Simulate forward in time using a precomputed input sequence.
 
-    This is a thin wrapper around `simulate()` for the common case where you already
-    have `U[k] = [u_s_ach, u_d_ach]` for each step (achieved actuation).
+    Thin wrapper around `simulate()` for the common case with
+    `U[k] = [u_s_ach, u_d_ach]` precomputed for each step (achieved actuation).
 
     Args:
         x0: initial state, shape (STATE_DIM,)

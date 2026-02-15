@@ -8,8 +8,8 @@ References:
 - Frame/units: [architecture.md](../architecture.md)
 
 ## Scope and assumptions
-- We use an **Extended Kalman Filter (EKF)** because the process model is nonlinear.
-- We assume familiarity with state-space notation.
+- Use an Extended Kalman Filter (EKF) because the process model is nonlinear.
+- Assume familiarity with state-space notation.
 - This document explains EKF terms in plain language so first-time Kalman readers can follow implementation intent.
 
 ## Notation

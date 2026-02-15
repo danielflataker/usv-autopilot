@@ -9,8 +9,8 @@ References:
 - [ekf_design.md](ekf_design.md)
 
 ## What gets tuned
-- Measurement noise $\mathbf{R}$ (how much we trust sensors)
-- Process noise $\mathbf{Q}$ (how much we trust the model; this models unmodeled process disturbances/model mismatch)
+- Measurement noise $\mathbf{R}$ (sensor trust level)
+- Process noise $\mathbf{Q}$ (model trust level; captures unmodeled process disturbances/model mismatch)
 - Gating thresholds (reject outliers)
 
 ## Starting point (safe defaults)
@@ -47,5 +47,5 @@ References:
 - State covariance diagonals (sanity: not collapsing to zero or exploding)
 
 ## Open questions
-- Do we want adaptive $\mathbf{R}$ for GNSS based on reported accuracy/HDOP?
-- Do we want a simple “EKF unhealthy” criterion for failsafe decisions?
+- Is adaptive $\mathbf{R}$ for GNSS needed based on reported accuracy/HDOP?
+- Is a simple “EKF unhealthy” criterion needed for failsafe decisions?

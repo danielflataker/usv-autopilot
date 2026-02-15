@@ -21,5 +21,5 @@ Frame conventions: see [architecture.md](../architecture.md).
 3) Speed scheduler produces $v_d$ (after caps + ramp)
 
 ## TODO / Open questions
-- Do we support “stop/loiter” at final waypoint in V1, or just mark mission done?
+- Should “stop/loiter” be supported at the final waypoint in V1, or should mission completion be marked?
 - Should lookahead $L$ be constant in V1, or depend on speed later?

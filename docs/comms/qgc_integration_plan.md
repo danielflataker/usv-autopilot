@@ -1,4 +1,4 @@
-# QGC Integration Plan (V1)
+﻿# QGC Integration Plan (V1)
 
 Purpose: define the minimum MAVLink compatibility needed to use QGroundControl as the primary mission-planning and field-operations ground station.
 
@@ -49,7 +49,7 @@ Strongly recommended:
 Notes:
 - Prefer `*_INT` mission item path for waypoint precision/compatibility, but be robust to clients that use non-INT fallback.
 - Treat mission transactions as reliable with clear timeout/retry behavior.
-- Mission upload **and** readback are both required for V1 and are validated explicitly in acceptance criteria below.
+- Mission upload and readback are both required for V1 and are validated explicitly in acceptance criteria below.
 
 ### 4) Parameter protocol
 

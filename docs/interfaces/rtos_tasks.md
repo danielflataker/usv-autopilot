@@ -70,9 +70,9 @@ Examples:
 
 ## Estimator placement
 Plan for V1:
-- EKF **predict** runs in the control loop (fixed $\Delta t$).
+- EKF predict runs in the control loop (fixed $\Delta t$).
 - Sensor reads are asynchronous; each measurement is queued with timestamp.
-- Control loop consumes all queued measurements since last tick and applies EKF **updates** in timestamp order.
+- Control loop consumes all queued measurements since last tick and applies EKF updates in timestamp order.
 
 Why:
 - keeps one place responsible for state + covariance
@@ -80,12 +80,12 @@ Why:
 - easy to keep estimator always-on in all modes
 
 Alternatives (possible later):
-- run estimator update as a callback in the sensor task (harder to keep consistent state unless we lock heavily)
+- run estimator update as a callback in the sensor task (harder to keep consistent state unless locking is heavy)
 - make estimator its own task (works, but then control must consume snapshots; adds latency/complexity)
 
 ## Watchdog / heartbeat (notes)
-- A hardware watchdog is usually worth it once we start running motors.
-- It does not need a big task: we can “kick” it from the control task *only if* key health conditions are met (no overruns, sensors alive, etc.).
+- A hardware watchdog is usually worth adding once motors are running.
+- It does not need a big task: kick it from the control task *only if* key health conditions are met (no overruns, sensors alive, etc.).
 - Heartbeat for telemetry is separate: telemetry task should send a heartbeat at a fixed rate.
 
 ## Buffers / IPC (V1)
@@ -98,4 +98,4 @@ Alternatives (possible later):
 - Final loop rates and priority ordering (after first bring-up)
 - Measurement timestamping strategy (single monotonic `t_us` source)
 - What happens on overload: drop logs first, then low-priority telemetry, never block control
-- Do we need a dedicated RC input task, or handle RC in sensor I/O?
+- Is a dedicated RC input task needed, or should RC stay in sensor I/O?

@@ -1,13 +1,13 @@
 # USV Autopilot — Docs Index
 
-This folder is the **source of truth** for project architecture, module contracts, logging/telemetry formats, and test procedures.
+This folder is the source of truth for project architecture, module contracts, logging/telemetry formats, and test procedures.
 
 ## Start here
-- **System overview:** [`architecture.md`](architecture.md)
-- **Vocabulary / symbols:** [`glossary.md`](glossary.md)
-- **Interfaces and contracts (authoritative):** [`interfaces/contracts.md`](interfaces/contracts.md)
-- **Run modes + RTOS tasks:** [`interfaces/modes.md`](interfaces/modes.md), [`interfaces/rtos_tasks.md`](interfaces/rtos_tasks.md)
-- **On-water workflow:** [`ops/water_test_playbook.md`](ops/water_test_playbook.md)
+- System overview: [`architecture.md`](architecture.md)
+- Vocabulary / symbols: [`glossary.md`](glossary.md)
+- Interfaces and contracts (authoritative): [`interfaces/contracts.md`](interfaces/contracts.md)
+- Run modes + RTOS tasks: [`interfaces/modes.md`](interfaces/modes.md), [`interfaces/rtos_tasks.md`](interfaces/rtos_tasks.md)
+- On-water workflow: [`ops/water_test_playbook.md`](ops/water_test_playbook.md)
 
 ## Core topics
 
@@ -79,6 +79,7 @@ This folder is the **source of truth** for project architecture, module contract
 - Timestamp: monotonic microseconds `t_us`
 - Units: SI (m, s, rad, m/s)
 - Coordinate frames: defined in [`architecture.md`](architecture.md)
+- Writing style: imperative, pronoun-free, concise; use `*italics*` for rare callouts; avoid double-asterisk emphasis in body text.
 
 ## Planning
-Implementation tasks are tracked in **GitHub Issues + Projects** (not in these docs).
+Implementation tasks are tracked in GitHub Issues + Projects (not in these docs).

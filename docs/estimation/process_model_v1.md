@@ -25,7 +25,7 @@ Per-motor commands:
 - $u_L$: left motor command
 - $u_R$: right motor command
 
-We use average + difference:
+Use average + difference:
 ```math
 u_s = \tfrac12(u_L + u_R), \qquad
 u_d = \tfrac12(u_R - u_L).
@@ -109,4 +109,4 @@ These are intended to be identified on-water using simple tests (step, turn, zig
 - If reverse thrust is not available, clamp/rules belong in the actuator layer, not here.
 
 ## Upgrade path (later)
-We might want to add slowly varying current/drift as extra states, e.g. $(v_{c,x}, v_{c,y})$, before moving to a higher-order 3DOF model.
+Consider adding slowly varying current/drift as extra states, e.g. $(v_{c,x}, v_{c,y})$, before moving to a higher-order 3DOF model.

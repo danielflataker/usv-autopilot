@@ -5,27 +5,27 @@ Keep it lightweight.
 
 ## What can go wrong (V1)
 
-- **GNSS dropouts / no fix**
+- GNSS dropouts / no fix
   - Symptom: no position updates, stale $x,y$
   - Notes: estimator will drift using process model only
 
-- **GNSS jumps / multipath**
+- GNSS jumps / multipath
   - Symptom: sudden large position residuals
   - Notes: should be handled by gating / outlier reject
 
-- **Bad heading observability at low speed**
+- Bad heading observability at low speed
   - Symptom: GNSS COG becomes noisy; heading updates become unreliable
   - Notes: avoid using COG below $v_{\min}$
 
-- **Gyro bias drift**
+- Gyro bias drift
   - Symptom: yaw-rate offset; heading slowly drifts if not corrected
   - Notes: bias state + reasonable $Q_{bb}$ helps
 
-- **Magnetometer disturbance (if used)**
+- Magnetometer disturbance (if used)
   - Symptom: heading spikes near motors/wiring
   - Notes: treat as optional, gate aggressively, or disable
 
-- **Time / timestamp issues**
+- Time / timestamp issues
   - Symptom: wrong $\Delta t$, out-of-order measurements
   - Notes: can silently ruin the filter
 

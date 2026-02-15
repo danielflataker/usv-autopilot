@@ -1,11 +1,11 @@
-# ADR 0002: QGC-first strategy for ground operations (V1)
+﻿# ADR 0002: QGC-first strategy for ground operations (V1)
 
 ## Status
 Proposed (pending team sign-off)
 
 ## Context
 
-We need to prioritize limited development time and maximize useful field capability early.
+Prioritize limited development time and maximize useful field capability early.
 
 The current docs already lean toward using predefined MAVLink messages for V1 telemetry,
 with custom messages only where project-specific data cannot be represented cleanly.
@@ -17,11 +17,11 @@ basic field missions if robust logs are available for post-run analysis.
 
 ## Decision
 
-For V1 and near-term milestones, we propose a **QGC-first** strategy:
+For V1 and near-term milestones, adopt a QGC-first strategy:
 
 1. Prioritize compatibility with existing MAVLink ground control software
    (QGroundControl first, optionally Mission Planner for cross-checks).
-2. Treat the in-repo custom ground station as a **de-prioritized / optional** track for
+2. Treat the in-repo custom ground station as a de-prioritized / optional track for
    advanced visualizations and project-specific diagnostics (not removed).
 3. Focus implementation on the standard MAVLink mission/parameter/command flows
    needed for practical planning, upload, execution control, and status visibility.
@@ -35,7 +35,7 @@ For V1 and near-term milestones, we propose a **QGC-first** strategy:
 
 ### Trade-offs
 - Some project-specific UX and advanced custom plots will be deferred.
-- We must align behavior with MAVLink client expectations and edge cases.
+- Align behavior with MAVLink client expectations and edge cases.
 
 ## Required MAVLink support baseline (V1)
 

@@ -9,7 +9,7 @@ import numpy as np
 
 from .io import TimeseriesData
 
-# Messages we can map directly onto MAVLink common set.
+# Messages mapped directly onto the MAVLink common set.
 PREDEFINED_MAVLINK_MESSAGES: dict[str, str] = {
     "heartbeat": "HEARTBEAT",
     "status": "SYS_STATUS",
@@ -20,7 +20,7 @@ PREDEFINED_MAVLINK_MESSAGES: dict[str, str] = {
     "param_ack": "PARAM_EXT_ACK",
 }
 
-# Messages that should stay custom if we want rich USV-specific debug payloads.
+# Messages that remain custom for USV-specific debug payloads.
 CUSTOM_MAVLINK_MESSAGES: dict[str, str] = {
     "event_structured": "USV_EVENT",
     "ctrl_debug": "USV_CTRL_DEBUG",
@@ -253,4 +253,3 @@ def iter_mavlink_telemetry(
                     "param_result": 0,  # MAV_PARAM_EXT_ACK_ACCEPTED
                 },
             )
-

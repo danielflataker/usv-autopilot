@@ -68,7 +68,7 @@ z^{\mathrm{gnss}}_{\mathrm{cog}} \approx \psi + n_{\psi,\mathrm{cog}}.
 
 Notes:
 - Ground speed and COG are affected by current/wind and may deviate from body-frame surge behavior.
-- We treat these with relatively large covariance in $\mathbf{R}$, and gate on $v > v_{\min}$.
+- Treat these with relatively large covariance in $\mathbf{R}$, and gate on $v > v_{\min}$.
 
 ## TODO / Outline
 - Define recommended measurement rates for each sensor (typical, not hard requirements)

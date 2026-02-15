@@ -1,4 +1,4 @@
-# Cascaded heading / yaw-rate control (V1)
+﻿# Cascaded heading / yaw-rate control (V1)
 
 Baseline yaw control for a twin-prop boat: an outer loop turns heading error into a desired yaw-rate, and an inner loop tracks yaw-rate using the normalized differential request $u_d^{req}$.
 
@@ -31,7 +31,7 @@ Track a desired heading $\psi_d$ (from LOS) by commanding $u_d^{req}$.
 - Compute:
   - $e_r = r_d - r$
   - $u_d^{req} = K_r e_r + I_r$
-- Note: a separate D-term is usually not needed since we already use rate feedback ($r$).
+- Note: a separate D-term is usually not needed because rate feedback ($r$) is already used.
 
 ### 4) Saturation + anti-windup
 - Define limits for $r_d$ and request-stage behavior for $u_d^{req}$
@@ -61,8 +61,8 @@ Rule of thumb:
   - yaw-rate loop uses $(u_d^{ach} - u_d^{cmd})$
 
 Typical implementation options (pick one later):
-- **Freeze/clamp integration** when `sat_any` is true and the error would push further into saturation.
-- **Back-calculation (tracking)** using the achieved-vs-commanded difference.
+- Freeze/clamp integration when `sat_any` is true and the error would push further into saturation.
+- Back-calculation (tracking) using the achieved-vs-commanded difference.
 
 Notes:
 - Priority (hold yaw vs hold speed) is owned by the mixer/allocator policy, not by the PI loops.

@@ -15,7 +15,7 @@ Non-goals:
 
 ## Pipeline contracts (topics -> payload types)
 
-To make the dataflow explicit, we name the *thing being published* (topic) and the struct that carries it:
+To make dataflow explicit, name the *thing being published* (topic) and the struct that carries it:
 
 - `NAV_SOLUTION` -> `nav_solution_t`
 - `MISSION_STATE` -> `mission_state_t`
@@ -123,7 +123,7 @@ Typed payloads passed through queues/mailboxes:
 
 ## Compatibility / schema IDs (tiny but important)
 
-Some data contracts must match exactly between firmware, logs, and analysis tools (e.g. state order, units, binary record layouts). To avoid silent mismatches, we define a small schema ID.
+Some data contracts must match exactly between firmware, logs, and analysis tools (e.g. state order, units, binary record layouts). To avoid silent mismatches, define a small schema ID.
 
 - `FW_MODEL_SCHEMA` (int): bumped only when a *breaking* contract change happens
   - examples: state vector order/meaning, frame conventions (ENU/NED), log binary layout, telemetry payload layout
@@ -167,6 +167,6 @@ Suggested function naming:
 
 ## TODO / Open questions
 - Which fields in `nav_solution_t` are required for V1 telemetry vs log-only
-- Do we keep `v_cap`/errors in `guidance_ref_t` or log them separately
+- Should `v_cap`/errors stay in `guidance_ref_t`, or be logged separately
 - Should `mixer_feedback_t` always be published, or only when saturation occurs
 - Which structs must be shared with the ground station (and versioned)

@@ -39,7 +39,7 @@ Package-local tests can still live with the package when that is the clearest lo
 
 ## Future run targets
 
-When we formalize CI, we should expose one clear command entrypoint from repo root that runs:
+When CI is formalized, expose one clear command entrypoint from repo root that runs:
 
 - docs checks
 - package unit tests

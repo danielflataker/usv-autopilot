@@ -1,6 +1,6 @@
 # Params (over telemetry)
 
-This document defines the **parameter system over the link**: how parameters are named/identified, how updates are sent and applied, and how changes are acknowledged and logged.
+This document defines the parameter system over the link: how parameters are named/identified, how updates are sent and applied, and how changes are acknowledged and logged.
 
 This is about behavior and rules, not UI implementation details.
 
@@ -29,17 +29,17 @@ This is about behavior and rules, not UI implementation details.
 
 V1 actuator/saturation parameter set:
 
-- **Hardware-absolute limits (still enforced in software):**
+- Hardware-absolute limits (still enforced in software):
   - `act.hw.u_LR_min`, `act.hw.u_LR_max`
   - Meaning: absolute physical command range for each motor (`u_L`, `u_R`), typically `[-1,1]` (with reverse) or `[0,1]` (no reverse)
-- **Software envelopes (runtime-tunable):**
+- Software envelopes (runtime-tunable):
   - `act.sw.u_s_min`, `act.sw.u_s_max` (surge envelope)
   - `act.sw.u_d_max_pos`, `act.sw.u_d_max_neg` (differential envelope; positive/negative kept separate)
   - `act.sw.u_LR_min`, `act.sw.u_LR_max` (operational motor cap below hardware max if desired)
-- **Command-shaping scales (new):**
+- Command-shaping scales (new):
   - `act.shp.ap.u_s_scale`, `act.shp.ap.u_d_scale`
   - `act.shp.man.u_s_scale`, `act.shp.man.u_d_scale`
-- **Allocator behavior (modular by design):**
+- Allocator behavior (modular by design):
   - `act.alloc.policy` (`ALLOC_SPEED_PRIORITY`, `ALLOC_YAW_PRIORITY`, later `ALLOC_WEIGHTED`)
   - (optional) `act.alloc.w_s`, `act.alloc.w_d` for weighted policy
 
@@ -70,5 +70,5 @@ Load-time invariant: `act.shp.ap.u_s_scale >= 0`, `act.shp.ap.u_d_scale >= 0`, `
 
 ## Open questions
 - Numeric ID vs string name on the wire?
-- Do we need `PARAM_LIST` for auto-populating UI, or is the UI hardcoded for V1?
+- Is `PARAM_LIST` needed for auto-populating UI, or is the UI hardcoded for V1?
 - Should restricted params be rejected outright, or queued until a safe state?

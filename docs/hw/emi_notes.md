@@ -9,6 +9,6 @@ Purpose: collect lessons and rules-of-thumb for reducing electrical noise and pr
 - Symptoms to watch for (GNSS dropouts, IMU spikes, MCU brownouts)
 
 ## Open questions
-- Do we need additional filtering beyond regulators (LC, ferrites)?
+- Is additional filtering beyond regulators needed (LC, ferrites)?
 - Where to place ferrite beads / chokes (motor leads vs sensor rails)
 - How to test for EMI issues on the bench (simple procedures)

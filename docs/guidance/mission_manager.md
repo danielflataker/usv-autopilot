@@ -32,6 +32,6 @@ Also implement:
 - ignore switching if mission not active
 
 ## TODO / Open questions
-- Do we support "loiter/stop" at last waypoint, or mark `done` and go IDLE?
-- Do we need per-waypoint acceptance radii, or a single global $r_{\text{acc}}$ in V1?
-- Should we expose a "current segment" snapshot over telemetry (useful for debugging)?
+- Should "loiter/stop" be supported at the last waypoint, or should `done` transition to IDLE?
+- Are per-waypoint acceptance radii needed, or is a single global $r_{\text{acc}}$ enough in V1?
+- Should a "current segment" snapshot be exposed over telemetry (useful for debugging)?

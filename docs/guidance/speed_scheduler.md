@@ -2,7 +2,7 @@
 
 The speed scheduler turns a per-segment target speed into a smooth speed setpoint for the surge speed controller.
 
-Key idea: many parts of the pipeline may want to *cap* the segment speed. We apply these caps first, then ramp the final target to avoid step changes into the PID.
+Key idea: many parts of the pipeline may *cap* the segment speed. Apply these caps first, then ramp the final target to avoid step changes into the PID.
 
 ## Symbols
 - $v_{\mathrm{seg}}$: segment target speed from the mission (piecewise constant)
@@ -64,6 +64,6 @@ These should fit the same pattern ($v \leftarrow \min(v, v_{\max})$):
 - manual operator “speed limit” knob
 
 ## TODO / Open questions
-- Do we enforce a minimum speed floor (to keep steering/heading observable)?
+- Should a minimum speed floor be enforced (to keep steering/heading observable)?
 - Where should “hard” safety limits live: here or in the mode/state machine?
-- How do we choose $a_{\uparrow}, a_{\downarrow}$ (direct $\mathrm{m/s^2}$ vs derived from $v_{\max}/T$)?
+- How should $a_{\uparrow}, a_{\downarrow}$ be chosen (direct $\mathrm{m/s^2}$ vs derived from $v_{\max}/T$)?

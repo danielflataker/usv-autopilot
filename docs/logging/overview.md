@@ -5,7 +5,7 @@ Purpose: store on-boat data for tuning and post-analysis without ever blocking t
 Principles:
 - control loop only appends to ringbuffers (non-blocking)
 - SD writing happens in a low-priority logger task (batched)
-- high-rate data is **binary**
+- high-rate data is binary
 - sparse events are stored separately
 
 ## Session layout (proposed)
@@ -13,10 +13,10 @@ On boot or “start logging”, create a new session folder:
 - `logs/YYYYMMDD_HHMMSS/`
   - `meta.json` (build id, `FW_MODEL_SCHEMA`, params snapshot, hw info)
   - `timeseries.bin` (high-rate binary records)
-  - `events.jsonl` (or `events.bin` if we want strictly binary)
+  - `events.jsonl` (or `events.bin` if strictly binary output is needed)
 
 ## Schema / compatibility (must match firmware + tools)
-Some contracts must match exactly (state order/meaning, units, record layouts). We use a single schema ID:
+Some contracts must match exactly (state order/meaning, units, record layouts). Use a single schema ID:
 
 - Firmware defines `FW_MODEL_SCHEMA` and logs it in `meta.json`
 - `timeseries.bin` header stores the same `fw_model_schema`
@@ -30,12 +30,12 @@ See: [`record_formats.md`](record_formats.md), [`interfaces/contracts.md`](../in
 - designed for fast writes and easy parsing in Python
 
 ### Why a single `timeseries.bin` is OK
-We log time series as *typed binary records* (TLV): each record stores only the fields it needs.
+Time series are logged as *typed binary records* (TLV): each record stores only the fields it needs.
 
 This avoids the “wide CSV row” problem where most columns are unused most of the time.
 Overhead per record is small (timestamp + type + payload length).
 
-We only split into multiple `.bin` files if we later add a very high-rate stream (e.g. raw IMU)
+Split into multiple `.bin` files only if a very high-rate stream is added later (e.g. raw IMU)
 that should not compete with core nav/control logs.
 
 ## Event log (separate)

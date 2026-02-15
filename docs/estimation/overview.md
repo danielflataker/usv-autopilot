@@ -1,16 +1,16 @@
 # Estimation overview (V1)
 
-This folder describes the V1 state estimator: what model we use, what sensors we fuse, and how the EKF is structured.
+This folder describes the V1 state estimator: model choice, fused sensors, and EKF structure.
 
 Assumptions for this documentation:
-- You are comfortable with state-space models (`x`, `u`, `y`) and Jacobians.
-- You may be new to Kalman filtering specifically.
+- Comfort with state-space models (`x`, `u`, `y`) and Jacobians is assumed.
+- Newness to Kalman filtering is acceptable.
 
 ## One-minute mental model
-Think of the estimator as a **continuous correction loop**:
-1. **Predict** where the boat should be now using the process model + motor commands.
-2. **Compare** that prediction to available sensor readings.
-3. **Correct** the state using weighted residuals (trusting cleaner sensors more).
+Think of the estimator as a continuous correction loop:
+1. Predict where the boat should be now using the process model + motor commands.
+2. Compare that prediction to available sensor readings.
+3. Correct the state using weighted residuals (trusting cleaner sensors more).
 4. Repeat at every timestep / sensor arrival.
 
 In EKF language, this is the predict/update cycle around a nonlinear model.
@@ -37,7 +37,7 @@ These are consumed by guidance and control. The goal is not to make every estima
 - Handle real-world sensor messiness with explicit gating and health flags.
 
 ## Reading order (recommended)
-If you are new to Kalman filtering:
+For readers new to Kalman filtering:
 1. Read this file.
 2. Read [process_model_v1.md](process_model_v1.md) to understand what “prediction” means physically.
 3. Read [measurement_models.md](measurement_models.md) to understand what sensors can correct.

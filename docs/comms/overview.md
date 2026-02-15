@@ -5,9 +5,9 @@ This folder describes how the boat and ground station talk to each other: what g
 Keep this practical and avoid duplicating internal structs from `interfaces/`.
 
 ## What lives here
-- **Telemetry**: messages sent from boat → ground station (status, pose, events, etc.)
-- **Protocol**: framing, reliability, and transactions (mission upload, ACK/timeout, resync)
-- **Params**: parameter listing + how parameters are set/apply/acked over the link
+- Telemetry: messages sent from boat → ground station (status, pose, events, etc.)
+- Protocol: framing, reliability, and transactions (mission upload, ACK/timeout, resync)
+- Params: parameter listing + how parameters are set/apply/acked over the link
 
 ## Files
 - `telemetry.md` — message types, fields, units, and recommended rates

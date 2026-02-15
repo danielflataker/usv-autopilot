@@ -1,6 +1,6 @@
 # Telemetry (messages and meaning)
 
-This document defines **what telemetry messages exist** and what they mean: fields, units,
+This document defines what telemetry messages exist and what they mean: fields, units,
 timestamps, frames, and recommended update rates.
 
 How bytes are transported (framing/ACK) lives in `protocol.md`.
@@ -57,4 +57,4 @@ For each message type:
 ## Open questions
 - Send local $(x,y)$ only, or also lat/lon for easy map overlay?
 - Include velocity in `POSE` for smoother UI interpolation?
-- Do we need a dedicated `CTRL` message in V1, or is logging enough?
+- Is a dedicated `CTRL` message needed in V1, or is logging enough?

@@ -57,13 +57,13 @@ Within the same task:
 - plain function calls + stack/local structs (no queues)
 
 Across tasks (V1):
-- **Mailboxes** for latest-value signals (e.g. `NAV_SOLUTION`, `GUIDANCE_REF`)
-- **Events** use a single emit API with fanout:
+- Mailboxes for latest-value signals (e.g. `NAV_SOLUTION`, `GUIDANCE_REF`)
+- Events use a single emit API with fanout:
   - producers call `event_emit(event_t)`
   - the event bus/router writes to two queues:
     - `event_q_sd` (consumer: logging task -> `events.jsonl`)
     - `event_q_tm` (consumer: telemetry task)
-- **Ringbuffer** for high-rate time series logs (producer: control loop, consumer: SD writer)
+- Ringbuffer for high-rate time series logs (producer: control loop, consumer: SD writer)
 
 Rule: control loop must never block. On overflow, drop and count (per-buffer counters).
 
