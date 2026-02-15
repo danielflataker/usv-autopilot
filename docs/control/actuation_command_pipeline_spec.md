@@ -1,35 +1,261 @@
-# Actuation command pipeline spec (V1.1 draft)
+# Actuation command pipeline spec (V1.2 draft)
 
-This document defines the end-to-end actuation command pipeline with one canonical set of names and symbols.
-The goal is a stable structure that stays clean when small features are added later.
+This document defines canonical notation and stage contracts for actuation.
+The goal is unambiguous definitions for space, basis, stage, and transformation.
 
 ## Scope
-- Applies to both `AUTOPILOT` and `MANUAL` command paths
+- Applies to `AUTOPILOT` and `MANUAL` actuation paths
 - Defines stage-by-stage inputs/outputs
-- Defines where command scaling is applied
-- Defines canonical symbols, field names, and parameter names
+- Defines spaces, bases, and basis changes
+- Defines clamping operators and clamp points
+- Defines canonical math symbols and software variable names
 
 ## Design goals
-1. One canonical naming scheme across control, mixer, logging, telemetry, and simulation.
-2. One shared backend pipeline for `AUTOPILOT` and `MANUAL` after source-specific shaping.
-3. Separation of concerns:
-   - command shaping (operator/controller feel)
+1. Use one naming convention across control, mixer, logging, telemetry, and simulation.
+2. Keep one shared backend pipeline after source-specific shaping.
+3. Keep separation of concerns:
+   - command shaping (source feel/sensitivity)
    - feasibility and priority (allocator)
-   - motor safety/physical enforcement (motor shaping + ESC mapping)
-4. Anti-windup based on achieved actuation (`u_*^{ach}`), not guessed limits.
+   - motor-side safety and enforcement (motor clamp/slew + ESC output)
+4. Define anti-windup residuals with explicit space semantics.
 
-## Canonical symbols and names
+## Conventions
 
-### Core actuation variables
-| Stage | Math symbol | Field names | Description |
+### Spaces
+| Space | Symbol | Meaning |
+|---|---|---|
+| Request space | $\mathcal{R}$ | Source intent. `0` means zero requested throttle on an axis. `1` means maximum allowed request on that axis. |
+| Hardware-normalized space | $\mathcal{H}$ | Actuator-relative command. `1` means hardware absolute maximum on that axis. |
+
+Notes:
+- Exactly two spaces are used: $\mathcal{R}$ and $\mathcal{H}$.
+- Limits/clamps define feasible subsets inside a space. They do not define a new space.
+
+### Bases
+| Basis | Space | Vector form | Meaning |
 |---|---|---|---|
-| Source request | $u_s^{req}, u_d^{req}$ | `u_s_req`, `u_d_req` (`ACTUATOR_REQ`) | Raw request from controller or RC mapping |
-| Command-stage output | $u_s^{cmd}, u_d^{cmd}$ | `u_s_cmd`, `u_d_cmd` (`ACTUATOR_CMD`) | Shaped request forwarded to allocator |
-| Allocator output | $u_s^{alloc}, u_d^{alloc}$ | `u_s_alloc`, `u_d_alloc` (optional debug) | Feasible command before motor-stage shaping |
-| Achieved output | $u_s^{ach}, u_d^{ach}$ | `u_s_ach`, `u_d_ach` (`MIXER_FEEDBACK`) | Final achieved command after motor constraints |
-| Motor outputs | $u_L, u_R$ | `u_L`, `u_R` (`ESC_OUTPUT`) | Per-motor normalized command after limits |
+| Surge/differential basis | $\mathcal{H}$ | $\mathbf{u}=[u_s,\ u_d]^\top$ | System-level actuation coordinates |
+| Left/right motor basis | $\mathcal{H}$ | $\mathbf{m}=[u_L,\ u_R]^\top$ | Per-motor actuation coordinates |
 
-### Limit parameters
+Notes:
+- Bases are coordinate systems inside $\mathcal{H}$, not separate spaces.
+
+### Stages
+| Stage | Symbol | Output space | Output basis | Canonical software variables |
+|---|---|---|---|---|
+| Source request | $req$ | $\mathcal{R}$ | surge/differential | `u_s_req`, `u_d_req` (`ACTUATOR_REQ`) |
+| Command stage | $cmd$ | $\mathcal{H}$ | surge/differential | `u_s_cmd`, `u_d_cmd` (`ACTUATOR_CMD`) |
+| Allocator stage | $alloc$ | $\mathcal{H}$ | surge/differential | `u_s_alloc`, `u_d_alloc` (optional diagnostics) |
+| Motor raw stage | $raw$ | $\mathcal{H}$ | left/right | `u_L_raw`, `u_R_raw` (internal) |
+| Motor achieved stage | $ach$ | $\mathcal{H}$ | left/right | `u_L_ach`, `u_R_ach` (internal or optional diagnostics) |
+| Feedback stage | $ach$ | $\mathcal{H}$ | surge/differential | `u_s_ach`, `u_d_ach` (`MIXER_FEEDBACK`) |
+
+Stage invariants:
+- `req` is always in $\mathcal{R}$.
+- `cmd`, `alloc`, `raw`, and `ach` are always in $\mathcal{H}$.
+
+### Software naming rules
+Use `<axis>_<stage>` for scalar fields.
+
+| Concept | Canonical names |
+|---|---|
+| Request-stage surge/differential | `u_s_req`, `u_d_req` |
+| Command-stage surge/differential | `u_s_cmd`, `u_d_cmd` |
+| Allocator-stage surge/differential | `u_s_alloc`, `u_d_alloc` |
+| Motor basis raw/achieved | `u_L_raw`, `u_R_raw`, `u_L_ach`, `u_R_ach` |
+| Feedback-stage surge/differential achieved | `u_s_ach`, `u_d_ach` |
+
+## Transformations
+
+### Basis change inside hardware-normalized space
+From surge/differential to left/right:
+
+```math
+\mathbf{m} = \mathbf{B}\mathbf{u}, \quad
+\mathbf{B} =
+\begin{bmatrix}
+1 & -1 \\
+1 & 1
+\end{bmatrix}
+```
+
+Inverse:
+
+```math
+\mathbf{u} = \mathbf{B}^{-1}\mathbf{m}, \quad
+\mathbf{B}^{-1} = \frac{1}{2}
+\begin{bmatrix}
+1 & 1 \\
+-1 & 1
+\end{bmatrix}
+```
+
+### Request-to-command mapping
+
+```math
+\mathbf{u}^{cmd,raw} = \Phi_{mode}\!\left(\mathbf{u}^{req}\right),
+\quad
+\mathbf{u}^{req} = [u_s^{req}, u_d^{req}]^\top \in \mathcal{R}
+```
+
+### Clamping operators
+Scalar clamp:
+
+```math
+\mathrm{clip}(x;\ell,h) = \min(\max(x,\ell), h)
+```
+
+Vector clamp applies scalar clamp componentwise.
+
+Command-stage clamp in surge/differential basis:
+
+```math
+\mathbf{u}^{cmd} = C_{cmd}\!\left(\mathbf{u}^{cmd,raw}\right)
+```
+
+Motor-stage clamp in left/right basis:
+
+```math
+\mathbf{m}^{lim} = C_{mot}\!\left(\mathbf{m}^{raw}\right)
+```
+
+### End-to-end stage equations
+
+```math
+\mathbf{u}^{cmd,raw} = \Phi_{mode}\!\left(\mathbf{u}^{req}\right)
+```
+
+```math
+\mathbf{u}^{cmd} = C_{cmd}\!\left(\mathbf{u}^{cmd,raw}\right)
+```
+
+```math
+\mathbf{u}^{alloc} = \mathcal{A}\!\left(\mathbf{u}^{cmd};\ \text{policy}\right)
+```
+
+```math
+\mathbf{m}^{raw} = \mathbf{B}\mathbf{u}^{alloc}
+```
+
+```math
+\mathbf{m}^{lim} = C_{mot}\!\left(\mathbf{m}^{raw}\right)
+```
+
+```math
+\mathbf{m}^{ach} = S\!\left(\mathbf{m}^{lim}, \mathbf{m}^{ach}_{k-1}, \Delta t\right)
+```
+
+```math
+\mathbf{u}^{ach} = \mathbf{B}^{-1}\mathbf{m}^{ach}
+```
+
+## Pipeline definition
+
+## Stage 0 - source generation
+Purpose: produce request-stage actuation.
+
+Inputs:
+- `AUTOPILOT`: controller outputs mapped into request space
+- `MANUAL`: RC channels mapped into request space
+
+Output:
+- $\mathbf{u}^{req}$ via `ACTUATOR_REQ`
+
+Rules:
+- No feasibility logic in this stage.
+- No motor output write in this stage.
+
+## Stage 1 - command shaping (mode-specific)
+Purpose: map request space into hardware-normalized command stage.
+
+Inputs:
+- $\mathbf{u}^{req}$
+- shaping parameters (`k_s`, `k_d`, deadband/expo settings)
+- command envelopes
+
+Output:
+- $\mathbf{u}^{cmd}$ via `ACTUATOR_CMD`
+
+Rules:
+- Own source feel/sensitivity and command-stage envelope clamp.
+- Expose enough local mapping information for anti-windup adaptation when needed.
+
+## Stage 2 - allocator (policy + feasibility)
+Purpose: enforce feasibility and priority in surge/differential basis.
+
+Inputs:
+- $\mathbf{u}^{cmd}$
+- software and hardware limit settings
+- allocator policy
+
+Output:
+- $\mathbf{u}^{alloc}$
+
+Policy contract:
+- `ALLOC_SPEED_PRIORITY`: preserve surge first, reduce differential as needed
+- `ALLOC_YAW_PRIORITY`: preserve differential first, reduce surge as needed
+- `ALLOC_WEIGHTED`: minimize weighted command error under constraints
+
+## Stage 3 - basis change + motor clamp/slew
+Purpose: convert to motor basis and enforce motor-side constraints.
+
+Inputs:
+- $\mathbf{u}^{alloc}$
+- motor envelopes/bounds, trims, slew parameters
+
+Operations:
+1. Basis change to motor coordinates: $\mathbf{m}^{raw} = \mathbf{B}\mathbf{u}^{alloc}$
+2. Apply trim/calibration
+3. Clamp motor commands: $\mathbf{m}^{lim} = C_{mot}(\mathbf{m}^{raw})$
+4. Apply slew/idle policy to get $\mathbf{m}^{ach}$
+
+Outputs:
+- `ESC_OUTPUT` from motor-stage achieved values
+- optional motor diagnostics (`u_L_ach`, `u_R_ach`)
+
+## Stage 4 - feedback reconstruction and anti-windup residual
+Purpose: publish achieved command and saturation state.
+
+Outputs:
+- `MIXER_FEEDBACK`: `u_s_ach`, `u_d_ach`, `sat_L`, `sat_R`, `sat_any`
+- optional diagnostics: stage saturation flags and effective limits
+
+Control rule:
+- Define anti-windup residual in hardware-normalized space:
+
+```math
+\mathbf{e}_{aw}^{\mathcal{H}} = \mathbf{u}^{ach} - \mathbf{u}^{cmd}
+```
+
+- Do not compare $\mathbf{u}^{ach}$ directly with $\mathbf{u}^{req}$ without mapping.
+
+## Space mapping contract
+
+Request-to-command mapping function:
+- `act_space_req_to_cmd()`
+- implements $\Phi_{mode}$
+
+Command-to-request approximate inverse function:
+- `act_space_cmd_to_req_approx()`
+- implements local inverse/pseudo-inverse behavior when needed
+
+Per-cycle mapping context:
+- `act_space_ctx_t`
+  - effective local slopes/gains used this cycle
+  - shaping-stage clamp/region flags
+  - mode/source tag
+
+Recommended controller-space adaptation:
+
+```math
+\mathbf{e}_{aw}^{\mathcal{R}} \approx \mathbf{J}_{\Phi}^{-1}\mathbf{e}_{aw}^{\mathcal{H}}
+```
+
+where $\mathbf{J}_{\Phi}$ is local Jacobian/slope of $\Phi_{mode}$.
+
+Approximate inverse is required in nonlinear/clamped regions.
+
+## Limit and parameter conventions
 | Category | Math symbol | Parameter names |
 |---|---|---|
 | Hardware motor bounds | $u_{LR,min}, u_{LR,max}$ | `act.hw.u_LR_min`, `act.hw.u_LR_max` |
@@ -37,133 +263,37 @@ The goal is a stable structure that stays clean when small features are added la
 | Software surge envelope | $u_s^{min}, u_s^{max}$ | `act.sw.u_s_min`, `act.sw.u_s_max` |
 | Software differential envelope | $u_{d,max}^{-}, u_{d,max}^{+}$ | `act.sw.u_d_max_neg`, `act.sw.u_d_max_pos` |
 
-### Scaling parameters (new)
-| Mode | Math symbol | Parameter names | Description |
-|---|---|---|---|
-| AUTOPILOT surge scale | $k_s^{ap}$ | `act.shp.ap.u_s_scale` | Optional global attenuation of surge request |
-| AUTOPILOT differential scale | $k_d^{ap}$ | `act.shp.ap.u_d_scale` | Optional global attenuation of differential request |
-| MANUAL surge scale | $k_s^{man}$ | `act.shp.man.u_s_scale` | RC feel/safety scaling in surge axis |
-| MANUAL differential scale | $k_d^{man}$ | `act.shp.man.u_d_scale` | RC feel/safety scaling in yaw axis |
-
-Scaling gains are dimensionless and default to `1.0`.
-
-## Pipeline definition
-
-## Stage 0 — source generation
-Purpose: produce raw actuation request.
-
-Inputs:
-- `AUTOPILOT`: controller outputs (`u_s_raw`, `u_d_raw`) from speed/yaw loops
-- `MANUAL`: RC channels mapped to normalized request axes
-
-Outputs:
-- $u_s^{req}, u_d^{req}$
-
-Rules:
-- Stage 0 contains no feasibility logic.
-- Stage 0 does not write motor outputs.
-
-## Stage 1 — command shaping (mode-specific)
-Purpose: shape request before allocator.
-
-Detailed stage definition is documented in [command_shaping.md](command_shaping.md).
-
-Inputs:
-- $u_s^{req}, u_d^{req}$
-- mode-specific shaping parameters
-- command envelopes
-
-Output:
-- $u_s^{cmd}, u_d^{cmd}$ (`ACTUATOR_CMD`)
-
-Command shaping owns source feel/sensitivity and pre-allocation command envelopes.
-
-## Stage 2 — allocator (policy + feasibility)
-Purpose: enforce feasibility and priority policy in $(u_s,u_d)$ space.
-
-Inputs:
-- $u_s^{cmd}, u_d^{cmd}$
-- software motor envelope and hardware motor bounds
-- allocator policy (`ALLOC_SPEED_PRIORITY`, `ALLOC_YAW_PRIORITY`, later `ALLOC_WEIGHTED`)
-
-Output:
-- $u_s^{alloc}, u_d^{alloc}$
-
-Policy contract:
-- `ALLOC_SPEED_PRIORITY`: preserve $u_s$ first, reduce $u_d$ as needed
-- `ALLOC_YAW_PRIORITY`: preserve $u_d$ first, reduce $u_s$ as needed
-- `ALLOC_WEIGHTED`: minimize weighted command error under constraints
-
-## Stage 3 — mixer + motor-stage shaping
-Purpose: convert allocator output to per-motor command and enforce motor-side constraints.
-
-Inputs:
-- $u_s^{alloc}, u_d^{alloc}$
-- motor envelopes/bounds, trims, slew parameters
-
-Operations (ordered):
-1. Mix:
-   - $u_L = u_s^{alloc} - u_d^{alloc}$
-   - $u_R = u_s^{alloc} + u_d^{alloc}$
-2. Apply trims/calibration
-3. Clamp to motor envelope and hardware bounds
-4. Apply idle/deadband and slew-rate limits
-
-Outputs:
-- `ESC_OUTPUT`: $u_L, u_R$
-- achieved stage reconstructed from outputs:
-  - $u_s^{ach} = 0.5(u_L + u_R)$
-  - $u_d^{ach} = 0.5(u_R - u_L)$
-
-## Stage 4 — feedback for control/logging
-Purpose: publish achieved values and saturation state.
-
-Outputs:
-- `MIXER_FEEDBACK`: `u_s_ach`, `u_d_ach`, `sat_L`, `sat_R`, `sat_any`
-- optional diagnostics:
-  - `sat_cmd_stage`, `sat_alloc`, `sat_motor_stage`
-  - `u_s_max_eff`, `u_d_max_pos_eff`, `u_d_max_neg_eff`, `u_LR_max_eff`, `u_LR_min_eff`
-
-Control rule:
-- Anti-windup uses achieved-vs-commanded deltas:
-  - $u_s^{ach} - u_s^{cmd}$
-  - $u_d^{ach} - u_d^{cmd}$
-
-## Scaling policy by mode
-
-### AUTOPILOT
-- Default: $k_s^{ap}=1.0$, $k_d^{ap}=1.0$.
-- Primary safety/behavior control remains limits + allocator policy.
-- Scaling is available as an explicit tuning knob, not as a substitute for feasibility handling.
-
-### MANUAL
-- Default: reduced yaw sensitivity is allowed through $k_d^{man} < 1.0$.
-- Full-stick behavior is tuned in command shaping, not by bypassing allocator.
-- Backend stages (allocator, mixer, motor shaping, feedback) remain shared with autopilot.
+Mode scaling parameters:
+| Mode | Math symbol | Parameter names |
+|---|---|---|
+| AUTOPILOT surge | $k_s^{ap}$ | `act.shp.ap.u_s_scale` |
+| AUTOPILOT differential | $k_d^{ap}$ | `act.shp.ap.u_d_scale` |
+| MANUAL surge | $k_s^{man}$ | `act.shp.man.u_s_scale` |
+| MANUAL differential | $k_d^{man}$ | `act.shp.man.u_d_scale` |
 
 ## Invariants and validation rules
 1. `act.hw.u_LR_min <= act.sw.u_LR_min <= act.sw.u_LR_max <= act.hw.u_LR_max`
-2. `act.sw.u_d_max_neg >= 0`, `act.sw.u_d_max_pos >= 0`
-3. `act.shp.*.u_s_scale >= 0`, `act.shp.*.u_d_scale >= 0`
-4. `ACTUATOR_CMD` always carries `u_s_cmd`, `u_d_cmd` after command shaping
-5. Anti-windup always uses `MIXER_FEEDBACK` achieved values
+2. `act.sw.u_d_max_neg >= 0` and `act.sw.u_d_max_pos >= 0`
+3. `act.shp.*.u_s_scale >= 0` and `act.shp.*.u_d_scale >= 0`
+4. `ACTUATOR_REQ` carries request-stage values in $\mathcal{R}$
+5. `ACTUATOR_CMD` carries command-stage values in $\mathcal{H}$
+6. Anti-windup residual is defined in $\mathcal{H}$
 
 ## Integration plan (documentation-first)
-1. Add this spec and make it the naming reference for actuation pipeline changes.
-2. Update `control/overview.md` and `control/mixer_and_limits.md` to link this spec as canonical stage definition.
-3. Keep `interfaces/contracts.md` and `interfaces/dataflow.md` aligned with `ACTUATOR_REQ` + `ACTUATOR_CMD` stage contracts.
-4. Add logging field plan for optional `u_*_req` and `u_*_alloc` visibility.
-5. Implement in code in small steps: Stage 1 shaping first, then allocator policy parameterization, then diagnostics.
+1. Keep this file as canonical naming reference.
+2. Keep `control/overview.md` and `control/mixer_and_limits.md` aligned with these definitions.
+3. Keep `interfaces/contracts.md` and `interfaces/dataflow.md` aligned with stage/topic contracts.
+4. Add logging plan for optional allocator and motor-basis diagnostics.
+5. Implement in code in small steps after doc alignment.
 
 ## Docs consistency check
-
-A lightweight naming check is available to catch drift across core documents:
+A lightweight naming check exists:
 
 ```bash
 python tools/check_docs_contracts.py
 ```
 
-The script validates required topics (`ACTUATOR_REQ`, `ACTUATOR_CMD`, `MIXER_FEEDBACK`) and stage naming (`req/cmd/alloc/ach`) across:
+Current checker scope validates topic/stage names (`req/cmd/alloc/ach`) across:
 - `docs/interfaces/contracts.md`
 - `docs/interfaces/dataflow.md`
 - `docs/control/mixer_and_limits.md`

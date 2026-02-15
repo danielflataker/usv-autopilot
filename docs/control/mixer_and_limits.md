@@ -1,6 +1,10 @@
 # Mixer, allocator, and limits (V1)
 
 This page defines the backend actuation pipeline from command-stage inputs $(u_s^{cmd},u_d^{cmd})$ to per-motor outputs $(u_L,u_R)$, and where saturation/feedback is generated.
+This module operates in hardware-normalized space only.
+It uses two coordinate bases inside that space:
+- surge/differential basis: $(u_s,u_d)$
+- left/right motor basis: $(u_L,u_R)$
 
 Canonical stage-by-stage I/O and naming rules are defined in [actuation_command_pipeline_spec.md](actuation_command_pipeline_spec.md).
 
@@ -14,7 +18,7 @@ Goal: V1 keeps allocation policy swappable (speed-priority, yaw-priority, later 
 
 ## Inputs / outputs
 Inputs:
-- $(u_s^{cmd},u_d^{cmd})$ from command shaping via `ACTUATOR_CMD -> actuator_cmd_t` (`u_s_cmd`, `u_d_cmd`)
+- $(u_s^{cmd},u_d^{cmd})$ from command shaping via `ACTUATOR_CMD -> actuator_cmd_t`
 - motor limits + policy params + $\Delta t$
 
 Outputs:
@@ -172,6 +176,25 @@ u_d^{ach} = \tfrac12(u_R-u_L).
 
 Sign convention (explicit): positive differential command means right motor command is larger than left motor command ($u_R>u_L$).
 
+Matrix form:
+
+```math
+\begin{bmatrix}u_L\\u_R\end{bmatrix}=
+\begin{bmatrix}
+1 & -1 \\
+1 & 1
+\end{bmatrix}
+\begin{bmatrix}u_s^{alloc}\\u_d^{alloc}\end{bmatrix},
+\qquad
+\begin{bmatrix}u_s^{ach}\\u_d^{ach}\end{bmatrix}=
+\frac{1}{2}
+\begin{bmatrix}
+1 & 1 \\
+-1 & 1
+\end{bmatrix}
+\begin{bmatrix}u_L\\u_R\end{bmatrix}.
+```
+
 ## 3) Shaping (limits, idle, slew)
 
 Shaping is applied to $(u_L,u_R)$ after mixing.
@@ -215,6 +238,11 @@ Controllers then do anti-windup using either:
 * Freeze/clamp integration when saturated in the "wrong" direction, or
 * Back-calculation (tracking): use $(u_*^{ach}-u_*^{cmd})$.
 
+Use only same-space deltas for anti-windup.
+Define saturation residual in hardware-normalized space first: $(u_*^{ach}-u_*^{cmd})$.
+If the receiving controller state is in request space, convert residuals through the request<->command mapping before applying anti-windup.
+Do not compare request-stage values directly to achieved outputs without mapping.
+
 ### Recommended signal stages
 
 Keep the signal set small so it is easy to reason about saturation.
@@ -226,7 +254,7 @@ Required in V1 control logic:
 2. Final achieved command (`u_*^{ach}` from final motor outputs)
    - what was actually sent to the plant
 
-These two are enough for anti-windup and for analyzing "requested vs achieved" behavior.
+These two are enough for anti-windup and for analyzing command-vs-achieved behavior.
 
 Optional intermediate stage:
 
@@ -237,9 +265,11 @@ Treat `u_*^{alloc}` as debug/tuning data, not as a required control input.
 V1 tracks command (`u_*^{cmd}`) and final achieved output (`u_*^{ach}`) as mandatory signals; allocator-stage signals are optional diagnostics.
 
 Notation reminder (for consistency across docs):
+- $u_*^{req}$: request-stage value in request space (`ACTUATOR_REQ`)
 - $u_*^{cmd}$: command-stage output from command shaping (`ACTUATOR_CMD`)
 - $u_*^{alloc}$: allocator output before motor-stage shaping (optional debug/tuning)
 - $u_*^{ach}$: final achieved command returned by mixer/limits (`MIXER_FEEDBACK`)
+- optional derived value: $u_*^{ach,req}$ (request-equivalent achieved value for analysis or controller-space adaptation)
 
 ## About thrust/force models and unit conversions
 

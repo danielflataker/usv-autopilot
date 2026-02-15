@@ -55,9 +55,21 @@ To make dataflow explicit, name the *thing being published* (topic) and the stru
   - timestamp: `t_us`
 
 ### Control / actuation
+- Space convention for actuation:
+  - request space `R`: `req` stage only
+  - hardware-normalized space `H`: `cmd`, `alloc`, `ach`, and motor commands
+  - two bases exist inside `H`: surge/differential (`u_s,u_d`) and left/right (`u_L,u_R`)
+  - anti-windup residual is defined in `H`
+
+- Stage-to-topic convention:
+  - request stage (`R`, surge/differential): `ACTUATOR_REQ`
+  - command stage (`H`, surge/differential): `ACTUATOR_CMD`
+  - feedback stage (`H`, surge/differential): `MIXER_FEEDBACK`
+  - motor output stage (`H`, left/right): `ESC_OUTPUT`
+
 - `actuator_req_t` (published by source logic, consumed by command shaping)
   - canonical request-stage fields: `u_s_req`, `u_d_req`
-    - math form in this stage: $u_s^{req}, u_d^{req}$
+    - math form in this stage: $u_s^{req}, u_d^{req}$ in request space `R`
     - `u_s_req` is raw average request from controller or RC mapping
     - `u_d_req` is raw differential request (positive means right-turn demand)
   - source metadata: `src` (`ACT_SRC_AUTOPILOT`, `ACT_SRC_MANUAL`, `ACT_SRC_TEST`)
@@ -66,7 +78,7 @@ To make dataflow explicit, name the *thing being published* (topic) and the stru
 
 - `actuator_cmd_t` (published by command shaping, consumed by allocator/mixer)
   - canonical command-stage fields: `u_s_cmd`, `u_d_cmd`
-    - math form in this stage: $u_s^{cmd}, u_d^{cmd}$
+    - math form in this stage: $u_s^{cmd}, u_d^{cmd}$ in hardware-normalized space `H`
     - `u_s_cmd` is shaped average command after scaling/deadband/command-envelope clamp
     - `u_d_cmd` is shaped differential command after scaling/deadband/command-envelope clamp
   - shaping metadata (optional): `k_s_mode`, `k_d_mode`
@@ -84,12 +96,12 @@ To make dataflow explicit, name the *thing being published* (topic) and the stru
   - `ALLOC_WEIGHTED` (later)
 
 - `mixer_feedback_t` (published by mixer/limits, consumed by controllers for anti-windup)
-  - achieved commands after mixing + clamping:
+  - achieved surge/differential commands in hardware-normalized space:
     - `u_s_ach`, `u_d_ach`
   - saturation flags:
     - `sat_L`, `sat_R`, `sat_any`
     - optional extension: `sat_cmd_stage`, `sat_alloc`, `sat_motor_stage`
-  - optional: `u_L_ach`, `u_R_ach` (only if needed for debugging/logging)
+  - optional: `u_L_ach`, `u_R_ach` (motor-basis diagnostics)
   - optional: effective limits used this cycle (`u_s_max_eff`, `u_d_max_pos_eff`, `u_d_max_neg_eff`, `u_LR_max_eff`, `u_LR_min_eff`)
   - timestamp: `t_us`
 
@@ -98,13 +110,15 @@ Guideline for signal count (to avoid naming overload):
 - Optional for debugging only: intermediate allocator-stage terms (e.g. `u_*_alloc`)
 
 - `esc_output_t` (final output to hardware)
-  - per-motor commands: `u_L`, `u_R` (normalized internal convention, achieved after limits)
+  - per-motor commands: `u_L`, `u_R` (hardware-normalized, left/right basis)
   - arm/disarm + output validity
   - timestamp: `t_us`
 
 Notes:
 - ESC reverse/non-reverse mapping is handled by the ESC driver, not by the controller.
-- Anti-windup uses `u_s_ach` / `u_d_ach` (or `sat_any`) against command-stage values `u_s_cmd` / `u_d_cmd`.
+- Anti-windup residual is computed in hardware-normalized space:
+  - $(u_s^{ach} - u_s^{cmd})$, $(u_d^{ach} - u_d^{cmd})$
+- If a controller integrates in request space, map residuals through the request<->command map before updating integrators.
 
 ## Modes / state machine
 - `mode_t`: enum of modes (manual, autopilot, tests, abort, idle, ...)
