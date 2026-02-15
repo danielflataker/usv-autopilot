@@ -13,6 +13,41 @@ Deep dives live elsewhere:
 - Logging: [logging/overview.md](logging/overview.md)
 - Comms/telemetry: [comms/overview.md](comms/overview.md)
 
+## System context (L0)
+This Level-0 diagram shows system boundaries: operator interfaces, radio links, and the main onboard subsystems.
+Detailed sensor, wiring, and power topology belong in dedicated diagrams.
+
+```mermaid
+flowchart LR
+    OP[Operator]
+    RC_TX[RC transmitter]
+    GCS[Ground station<br/>QGC]
+    SIK_GND[SiK modem<br/>ground]
+
+    subgraph BOAT[Boat]
+        SIK_BOAT[SiK modem<br/>boat]
+        RC_RX[RC receiver]
+        MCU[STM32 autopilot<br/>estimation -> guidance -> control]
+        SNS[Sensors<br/>IMU, GNSS, battery]
+        LOG[SD logging]
+        ACT[ESCs + motors]
+    end
+
+    OP --> RC_TX
+    OP --> GCS
+
+    GCS <--> SIK_GND
+    SIK_GND <-->|SiK radio| SIK_BOAT
+    RC_TX <-->|RC radio| RC_RX
+
+    RC_RX -->|SBUS/PWM| MCU
+    SIK_BOAT -->|UART uplink| MCU
+    MCU -->|UART downlink| SIK_BOAT
+    SNS --> MCU
+    MCU --> LOG
+    MCU -->|PWM/DSHOT| ACT
+```
+
 ## System overview (STM32)
 
 ### Main tasks (V1)
