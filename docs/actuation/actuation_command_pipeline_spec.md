@@ -292,7 +292,7 @@ Mode scaling parameters:
 
 ## Integration plan (documentation-first)
 1. Keep this file as canonical naming reference.
-2. Keep `control/overview.md` and `control/mixer_and_limits.md` aligned with these definitions.
+2. Keep `control/overview.md` and `actuation/mixer_and_limits.md` aligned with these definitions.
 3. Keep `interfaces/contracts.md` and `interfaces/dataflow.md` aligned with stage/topic contracts.
 4. Add logging plan for optional allocator and motor-basis diagnostics.
 5. Implement in code in small steps after doc alignment.
@@ -307,4 +307,4 @@ python tools/check_docs_contracts.py
 Current checker scope validates topic/stage names (`req/cmd/alloc/ach`) across:
 - `docs/interfaces/contracts.md`
 - `docs/interfaces/dataflow.md`
-- `docs/control/mixer_and_limits.md`
+- `docs/actuation/mixer_and_limits.md`

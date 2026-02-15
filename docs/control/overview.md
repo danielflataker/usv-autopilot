@@ -1,6 +1,7 @@
 # Control overview (V1)
 
-This folder describes the V1 control stack: track heading and speed, then map to left/right motor commands for a twin-prop boat (no rudder).
+This folder covers controller logic that generates request-stage actuation.
+Shared backend actuation pipeline docs (command shaping, allocator, mixer, and limits) live in `docs/actuation/`.
 
 Inputs:
 - references from [docs/guidance/](../guidance/overview.md)
@@ -16,13 +17,15 @@ Allocator and mixer then operate in hardware-normalized space using two bases:
 - surge/differential basis: $(u_s,u_d)$
 - left/right basis: $(u_L,u_R)$
 
-Final motor mapping is defined in [mixer_and_limits.md](mixer_and_limits.md).
+Final motor mapping is defined in [../actuation/mixer_and_limits.md](../actuation/mixer_and_limits.md).
 
-## Files
+## Controller files
 - [cascaded_heading_yawrate.md](cascaded_heading_yawrate.md) - yaw control: $e_\psi \rightarrow r_d \rightarrow u_d^{req}$
 - [speed_controller.md](speed_controller.md) - speed control: $e_v \rightarrow u_s^{req}$
-- [command_shaping.md](command_shaping.md) - $\mathbf{q} \rightarrow (u_s^{cmd},u_d^{cmd})$ with scaling/deadband/envelope clamp
-- [mixer_and_limits.md](mixer_and_limits.md) - $(u_s^{cmd},u_d^{cmd}) \rightarrow (u_L,u_R)$ + clamp/idle/slew
+
+## Related actuation backend docs
+- [../actuation/command_shaping.md](../actuation/command_shaping.md) - $\mathbf{q} \rightarrow (u_s^{cmd},u_d^{cmd})$ with scaling/deadband/envelope clamp
+- [../actuation/mixer_and_limits.md](../actuation/mixer_and_limits.md) - $(u_s^{cmd},u_d^{cmd}) \rightarrow (u_L,u_R)$ + clamp/idle/slew
 
 ## V1 control pipeline (short)
 1) Guidance provides $\psi_d$ and $v_d$
@@ -30,7 +33,7 @@ Final motor mapping is defined in [mixer_and_limits.md](mixer_and_limits.md).
 3) Command shaping computes command stage $(u_s^{cmd},u_d^{cmd})$
 4) Allocator + mixer + limits produce $(u_L,u_R)$ and feedback $(u_s^{ach},u_d^{ach})$
 
-Detailed stage definitions and naming invariants are specified in [actuation_command_pipeline_spec.md](actuation_command_pipeline_spec.md).
+Detailed stage definitions and naming invariants are specified in [../actuation/actuation_command_pipeline_spec.md](../actuation/actuation_command_pipeline_spec.md).
 
 ## Notes
 - Command clipping can occur at command stage, and motor clipping can occur after mixing in the motor stage.

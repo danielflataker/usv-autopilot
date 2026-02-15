@@ -32,7 +32,7 @@ Anti-windup (choose one implementation):
 - freeze integrator when saturated and $e_v$ pushes further into saturation
 - back-calculation (more work, smoother)
 
-(Exact clamp/slew is handled in `mixer_and_limits.md`, but the controller still needs an anti-windup rule.)
+(Exact clamp/slew is handled in `../actuation/mixer_and_limits.md`, but the controller still needs an anti-windup rule.)
 
 ## Special cases / validity
 - If $\hat v$ is flagged invalid (estimator unhealthy), optionally fall back to GNSS ground speed when available and above a minimum speed.
