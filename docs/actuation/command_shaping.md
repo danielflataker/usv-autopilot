@@ -1,6 +1,6 @@
 # Command shaping (V1)
 
-This module converts request-stage actuation $(u_s^{req},u_d^{req})$ into command-stage actuation $(u_s^{cmd},u_d^{cmd})$ before allocator feasibility logic.
+This module maps request-stage actuation vector $\mathbf{q}$ in request space to command-stage actuation in hardware-normalized space before allocator feasibility logic.
 
 ## Scope
 - Applies to both `AUTOPILOT` and `MANUAL`
@@ -20,20 +20,28 @@ This module converts request-stage actuation $(u_s^{req},u_d^{req})$ into comman
 ## Outputs
 - `ACTUATOR_CMD -> actuator_cmd_t`
   - `u_s_cmd`, `u_d_cmd`
+  - surge/differential basis in hardware-normalized space
 
 ## Stage definition
 
 The command-shaping stage runs the following ordered operations:
 
-1. Optional deadband/expo on request axes (typically used for `MANUAL` source)
-2. Axis scaling
+1. Request-stage input vector:
+   - $\mathbf{q}=[u_s^{req},u_d^{req}]^\top$
+2. Optional deadband/expo on request axes (typically used for `MANUAL` source)
+3. Axis scaling
    - $\tilde u_s = k_s^{mode} u_s^{req}$
    - $\tilde u_d = k_d^{mode} u_d^{req}$
-3. Command-envelope clamp
+4. Build raw command-stage vector:
+   - $\mathbf{u}^{cmd,raw} = [\tilde u_s,\tilde u_d]^\top$
+5. Command-envelope clamp
    - $u_s^{cmd} \in [u_s^{min},u_s^{max}]$
    - $u_d^{cmd} \in [-u_{d,max}^{-},u_{d,max}^{+}]$
+   - equivalently, $\mathbf{u}^{cmd} = C_{cmd}(\mathbf{u}^{cmd,raw})$
 
 The output of this stage is always command-stage naming: `u_s_cmd`, `u_d_cmd`.
+The output of this stage is always hardware-normalized space.
+This stage should expose enough mapping context to adapt anti-windup residuals when controller internals are in request space.
 
 ## Responsibility split
 - Command shaping owns mode feel, attenuation, and pre-allocation command limits.
@@ -43,10 +51,8 @@ The output of this stage is always command-stage naming: `u_s_cmd`, `u_d_cmd`.
 ## Invariants
 - `u_s_cmd` and `u_d_cmd` always satisfy command envelopes.
 - Stage output naming is canonical and stable across docs/tools:
-  - request: `u_*_req`
-  - command: `u_*_cmd`
-  - allocator (optional diagnostics): `u_*_alloc`
-  - achieved: `u_*_ach`
+  - request stage in request space: `u_*_req`
+  - command/allocator/achieved stages in hardware-normalized space: `u_*_cmd`, `u_*_alloc`, `u_*_ach`
 
 ## Logging and diagnostics
 - `REC_ACTUATOR_REQ` stores request-stage values (`u_s_req`, `u_d_req`, `src`).

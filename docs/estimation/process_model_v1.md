@@ -5,7 +5,7 @@ This is the baseline process model used by the EKF in V1. It's deliberately simp
 ## Assumptions
 - Planar motion (roll/pitch ignored).
 - Forward speed $v$ is along heading $\psi$ (no sway state in V1).
-- Motor commands are normalized (e.g. $u_L,u_R \in [-1,1]$).
+- Motor commands are hardware-normalized in motor basis: $u_L,u_R \in [u_{LR,min},u_{LR,max}]$ (typically `[-1,1]` with reverse or `[0,1]` without reverse).
 - For estimation, these represent achieved actuation (not raw requested controller command before limits).
 - Unmodelled effects (waves, current, thrust nonlinearity) are handled as process noise (the EKF's stochastic representation of process disturbances/model mismatch).
 

@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DOCS = [
     Path("docs/interfaces/contracts.md"),
     Path("docs/interfaces/dataflow.md"),
-    Path("docs/control/mixer_and_limits.md"),
+    Path("docs/actuation/mixer_and_limits.md"),
 ]
 
 GLOBAL_TOKENS = [
@@ -37,7 +37,7 @@ GLOBAL_TOKENS = [
 PER_FILE_TOKENS = {
     "docs/interfaces/contracts.md": ["actuator_req_t", "actuator_cmd_t", "mixer_feedback_t"],
     "docs/interfaces/dataflow.md": ["publish:", "consume:", "MIXER_FEEDBACK"],
-    "docs/control/mixer_and_limits.md": ["u_s^{alloc}", "u_d^{alloc}", "u_s^{ach}", "u_d^{ach}"],
+    "docs/actuation/mixer_and_limits.md": ["u_s^{alloc}", "u_d^{alloc}", "u_s^{ach}", "u_d^{ach}"],
 }
 
 

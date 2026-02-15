@@ -1,13 +1,13 @@
 # Cascaded heading / yaw-rate control (V1)
 
-Baseline yaw control for a twin-prop boat: an outer loop turns heading error into a desired yaw-rate, and an inner loop tracks yaw-rate using the normalized differential request $u_d^{req}$.
+Baseline yaw control for a twin-prop boat: an outer loop turns heading error into a desired yaw-rate, and an inner loop tracks yaw-rate using the normalized differential request component $u_d^{req}$.
 
 ## Goal
 Track a desired heading $\psi_d$ (from LOS) by commanding $u_d^{req}$.
 
 ## Inputs / outputs
 - Inputs: $\psi_d$, $\psi$, $r$, $\Delta t$
-- Output: $u_d^{req}$ (normalized differential request; command stage is produced later by command shaping)
+- Output: $u_d^{req}$ (normalized differential request component of $\mathbf{q}$; command stage is produced later by command shaping)
 
 ## Core idea
 1) Heading loop: $e_\psi = \mathrm{wrap}(\psi_d - \psi) \rightarrow r_d$  
@@ -49,7 +49,8 @@ Track a desired heading $\psi_d$ (from LOS) by commanding $u_d^{req}$.
 
 ## Saturation + anti-windup (V1)
 
-Actuator saturation happens *after mixing* (motor limits on $u_L,u_R$), so the controllers must use mixer feedback for anti-windup.
+Actuation may clip at command stage and again at motor stage; final achieved actuation is set by motor-stage limits/slew.
+Controllers should use achieved-vs-command residuals in hardware-normalized space for anti-windup.
 
 Contract:
 - `MIXER_FEEDBACK -> mixer_feedback_t` is defined in [docs/interfaces/contracts.md](../interfaces/contracts.md).

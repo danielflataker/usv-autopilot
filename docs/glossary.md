@@ -9,9 +9,11 @@ Quick reference for shared vocabulary across the docs. Math uses $\,\cdot\,$, co
 - $\psi$: heading/yaw angle (convention defined in [architecture.md](architecture.md)).
 - $\mathrm{wrap}(\cdot)$: canonical angle wrapper defined in [architecture.md](architecture.md).
 - For control commands, use superscripts to show stage in the pipeline:
-  - $u_*^{cmd}$: command requested by controller.
+  - $u_*^{req}$: source request component in request-space vector $\mathbf{q}$ (dimensionless, source-defined scaling).
+  - $u_*^{cmd}$: command-stage output from command shaping in hardware-normalized space.
   - $u_*^{ach}$: final command achieved at hardware output stage (after allocator/mixer/limits).
   - $u_*^{alloc}$: optional intermediate allocator-stage command (debug/tuning only).
+  - $u_*^{ach,req}$: optional analysis-only request-equivalent achieved value (not a canonical firmware/log field).
   - $u_*^{*}$: raw/unclamped controller output (before saturation/anti-windup logic).
 - In code/log field names, stage uses explicit suffixes consistently:
   - request stage: `u_s_req`, `u_d_req`
@@ -66,9 +68,10 @@ Key relations:
 | $e_v$ | `e_v` | speed error [m/s] |
 | $u_L$ | `u_L` | left motor command (normalized) |
 | $u_R$ | `u_R` | right motor command (normalized) |
-| $u_s$ | `u_s` | average input (normalized) |
-| $u_d$ | `u_d` | differential input (normalized) |
-| $u_s^{req},u_d^{req}$ | `u_s_req,u_d_req` in `actuator_req_t` | request-stage average/differential input from source logic |
+| $u_s$ | `u_s` | average input in surge/differential basis (hardware-normalized; feasible range depends on motor bounds) |
+| $u_d$ | `u_d` | differential input in surge/differential basis (hardware-normalized; feasible range depends on motor bounds and $u_s$) |
+| $\mathbf{q}=[u_s^{req},u_d^{req}]^\top$ | `u_s_req,u_d_req` in `actuator_req_t` | request-space surge/differential vector from source logic (source-defined scaling; manual is often `[-1,1]`) |
+| $u_s^{req},u_d^{req}$ | `u_s_req,u_d_req` in `actuator_req_t` | scalar components of $\mathbf{q}$ |
 | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd,u_d_cmd` in `actuator_cmd_t` | shaped average/differential command after command-shaping |
 | $u_s^{ach},u_d^{ach}$ | `u_s_ach,u_d_ach` | final achieved average/differential input after limits |
 | $u_s^{alloc},u_d^{alloc}$ | `u_s_alloc,u_d_alloc` (optional) | intermediate allocator-stage output (debug/tuning) |
@@ -81,7 +84,7 @@ To make simulator/hardware swap straightforward, the project uses one canonical 
 
 | Stage | Canonical math | Firmware/log field names | Simulator/process-model names |
 |---|---|---|---|
-| Source request | $u_s^{req},u_d^{req}$ | `u_s_req`,`u_d_req` | request stage from controller/RC mapping |
+| Source request | $\mathbf{q}=[u_s^{req},u_d^{req}]^\top$ | `u_s_req`,`u_d_req` | request stage from controller/RC mapping |
 | Command stage | $u_s^{cmd},u_d^{cmd}$ | `u_s_cmd`,`u_d_cmd` | shaped command used by allocator/mixer and anti-windup reference |
 | Allocator intermediate (optional) | $u_s^{alloc},u_d^{alloc}$ | `u_s_alloc`,`u_d_alloc` | optional debugging/tuning visibility |
 | Achieved actuation | $u_s^{ach},u_d^{ach}$ | `u_s_ach`,`u_d_ach` | required feedback from final output stage |

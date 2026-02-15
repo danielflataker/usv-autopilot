@@ -1,7 +1,7 @@
 # Speed controller (V1)
 
-Purpose: track desired surge speed $v_d$ by producing the average request $u_s^{req}$.
-Yaw control produces $u_d^{req}$ separately; command shaping then maps requests to command-stage terms $(u_s^{cmd},u_d^{cmd})$.
+Purpose: track desired surge speed $v_d$ by producing the average request component $u_s^{req}$.
+Yaw control produces $u_d^{req}$ separately; together they form the request-stage vector $\mathbf{q}=[u_s^{req},u_d^{req}]^\top$ before command shaping maps to $(u_s^{cmd},u_d^{cmd})$.
 
 ## Inputs
 - desired speed $v_d$ (from `docs/guidance/`)
@@ -26,13 +26,13 @@ Maybe later: feedforward $u_{ff}$ once the thrust-to-speed mapping is identified
 
 ## Saturation and anti-windup
 Request stage passes raw controller output; command-stage limits are applied in command shaping:
-- $u_s^{req} = u_s^{*}$ (request stage; command-stage clamp happens in command shaping)
+- baseline `AUTOPILOT` contract: $u_s^{req} = u_s^{*}$ (source-specific request-space bounds may also be applied before shaping)
 
 Anti-windup (choose one implementation):
 - freeze integrator when saturated and $e_v$ pushes further into saturation
 - back-calculation (more work, smoother)
 
-(Exact clamp/slew is handled in `mixer_and_limits.md`, but the controller still needs an anti-windup rule.)
+(Exact clamp/slew is handled in `../actuation/mixer_and_limits.md`, but the controller still needs an anti-windup rule.)
 
 ## Special cases / validity
 - If $\hat v$ is flagged invalid (estimator unhealthy), optionally fall back to GNSS ground speed when available and above a minimum speed.
@@ -46,7 +46,8 @@ Log at control rate:
 
 ## Saturation + anti-windup (V1)
 
-Actuator saturation happens *after mixing* (motor limits on $u_L,u_R$), so the controllers must use mixer feedback for anti-windup.
+Actuation may clip at command stage and again at motor stage; final achieved actuation is set by motor-stage limits/slew.
+Controllers should use achieved-vs-command residuals in hardware-normalized space for anti-windup.
 
 Contract:
 - `MIXER_FEEDBACK -> mixer_feedback_t` is defined in [docs/interfaces/contracts.md](../interfaces/contracts.md).

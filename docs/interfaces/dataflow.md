@@ -20,25 +20,29 @@ It complements [contracts.md](contracts.md) by showing the pipeline.
 
 - `ACTUATOR_REQ` (`actuator_req_t`)
   - fields: `u_s_req`, `u_d_req`, `src` (+ validity/timestamp)
+  - stage/space: request stage in request space, basis $\mathbf{q}=[u_s^{req},u_d^{req}]^\top$
   - publish: controller or RC mapping (mode-dependent)
   - consume: command shaping, logging (optional)
 
 - `ACTUATOR_CMD` (`actuator_cmd_t`)
   - fields: `u_s_cmd`, `u_d_cmd` (+ validity/timestamp)
+  - stage/space: command stage in hardware-normalized space, surge/differential basis
   - publish: command shaping
   - consume: allocator/mixer, logging (optional)
 
 - `MIXER_FEEDBACK` (`mixer_feedback_t`)
   - fields: `u_s_ach`, `u_d_ach`, saturation flags (+ timestamp)
+  - stage/space: achieved feedback in hardware-normalized space, surge/differential basis
   - publish: allocator/mixer
   - consume: controllers (anti-windup), logging (optional)
 
 - `ESC_OUTPUT` (`esc_output_t`)
+  - stage/space: motor output in hardware-normalized space, left/right basis
   - publish: allocator/mixer
   - consume: ESC driver
 
 ## Timing model (V1)
-- Control loop runs at a fixed rate (e.g. 50–200 Hz)
+- Control loop runs at a fixed rate (e.g. 50-200 Hz)
 - Estimator predict runs in the control loop; measurement updates happen when new sensor data arrives
 - Guidance runs in the control loop (cheap computations)
 - Logging/telemetry are best-effort and must not block control
@@ -48,8 +52,8 @@ It complements [contracts.md](contracts.md) by showing the pipeline.
 - Mission manager owns waypoint switching
 - LOS owns $\psi_d$ and geometry errors
 - Speed scheduler owns $v_d$ ramping and speed caps
-- Controller/RC mapping owns source request generation $(u_s^{req},u_d^{req})$
-- Command shaping owns scaling/deadband/expo + command-envelope clamp $(u_s^{req},u_d^{req}) \rightarrow (u_s^{cmd},u_d^{cmd})$
+- Controller/RC mapping owns source request generation $\mathbf{q}$
+- Command shaping owns scaling/deadband/expo + command-envelope clamp $\mathbf{q} \rightarrow (u_s^{cmd},u_d^{cmd})$
 - Allocator/mixer owns feasibility policy + mapping to `u_L,u_R`
 
 ## Transport between modules/tasks
@@ -69,5 +73,5 @@ Rule: control loop must never block. On overflow, drop and count (per-buffer cou
 
 ## TODO / Open questions
 - Exact loop rates and where each topic is produced (same task vs cross-task)
-- Which signals are “log-only” vs “telemetry snapshot” vs “events”
+- Which signals are "log-only" vs "telemetry snapshot" vs "events"
 - Minimal set of debug fields that help tuning without bloating structs

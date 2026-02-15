@@ -1,6 +1,10 @@
 # Mixer, allocator, and limits (V1)
 
 This page defines the backend actuation pipeline from command-stage inputs $(u_s^{cmd},u_d^{cmd})$ to per-motor outputs $(u_L,u_R)$, and where saturation/feedback is generated.
+This module operates in hardware-normalized space only.
+It uses two coordinate bases inside that space:
+- surge/differential basis: $(u_s,u_d)$
+- left/right motor basis: $(u_L,u_R)$
 
 Canonical stage-by-stage I/O and naming rules are defined in [actuation_command_pipeline_spec.md](actuation_command_pipeline_spec.md).
 
@@ -14,7 +18,7 @@ Goal: V1 keeps allocation policy swappable (speed-priority, yaw-priority, later 
 
 ## Inputs / outputs
 Inputs:
-- $(u_s^{cmd},u_d^{cmd})$ from command shaping via `ACTUATOR_CMD -> actuator_cmd_t` (`u_s_cmd`, `u_d_cmd`)
+- $(u_s^{cmd},u_d^{cmd})$ from command shaping via `ACTUATOR_CMD -> actuator_cmd_t`
 - motor limits + policy params + $\Delta t$
 
 Outputs:
@@ -49,7 +53,7 @@ Open questions:
 V1 uses two separate layers:
 
 1. Hardware limits (absolute): what ESC + propulsion can physically do.
-   - Internal normalization still means `u=1.0` is "max physically possible".
+   - In motor basis, `u_L=1.0` / `u_R=1.0` represent per-motor upper hardware limits (with lower limit set by reverse configuration).
    - These limits change rarely at runtime.
 2. Software envelopes (operational): what is *allowed* in normal operation.
    - Safety/tuning choices, e.g. cap surge authority to reduce aggressive behavior.
@@ -60,13 +64,14 @@ Practical V1 structure:
 - Envelope A (command-stage): clamp shaped command outputs before allocation
   - `u_s_cmd in [u_s_min, u_s_max]`
   - `u_d_cmd in [-u_d_max_neg, u_d_max_pos]`
-- Envelope B (motor-stage): clamp mixed outputs before ESC output
-  - `u_L,u_R in [u_LR_min, u_LR_max]`
+- Envelope B (motor-stage software envelope): clamp mixed outputs before ESC output
+  - `u_L,u_R in [u_LR_min^sw, u_LR_max^sw]`
 
-Then allocator + mixer enforce feasibility under both software envelopes and hardware limits.
+Then allocator + mixer enforce feasibility under both software envelopes and hardware absolute limits.
 
 Canonical limit names in the pipeline:
 - motor absolute max/min: `u_LR_max`, `u_LR_min` (math: $u_{LR,max}, u_{LR,min}$; hardware-absolute)
+- motor software envelope: `act.sw.u_LR_max`, `act.sw.u_LR_min` (math: $u_{LR,max}^{sw}, u_{LR,min}^{sw}$)
 - surge envelope: `u_s_max`, `u_s_min` (math: $u_s^{max}, u_s^{min}$; software)
 - differential envelope: `u_d_max_pos`, `u_d_max_neg` (math: $u_{d,max}^{+}, u_{d,max}^{-}$; software)
 
@@ -125,7 +130,7 @@ the feasible differential range becomes:
 | `0.8` | `[-0.2, 0.2]` | small | small |
 
 Interpretation:
-- At `u_s=0.8`, only ±0.2 differential is available before a motor saturates.
+- At `u_s=0.8`, only +/-0.2 differential is available before a motor saturates.
 - Reserving surge headroom (for example `u_s_max=0.7`) keeps extra room for differential control.
 
 ### Tuning cheat sheet (turn aggressiveness)
@@ -172,6 +177,25 @@ u_d^{ach} = \tfrac12(u_R-u_L).
 
 Sign convention (explicit): positive differential command means right motor command is larger than left motor command ($u_R>u_L$).
 
+Matrix form:
+
+```math
+\begin{bmatrix}u_L\\u_R\end{bmatrix}=
+\begin{bmatrix}
+1 & -1 \\
+1 & 1
+\end{bmatrix}
+\begin{bmatrix}u_s^{alloc}\\u_d^{alloc}\end{bmatrix},
+\qquad
+\begin{bmatrix}u_s^{ach}\\u_d^{ach}\end{bmatrix}=
+\frac{1}{2}
+\begin{bmatrix}
+1 & 1 \\
+-1 & 1
+\end{bmatrix}
+\begin{bmatrix}u_L\\u_R\end{bmatrix}.
+```
+
 ## 3) Shaping (limits, idle, slew)
 
 Shaping is applied to $(u_L,u_R)$ after mixing.
@@ -179,7 +203,7 @@ Shaping is applied to $(u_L,u_R)$ after mixing.
 Order (V1):
 
 1. Optional trims/calibration (static offsets/scales)
-2. Clamp to allowed motor range ($u_{\min}, u_{\max}$ per motor)
+2. Clamp to software motor envelope and enforce hardware absolute bounds
 3. Idle/deadband (optional; depends on ESC + reverse support)
 4. Slew-rate limiting on $u_L/u_R$ (up/down may differ)
 5. Write `ESC_OUTPUT` (non-blocking); ESC driver maps internal $(u_L,u_R)$ to PWM
@@ -190,8 +214,9 @@ The ESC/motor setup ultimately decides whether reverse is available.
 
 V1 choice: keep one internal convention and map to ESC output:
 
-* internal: $u_L,u_R \in [-1,1]$ (signed, $0$ is stop)
-* ESC mapping: convert to PWM / clamp if reverse is not supported
+* internal motor basis: $u_L,u_R \in [u_{LR,min},u_{LR,max}]$ (configured hardware-normalized range)
+* typical ranges: `[-1,1]` with reverse support, `[0,1]` in no-reverse setups
+* ESC mapping: convert normalized internal commands to PWM and enforce configured range
 
 This file defines the internal convention; the ESC driver implements the final mapping.
 
@@ -215,6 +240,11 @@ Controllers then do anti-windup using either:
 * Freeze/clamp integration when saturated in the "wrong" direction, or
 * Back-calculation (tracking): use $(u_*^{ach}-u_*^{cmd})$.
 
+Use only same-space deltas for anti-windup.
+Define saturation residual in hardware-normalized space first: $(u_*^{ach}-u_*^{cmd})$.
+If the receiving controller state is in request space, convert residuals through the request<->command mapping before applying anti-windup.
+Do not compare request-stage values directly to achieved outputs without mapping.
+
 ### Recommended signal stages
 
 Keep the signal set small so it is easy to reason about saturation.
@@ -226,7 +256,7 @@ Required in V1 control logic:
 2. Final achieved command (`u_*^{ach}` from final motor outputs)
    - what was actually sent to the plant
 
-These two are enough for anti-windup and for analyzing "requested vs achieved" behavior.
+These two are enough for anti-windup and for analyzing command-vs-achieved behavior.
 
 Optional intermediate stage:
 
@@ -237,9 +267,11 @@ Treat `u_*^{alloc}` as debug/tuning data, not as a required control input.
 V1 tracks command (`u_*^{cmd}`) and final achieved output (`u_*^{ach}`) as mandatory signals; allocator-stage signals are optional diagnostics.
 
 Notation reminder (for consistency across docs):
+- $u_*^{req}$: request-stage value in request space (`ACTUATOR_REQ`)
 - $u_*^{cmd}$: command-stage output from command shaping (`ACTUATOR_CMD`)
 - $u_*^{alloc}$: allocator output before motor-stage shaping (optional debug/tuning)
 - $u_*^{ach}$: final achieved command returned by mixer/limits (`MIXER_FEEDBACK`)
+- optional derived analysis symbol: $u_*^{ach,req}$ (request-equivalent achieved value); not a canonical firmware/log field
 
 ## About thrust/force models and unit conversions
 

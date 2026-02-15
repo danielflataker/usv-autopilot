@@ -12,7 +12,7 @@ This is about behavior and rules, not UI implementation details.
 
 ## Not in scope
 - Full ground station UI design (see `docs/groundstation/`)
-- Internal controller math (see `docs/control/`)
+- Internal control/actuation math (see `docs/control/` and `docs/actuation/`)
 
 ## References
 - Telemetry messages: `telemetry.md`
