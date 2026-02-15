@@ -10,7 +10,7 @@ Quick reference for shared vocabulary across the docs. Math uses $\,\cdot\,$, co
 - $\mathrm{wrap}(\cdot)$: canonical angle wrapper defined in [architecture.md](architecture.md).
 - For control commands, use superscripts to show stage in the pipeline:
   - $u_*^{req}$: source request component in request-space vector $\mathbf{q}$.
-  - $u_*^{cmd}$: command requested by controller.
+  - $u_*^{cmd}$: command-stage output from command shaping in hardware-normalized space.
   - $u_*^{ach}$: final command achieved at hardware output stage (after allocator/mixer/limits).
   - $u_*^{alloc}$: optional intermediate allocator-stage command (debug/tuning only).
   - $u_*^{*}$: raw/unclamped controller output (before saturation/anti-windup logic).

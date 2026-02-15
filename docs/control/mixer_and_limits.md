@@ -213,8 +213,9 @@ The ESC/motor setup ultimately decides whether reverse is available.
 
 V1 choice: keep one internal convention and map to ESC output:
 
-* internal: $u_L,u_R \in [-1,1]$ (signed, $0$ is stop)
-* ESC mapping: convert to PWM / clamp if reverse is not supported
+* internal motor basis: $u_L,u_R \in [u_{LR,min},u_{LR,max}]$ (configured hardware-normalized range)
+* typical ranges: `[-1,1]` with reverse support, `[0,1]` in no-reverse setups
+* ESC mapping: convert normalized internal commands to PWM and enforce configured range
 
 This file defines the internal convention; the ESC driver implements the final mapping.
 
