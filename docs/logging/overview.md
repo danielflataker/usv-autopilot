@@ -41,7 +41,7 @@ that should not compete with core nav/control logs.
 ## Event log (separate)
 - `events.jsonl` (one JSON object per line) is acceptable since it is low-rate
   - easy to read/debug
-  - doesn’t bloat SD writes
+  - doesn't bloat SD writes
 - alternative: `events.bin` with fixed structs (later)
 
 ## Metadata (`meta.json`)

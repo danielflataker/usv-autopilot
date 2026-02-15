@@ -4,7 +4,7 @@
 In use
 
 ## Why this exists
-Design notes and implementation details tend to end up scattered. Key decisions can get lost, and it becomes hard to tell what’s current. A lightweight workflow is needed so the project stays searchable, consistent, and easy to extend later.
+Design notes and implementation details tend to end up scattered. Key decisions can get lost, and it becomes hard to tell what's current. A lightweight workflow is needed so the project stays searchable, consistent, and easy to extend later.
 
 ## Approach
 

@@ -40,7 +40,7 @@ This is a TLV-style format: easy to extend, easy to skip unknown types.
 
 ## Space efficiency and grouping
 Records are *not* a single fixed-width row. Each record type has its own payload layout.
-This keeps the file compact (no unused bytes for fields that don’t apply).
+This keeps the file compact (no unused bytes for fields that don't apply).
 
 To reduce overhead, values that are typically plotted together are packed into the same record
 (e.g. `REC_NAV_SOLUTION` contains `x,y,psi,v,r,b_g`).
@@ -78,7 +78,7 @@ Optional (if needed for tuning/debug):
 
 ## Versioning rules (simple)
 - Adding a *new* record type is backwards compatible (parsers can skip unknown `type`s).
-- Changing an existing payload layout is breaking → bump `FW_MODEL_SCHEMA`.
+- Changing an existing payload layout is breaking -> bump `FW_MODEL_SCHEMA`.
 
 ## TODO / Open questions
 - float precision: float32 vs float64 (V1 likely float32 for size)

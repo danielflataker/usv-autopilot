@@ -3,7 +3,7 @@
 This page describes who produces what, and how data moves through the firmware at runtime.
 It complements [contracts.md](contracts.md) by showing the pipeline.
 
-## Canonical topics (publish → consume)
+## Canonical topics (publish -> consume)
 (Topic names are logical; actual RTOS wiring may differ.)
 
 - `NAV_SOLUTION` (`nav_solution_t`)
@@ -61,7 +61,7 @@ Across tasks (V1):
 - **Events** use a single emit API with fanout:
   - producers call `event_emit(event_t)`
   - the event bus/router writes to two queues:
-    - `event_q_sd` (consumer: logging task → `events.jsonl`)
+    - `event_q_sd` (consumer: logging task -> `events.jsonl`)
     - `event_q_tm` (consumer: telemetry task)
 - **Ringbuffer** for high-rate time series logs (producer: control loop, consumer: SD writer)
 

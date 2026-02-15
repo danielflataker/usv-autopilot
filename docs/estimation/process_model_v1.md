@@ -1,6 +1,6 @@
 # V1 process model
 
-This is the baseline process model used by the EKF in V1. It’s deliberately simple: planar motion, lumped 1st-order dynamics for forward speed and yaw-rate, and a gyro bias state.
+This is the baseline process model used by the EKF in V1. It's deliberately simple: planar motion, lumped 1st-order dynamics for forward speed and yaw-rate, and a gyro bias state.
 
 ## Assumptions
 - Planar motion (roll/pitch ignored).

@@ -28,7 +28,7 @@ Basic rule:
 - switch to next segment when $d_{\text{wp}} < r_{\text{acc}}$
 
 Also implement:
-- hysteresis: once switched, don’t switch back unless mission is reset
+- hysteresis: once switched, don't switch back unless mission is reset
 - ignore switching if mission not active
 
 ## TODO / Open questions

@@ -53,7 +53,7 @@ Track a desired heading $\psi_d$ (from LOS) by commanding $u_d^{req}$.
 Actuator saturation happens *after mixing* (motor limits on $u_L,u_R$), so the controllers must use mixer feedback for anti-windup.
 
 Contract:
-- `MIXER_FEEDBACK → mixer_feedback_t` is defined in [`docs/interfaces/contracts.md`](../interfaces/contracts.md).
+- `MIXER_FEEDBACK -> mixer_feedback_t` is defined in [`docs/interfaces/contracts.md`](../interfaces/contracts.md).
 
 Rule of thumb:
 - Each controller compares what it *commanded* vs what was *achieved*:

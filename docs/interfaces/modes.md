@@ -16,7 +16,7 @@ See also: [contracts.md](contracts.md) and [rtos_tasks.md](rtos_tasks.md).
 
 ## Ownership: who outputs what
 - In `MANUAL`: mode outputs `actuator_req_t` from RC mapping (or `esc_output_t` in direct test/failsafe paths)
-- In `AUTOPILOT`: mode enables the pipeline (mission → guidance → control → request shaping → allocator/mixer)
+- In `AUTOPILOT`: mode enables the pipeline (mission -> guidance -> control -> request shaping -> allocator/mixer)
 - In `TESTS`: mode bypasses mission/guidance and injects setpoints or request-stage actuation
 - In `ABORT`: mode overrides everything and forces a safe output
 

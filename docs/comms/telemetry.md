@@ -37,7 +37,7 @@ For each message type:
 - required fields
 - optional fields (V2+)
 - units and valid ranges
-- when it’s sent (rate or event-triggered)
+- when it's sent (rate or event-triggered)
 
 ### Update rates / priority (recommendations)
 - `POSE`: 2–10 Hz (default 5 Hz)

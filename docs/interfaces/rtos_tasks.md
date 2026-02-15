@@ -92,7 +92,7 @@ Alternatives (possible later):
 - Mailboxes for latest-value signals: `NAV_SOLUTION`, `GUIDANCE_REF`, `ACTUATOR_REQ`, `ACTUATOR_CMD`
 - Event queue for sparse events (mode changes, param updates, rejects)
 - Ringbuffer for high-rate logging (producer: control loop, consumer: logging task)
-- Optional: separate small “priority event” queue to telemetry (so events don’t wait behind bulk data)
+- Optional: separate small “priority event” queue to telemetry (so events don't wait behind bulk data)
 
 ## TODO / Open questions
 - Final loop rates and priority ordering (after first bring-up)

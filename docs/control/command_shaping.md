@@ -8,7 +8,7 @@ This module converts request-stage actuation $(u_s^{req},u_d^{req})$ into comman
 - Does not own allocator policy, motor mixing, or ESC mapping
 
 ## Inputs
-- `ACTUATOR_REQ → actuator_req_t`
+- `ACTUATOR_REQ -> actuator_req_t`
   - `u_s_req`, `u_d_req`, `src`
 - mode-dependent shaping parameters
   - `act.shp.ap.u_s_scale`, `act.shp.ap.u_d_scale`
@@ -18,7 +18,7 @@ This module converts request-stage actuation $(u_s^{req},u_d^{req})$ into comman
   - `act.sw.u_d_max_neg`, `act.sw.u_d_max_pos`
 
 ## Outputs
-- `ACTUATOR_CMD → actuator_cmd_t`
+- `ACTUATOR_CMD -> actuator_cmd_t`
   - `u_s_cmd`, `u_d_cmd`
 
 ## Stage definition

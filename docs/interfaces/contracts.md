@@ -13,17 +13,17 @@ Non-goals:
 - Full implementations
 - HAL/driver details
 
-## Pipeline contracts (topics → payload types)
+## Pipeline contracts (topics -> payload types)
 
 To make the dataflow explicit, we name the *thing being published* (topic) and the struct that carries it:
 
-- `NAV_SOLUTION` → `nav_solution_t`
-- `MISSION_STATE` → `mission_state_t`
-- `GUIDANCE_REF` → `guidance_ref_t`
-- `ACTUATOR_REQ` → `actuator_req_t`
-- `ACTUATOR_CMD` → `actuator_cmd_t`
-- `MIXER_FEEDBACK` → `mixer_feedback_t`
-- `ESC_OUTPUT` → `esc_output_t`
+- `NAV_SOLUTION` -> `nav_solution_t`
+- `MISSION_STATE` -> `mission_state_t`
+- `GUIDANCE_REF` -> `guidance_ref_t`
+- `ACTUATOR_REQ` -> `actuator_req_t`
+- `ACTUATOR_CMD` -> `actuator_cmd_t`
+- `MIXER_FEEDBACK` -> `mixer_feedback_t`
+- `ESC_OUTPUT` -> `esc_output_t`
 
 (Exact RTOS wiring is described in [rtos_tasks.md](rtos_tasks.md) and [dataflow.md](dataflow.md).)
 
@@ -39,7 +39,7 @@ To make the dataflow explicit, we name the *thing being published* (topic) and t
 
 ### Mission management
 - `mission_state_t` (published by mission manager)
-  - `idx` (active segment: waypoint `idx` → `idx+1`)
+  - `idx` (active segment: waypoint `idx` -> `idx+1`)
   - `active`, `done`
   - segment endpoints: `x0,y0` and `x1,y1`
   - segment target speed: `v_seg` (optional in V1)

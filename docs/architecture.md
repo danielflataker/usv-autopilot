@@ -43,25 +43,25 @@ Each tick runs without blocking:
 
 4) **Autopilot (only if mode enables it)**
 - `mission_manager`: active segment + waypoint switching
-- `los_guidance`: compute lookahead target → desired heading `psi_d` + errors (`e_y`, `e_psi`)
-- `speed_scheduler`: start from segment speed `v_seg`, apply caps (WP proximity, |e_psi|, …), then ramp → `v_d`
-- `control_cascade`: heading loop (`e_psi` → `r_d`) + yaw-rate loop (`e_r` → `u_d^{cmd}`/`DeltaT`) + speed loop (`e_v` → `u_s^{cmd}`/`T`)
+- `los_guidance`: compute lookahead target -> desired heading `psi_d` + errors (`e_y`, `e_psi`)
+- `speed_scheduler`: start from segment speed `v_seg`, apply caps (WP proximity, |e_psi|, ...), then ramp -> `v_d`
+- `control_cascade`: heading loop (`e_psi` -> `r_d`) + yaw-rate loop (`e_r` -> `u_d^{cmd}`/`DeltaT`) + speed loop (`e_v` -> `u_s^{cmd}`/`T`)
 
 5) **Actuator shaping + ESC output**
 - clamp/deadband/slew-rate limiting
-- differential thrust mixing `(u_s^{cmd},u_d^{cmd}) → (u_L,u_R)` + publish achieved feedback `(u_s^{ach},u_d^{ach})`
+- differential thrust mixing `(u_s^{cmd},u_d^{cmd}) -> (u_L,u_R)` + publish achieved feedback `(u_s^{ach},u_d^{ach})`
 - write to ESC output (non-blocking)
 
 6) **Log + event emission**
 - push high-rate records to the log ringbuffer (non-blocking)
-- emit sparse events via `event_emit()` (mode switches, param apply, gating, …)
+- emit sparse events via `event_emit()` (mode switches, param apply, gating, ...)
 
 ## IPC patterns (V1)
 - **Mailboxes**: latest-value signals (`NAV_SOLUTION`, `GUIDANCE_REF`, status snapshots)
-- **Measurement queue**: timestamped sensor measurements → estimator update path
-- **Ringbuffer**: high-rate log records → `task_logger`
+- **Measurement queue**: timestamped sensor measurements -> estimator update path
+- **Ringbuffer**: high-rate log records -> `task_logger`
 - **Event bus**: producers call `event_emit(event_t)`; implementation fans out to:
-  - `event_q_sd` (consumer: `task_logger` → `events.jsonl`)
+  - `event_q_sd` (consumer: `task_logger` -> `events.jsonl`)
   - `event_q_tm` (consumer: `task_telemetry`)
 Drop-on-full is allowed; counters must be logged.
 

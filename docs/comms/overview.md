@@ -1,6 +1,6 @@
 # Comms overview
 
-This folder describes how the boat and ground station talk to each other: what gets sent, how it’s framed, and how parameters are updated.
+This folder describes how the boat and ground station talk to each other: what gets sent, how it's framed, and how parameters are updated.
 
 Keep this practical and avoid duplicating internal structs from `interfaces/`.
 

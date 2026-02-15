@@ -14,12 +14,12 @@ Goal: V1 keeps allocation policy swappable (speed-priority, yaw-priority, later 
 
 ## Inputs / outputs
 Inputs:
-- $(u_s^{cmd},u_d^{cmd})$ from command shaping via `ACTUATOR_CMD → actuator_cmd_t` (`u_s_cmd`, `u_d_cmd`)
+- $(u_s^{cmd},u_d^{cmd})$ from command shaping via `ACTUATOR_CMD -> actuator_cmd_t` (`u_s_cmd`, `u_d_cmd`)
 - motor limits + policy params + $\Delta t$
 
 Outputs:
-- `ESC_OUTPUT → esc_output_t`: $(u_L,u_R)$ (internal motor commands; ESC driver maps to PWM)
-- `MIXER_FEEDBACK → mixer_feedback_t`: achieved $(u_s^{ach},u_d^{ach})$ + saturation flags for anti-windup
+- `ESC_OUTPUT -> esc_output_t`: $(u_L,u_R)$ (internal motor commands; ESC driver maps to PWM)
+- `MIXER_FEEDBACK -> mixer_feedback_t`: achieved $(u_s^{ach},u_d^{ach})$ + saturation flags for anti-windup
 
 (Exact payload fields are defined in [`interfaces/contracts.md`](../interfaces/contracts.md).)
 
@@ -60,10 +60,10 @@ V1 uses two separate layers:
 Practical V1 structure:
 
 - Envelope A (command-stage): clamp shaped command outputs before allocation
-  - `u_s_cmd ∈ [u_s_min, u_s_max]`
-  - `u_d_cmd ∈ [-u_d_max_neg, u_d_max_pos]`
+  - `u_s_cmd in [u_s_min, u_s_max]`
+  - `u_d_cmd in [-u_d_max_neg, u_d_max_pos]`
 - Envelope B (motor-stage): clamp mixed outputs before ESC output
-  - `u_L,u_R ∈ [u_LR_min, u_LR_max]`
+  - `u_L,u_R in [u_LR_min, u_LR_max]`
 
 Then allocator + mixer enforce feasibility under both software envelopes and hardware limits.
 
@@ -111,7 +111,7 @@ Any direction asymmetry then comes from configured software limits (`u_d_max_pos
 
 ### Worked numeric example (no reverse, motor range [0,1])
 
-Assume motor-side limits are `u_L,u_R ∈ [0,1]` and command `u_s` is fixed.
+Assume motor-side limits are `u_L,u_R in [0,1]` and command `u_s` is fixed.
 Using
 
 ```math

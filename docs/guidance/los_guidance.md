@@ -43,7 +43,7 @@ Desired heading:
 ```
 
 ## Notes
-- Clamp the lookahead point to the segment (V1) so we don’t “look beyond” the next waypoint too far.
+- Clamp the lookahead point to the segment (V1) so we don't “look beyond” the next waypoint too far.
 - Always wrap heading differences: $e_\psi = \mathrm{wrap}(\psi_d - \psi)$.
 
 ## TODO / Open questions
