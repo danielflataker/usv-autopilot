@@ -159,6 +159,67 @@ Motor-stage clamp in left/right basis:
 \mathbf{u}^{ach} = \mathbf{B}^{-1}\mathbf{m}^{ach}
 ```
 
+## End-to-end diagram (Mermaid)
+
+```mermaid
+flowchart TB
+  subgraph R["R space"]
+    direction TB
+    subgraph Rq["q basis [u_s_req, u_d_req]"]
+      SRC["q (ACTUATOR_REQ)"]
+    end
+  end
+
+  subgraph H["H space"]
+    direction TB
+    subgraph Hu["u basis [u_s, u_d]"]
+      subgraph ST1["Stage 1: command shaping"]
+        Ccmd["C_cmd"]
+      end
+      subgraph ST2["Stage 2: allocator"]
+        Aop["A(policy)"]
+      end
+      subgraph ST4["Stage 4: feedback + AW"]
+        Binv["B⁻¹"]
+        AW["e_aw^H = u_ach - u_cmd"]
+      end
+    end
+
+    subgraph Hm["m basis [u_L, u_R]"]
+      subgraph ST3["Stage 3: motor path"]
+        Bop["B (mix matrix)"]
+        Cmot["C_mot"]
+        Sop["S(Δt)"]
+        ESC["m_ach (ESC_OUTPUT)"]
+      end
+    end
+  end
+
+  Phi["Φ (R→H)"]
+
+  SRC -->|q| Phi
+  Phi -->|u_cmd_raw| Ccmd
+  Ccmd -->|u_cmd / ACTUATOR_CMD| Aop
+  Aop -->|u_alloc| Bop
+  Bop -->|m_raw| Cmot
+  Cmot -->|m_lim| Sop
+  Sop -->|m_ach| ESC
+  ESC -->|m_ach| Binv
+  Binv -->|u_ach / MIXER_FEEDBACK| AW
+
+  Ccmd -->|u_cmd| AW
+
+  PhiInv["Φ⁻¹ (H→R)"]
+  AW -. e_aw^H .-> PhiInv
+  PhiInv -. e_aw^R .-> SRC
+```
+
+Diagram shorthand:
+- Edge labels denote carried quantities.
+- Transformation blocks denote operators (`Φ`, `C_cmd`, `A`, `B`, `C_mot`, `S`, `B⁻¹`, and optional `Φ⁻¹`).
+- `Φ` is the cross-space mapping from request space `R` to hardware-normalized space `H`.
+- Stage boxes group operators; they are not signal-carrying nodes.
+
 ## Pipeline definition
 
 ## Stage 0 - source generation
@@ -248,7 +309,7 @@ Request-to-command mapping function:
 
 Command-to-request approximate inverse function:
 - `act_space_cmd_to_req_approx()`
-- implements local inverse/pseudo-inverse behavior when needed
+- implements $\Phi_{mode}^{-1,\mathrm{approx}}$
 
 Per-cycle mapping context:
 - `act_space_ctx_t`
@@ -259,12 +320,11 @@ Per-cycle mapping context:
 Recommended controller-space adaptation:
 
 ```math
-\mathbf{e}_{aw}^{\mathcal{R}} \approx \mathbf{J}_{\Phi}^{-1}\mathbf{e}_{aw}^{\mathcal{H}}
+\mathbf{e}_{aw}^{\mathcal{R}} \approx
+\Phi_{mode}^{-1,\mathrm{approx}}\!\left(\mathbf{e}_{aw}^{\mathcal{H}}\right)
 ```
 
-where $\mathbf{J}_{\Phi}$ is local Jacobian/slope of $\Phi_{mode}$.
-
-Approximate inverse is required in nonlinear/clamped regions.
+In nonlinear/clamped regions this is a local approximation, not an exact global inverse.
 
 ## Limit and parameter conventions
 | Category | Math symbol | Parameter names |
