@@ -66,7 +66,7 @@ Rules:
 ## Stage 1 — command shaping (mode-specific)
 Purpose: shape request before allocator.
 
-Detailed stage definition is documented in [`command_shaping.md`](command_shaping.md).
+Detailed stage definition is documented in [command_shaping.md](command_shaping.md).
 
 Inputs:
 - $u_s^{req}, u_d^{req}$

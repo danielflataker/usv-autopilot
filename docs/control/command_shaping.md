@@ -54,7 +54,7 @@ The output of this stage is always command-stage naming: `u_s_cmd`, `u_d_cmd`.
 - Stage clamp status can be exported through controller debug fields (`sat_u_s`, `sat_u_d`) and optional mixer diagnostics (`sat_cmd_stage`).
 
 ## References
-- Pipeline and stage contract: [`actuation_command_pipeline_spec.md`](actuation_command_pipeline_spec.md)
-- Topic payloads: [`../interfaces/contracts.md`](../interfaces/contracts.md)
-- Runtime dataflow: [`../interfaces/dataflow.md`](../interfaces/dataflow.md)
-- Backend allocator/mixer: [`mixer_and_limits.md`](mixer_and_limits.md)
+- Pipeline and stage contract: [actuation_command_pipeline_spec.md](actuation_command_pipeline_spec.md)
+- Topic payloads: [../interfaces/contracts.md](../interfaces/contracts.md)
+- Runtime dataflow: [../interfaces/dataflow.md](../interfaces/dataflow.md)
+- Backend allocator/mixer: [mixer_and_limits.md](mixer_and_limits.md)

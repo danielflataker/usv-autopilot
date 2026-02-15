@@ -2,7 +2,7 @@
 
 This page defines the backend actuation pipeline from command-stage inputs $(u_s^{cmd},u_d^{cmd})$ to per-motor outputs $(u_L,u_R)$, and where saturation/feedback is generated.
 
-Canonical stage-by-stage I/O and naming rules are defined in [`actuation_command_pipeline_spec.md`](actuation_command_pipeline_spec.md).
+Canonical stage-by-stage I/O and naming rules are defined in [actuation_command_pipeline_spec.md](actuation_command_pipeline_spec.md).
 
 Goal: V1 keeps allocation policy swappable (speed-priority, yaw-priority, later cost/QP) without rewriting the rest of the module.
 
@@ -21,7 +21,7 @@ Outputs:
 - `ESC_OUTPUT -> esc_output_t`: $(u_L,u_R)$ (internal motor commands; ESC driver maps to PWM)
 - `MIXER_FEEDBACK -> mixer_feedback_t`: achieved $(u_s^{ach},u_d^{ach})$ + saturation flags for anti-windup
 
-(Exact payload fields are defined in [`interfaces/contracts.md`](../interfaces/contracts.md).)
+(Exact payload fields are defined in [interfaces/contracts.md](../interfaces/contracts.md).)
 
 ## 1) Allocator (policy layer)
 

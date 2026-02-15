@@ -22,11 +22,11 @@ Some contracts must match exactly (state order/meaning, units, record layouts). 
 - `timeseries.bin` header stores the same `fw_model_schema`
 - tools should fail fast if dataset schema != tool schema
 
-See: [`record_formats.md`](record_formats.md), [`interfaces/contracts.md`](../interfaces/contracts.md), and [`contract_sync.md`](contract_sync.md).
+See: [record_formats.md](record_formats.md), [interfaces/contracts.md](../interfaces/contracts.md), and [contract_sync.md](contract_sync.md).
 
 ## High-rate time series (binary)
 - single append-only file: `timeseries.bin`
-- fixed header + TLV record stream (see [`record_formats.md`](record_formats.md))
+- fixed header + TLV record stream (see [record_formats.md](record_formats.md))
 - designed for fast writes and easy parsing in Python
 
 ### Why a single `timeseries.bin` is OK

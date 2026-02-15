@@ -1,4 +1,4 @@
-﻿# Speed controller (V1)
+# Speed controller (V1)
 
 Purpose: track desired surge speed $v_d$ by producing the average request $u_s^{req}$.
 Yaw control produces $u_d^{req}$ separately; command shaping then maps requests to command-stage terms $(u_s^{cmd},u_d^{cmd})$.
@@ -49,7 +49,7 @@ Log at control rate:
 Actuator saturation happens *after mixing* (motor limits on $u_L,u_R$), so the controllers must use mixer feedback for anti-windup.
 
 Contract:
-- `MIXER_FEEDBACK -> mixer_feedback_t` is defined in [`docs/interfaces/contracts.md`](../interfaces/contracts.md).
+- `MIXER_FEEDBACK -> mixer_feedback_t` is defined in [docs/interfaces/contracts.md](../interfaces/contracts.md).
 
 Rule of thumb:
 - Each controller compares what it *commanded* vs what was *achieved*:

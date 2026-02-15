@@ -7,4 +7,4 @@ Suggested layout:
 - `bench/` (repeatable bench runs)
 - `notes/` (what happened + outcomes)
 
-Raw logs can be large; usually ignored by git. Keep small examples in [`datasets/`](../datasets/).
+Raw logs can be large; usually ignored by git. Keep small examples in [datasets/](../datasets/).

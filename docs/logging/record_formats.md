@@ -14,7 +14,7 @@ This file uses the same *contract schema* as the rest of the project:
 - `timeseries.bin` stores the same value in its header (`fw_model_schema`).
 - Tools should fail fast if dataset schema != tool schema.
 
-See: [`docs/interfaces/contracts.md`](../interfaces/contracts.md) (Compatibility / schema IDs).
+See: [docs/interfaces/contracts.md](../interfaces/contracts.md) (Compatibility / schema IDs).
 
 ## File structure (proposal)
 
@@ -74,7 +74,7 @@ Optional (if needed for tuning/debug):
 ## Types and units
 - `t_us`: monotonic microseconds
 - SI units (m, rad, m/s, rad/s)
-- angle wrapping + frame conventions referenced from [`architecture.md`](../architecture.md)
+- angle wrapping + frame conventions referenced from [architecture.md](../architecture.md)
 
 ## Versioning rules (simple)
 - Adding a *new* record type is backwards compatible (parsers can skip unknown `type`s).
