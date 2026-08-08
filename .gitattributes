@@ -1,0 +1,16 @@
+# Keep text files consistent across Windows, macOS and Linux.
+* text=auto eol=lf
+
+# Windows command files are conventionally CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files should not be treated as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.xlsx binary
+*.zip binary
+*.bin binary
