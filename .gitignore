@@ -1,0 +1,32 @@
+# STM32 / build output
+build/
+Debug/
+Release/
+*.elf
+*.hex
+*.map
+*.list
+
+# STM32CubeIDE / Eclipse workspace-local files
+.metadata/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local analysis and raw test data
+data/raw/
+
+# Local environment / secrets
+.env
+.env.*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*~
