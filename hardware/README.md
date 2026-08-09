@@ -15,6 +15,10 @@ This page tracks the hardware that is part of the working USV. Purchasing spread
 
 SiK telemetry is planned for a later milestone and is not required for initial bring-up.
 
+## Power architecture
+
+![Power architecture](architecture/power.svg)
+
 ## Actuation constraint
 
 The current ESCs are treated as forward-only. With normalized surge and differential commands,
