@@ -13,7 +13,7 @@ This page tracks the hardware that is part of the working USV. Purchasing spread
 | ESCs | 2 × Hobbywing Skywalker 60A | Motor control |
 | Motors | 2 × SSS 2960 inrunner | Differential-thrust propulsion |
 
-A SiK telemetry radio is available and may be added later if it is useful during testing.
+SiK telemetry is planned for a later milestone and is not required for initial bring-up.
 
 ## Actuation constraint
 

@@ -40,12 +40,13 @@ Left + right motor
 
 The project is starting with hardware bring-up and manual testing. Autonomous control will be added one working step at a time.
 
-See [docs/roadmap.md](docs/roadmap.md) for the near-term plan, [docs/hardware.md](docs/hardware.md) for the current hardware baseline, and [docs/workflow.md](docs/workflow.md) for the lightweight Git workflow.
+See [docs/roadmap.md](docs/roadmap.md) for the project roadmap, [hardware/README.md](hardware/README.md) for the current hardware baseline, and [docs/workflow.md](docs/workflow.md) for the lightweight Git workflow.
 
 ## Repository
 
 As implementation starts, the repository will mainly contain:
 
+- `hardware/` — hardware architecture, wiring and integration
 - `firmware/` — STM32 firmware
 - `analysis/` — small Python scripts for plotting and test analysis
 - `docs/` — short documentation for the system that actually exists
