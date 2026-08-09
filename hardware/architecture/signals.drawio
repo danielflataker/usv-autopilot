@@ -1,0 +1,136 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="signal-architecture">
+    <mxGraphModel dx="290" dy="311" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="stm32" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#003333);fontSize=16;" value="STM32&lt;div&gt;Nucleo-H533RE&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="450" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="gnss" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#003333);" value="GNSS&lt;div&gt;NEO-M9N&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="120" x="120" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="imu" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#003333);" value="IMU&lt;div&gt;BMI270&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="120" x="120" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="mag" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#003333);" value="Magnetometer&lt;div&gt;MLX90393&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="120" x="120" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="ina" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#003333);" value="INA219" vertex="1">
+          <mxGeometry height="30" width="120" x="120" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="sd" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#003333);" value="microSD" vertex="1">
+          <mxGeometry height="30" width="120" x="120" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="rx" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#003333);" value="RC receiver&lt;div&gt;RX8R Pro&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="130" x="830" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="sik" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#003333);" value="SiK telemetry&lt;div&gt;radio&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="130" x="830" y="385" as="geometry" />
+        </mxCell>
+        <mxCell id="escl" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#003333);" value="ESC L" vertex="1">
+          <mxGeometry height="30" width="130" x="680" y="505" as="geometry" />
+        </mxCell>
+        <mxCell id="escr" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#003333);" value="ESC R" vertex="1">
+          <mxGeometry height="30" width="130" x="680" y="625" as="geometry" />
+        </mxCell>
+        <mxCell id="antenna" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#F5F5F5,#1A1A1A);dashed=1;" value="GNSS antenna" vertex="1">
+          <mxGeometry height="45" width="120" x="120" y="55" as="geometry" />
+        </mxCell>
+        <mxCell id="tx" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#F5F5F5,#1A1A1A);dashed=1;" value="RC transmitter&lt;div&gt;Taranis Q X7S&lt;/div&gt;" vertex="1">
+          <mxGeometry height="55" width="130" x="830" y="55" as="geometry" />
+        </mxCell>
+        <mxCell id="qgc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#F5F5F5,#1A1A1A);dashed=1;" value="Ground SiK +&lt;div&gt;QGroundControl&lt;/div&gt;" vertex="1">
+          <mxGeometry height="55" width="130" x="830" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="e_gnss" edge="1" parent="1" source="gnss" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;endArrow=classic;endFill=1;strokeWidth=2;strokeColor=light-dark(#000000,#3399FF);fontSize=14;labelBackgroundColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;verticalAlign=bottom;" target="stm32" value="UART">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="560" y="175" />
+            </Array>
+            <mxPoint x="260" y="140" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_imu" edge="1" parent="1" source="imu" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;endArrow=classic;endFill=1;strokeWidth=2;strokeColor=light-dark(#000000,#9966CC);fontSize=14;labelBackgroundColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;align=center;verticalAlign=bottom;" target="stm32" value="SPI + INT">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="255" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_mag" edge="1" parent="1" source="mag" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;endArrow=classic;endFill=1;strokeWidth=2;strokeColor=light-dark(#000000,#33AA66);fontSize=14;labelBackgroundColor=none;verticalAlign=bottom;" target="stm32" value="I²C">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="335" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ina" edge="1" parent="1" source="ina" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;endArrow=classic;endFill=1;strokeWidth=2;strokeColor=light-dark(#000000,#33AA66);fontSize=14;labelBackgroundColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;verticalAlign=bottom;entryX=0.167;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" target="stm32" value="I²C">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="495" />
+            </Array>
+            <mxPoint x="240" y="479.9999999999998" as="sourcePoint" />
+            <mxPoint x="478.62" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sd" edge="1" parent="1" source="sd" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;endArrow=classic;endFill=1;strokeWidth=2;strokeColor=light-dark(#000000,#9966CC);fontSize=14;labelBackgroundColor=none;verticalAlign=bottom;" target="stm32" value="SPI">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520.03" y="575.03" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_rx" edge="1" parent="1" source="rx" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2;strokeColor=light-dark(#000000,#CC3333);fontSize=14;labelBackgroundColor=none;verticalAlign=bottom;" target="stm32" value="SBUS">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="197.57" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sik" edge="1" parent="1" source="stm32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;endArrow=classic;endFill=1;strokeWidth=2;strokeColor=light-dark(#000000,#3399FF);fontSize=14;labelBackgroundColor=none;verticalAlign=bottom;" target="sik" value="UART / MAVLink">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_escl" edge="1" parent="1" source="stm32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2;strokeColor=light-dark(#000000,#FF9900);fontSize=14;labelBackgroundColor=none;exitX=0.826;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;verticalAlign=bottom;align=left;" target="escl" value="PWM">
+          <mxGeometry relative="1" x="-0.1158" y="10" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="600.03" y="440.03" />
+              <mxPoint x="600.03" y="519.97" />
+            </Array>
+            <mxPoint x="630" y="429.99882352941194" as="sourcePoint" />
+            <mxPoint x="895.0588235294117" y="529.9399999999998" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_escr" edge="1" parent="1" source="stm32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2;strokeColor=light-dark(#000000,#FF9900);fontSize=14;labelBackgroundColor=none;exitX=0.612;exitY=0.982;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;verticalAlign=bottom;align=left;" target="escr" value="PWM">
+          <mxGeometry relative="1" x="0.1917" y="10" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="560.24" y="639.94" />
+            </Array>
+            <mxPoint x="560" y="520.0000000000002" as="sourcePoint" />
+            <mxPoint x="895.0588235294117" y="704.9999999999998" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ant" edge="1" parent="1" source="antenna" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2;dashed=1;strokeColor=light-dark(#666666,#BBBBBB);fontSize=13;labelBackgroundColor=none;align=left;" target="gnss" value="RF">
+          <mxGeometry relative="1" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_tx" edge="1" parent="1" source="tx" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2;dashed=1;strokeColor=light-dark(#666666,#BBBBBB);fontSize=13;labelBackgroundColor=none;align=left;" target="rx" value="RC link">
+          <mxGeometry relative="1" x="-0.1429" y="5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_qgc" edge="1" parent="1" source="sik" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;endArrow=classic;endFill=1;strokeWidth=2;dashed=1;strokeColor=light-dark(#666666,#BBBBBB);fontSize=13;labelBackgroundColor=none;align=left;" target="qgc" value="SiK RF / MAVLink">
+          <mxGeometry relative="1" x="-0.0149" y="5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=light-dark(#999999,#666666);dashed=1;fontSize=13;" value="Draft architecture&lt;div&gt;Exact STM32 peripheral/pin mapping TBD&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="240" x="420" y="745" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

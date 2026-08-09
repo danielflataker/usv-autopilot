@@ -19,6 +19,10 @@ SiK telemetry is planned for a later milestone and is not required for initial b
 
 ![Power architecture](architecture/power.svg)
 
+## Signal architecture
+
+![Signal architecture](architecture/signals.svg)
+
 ## Actuation constraint
 
 The current ESCs are treated as forward-only. With normalized surge and differential commands,
